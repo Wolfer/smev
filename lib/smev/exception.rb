@@ -1,0 +1,2 @@
+class SmevException < Exception
+end

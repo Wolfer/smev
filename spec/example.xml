@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<soap:Envelope xmlns:smev="http://smev.gosuslugi.ru/rev110801" xmlns:ds="http://www.w3.org/2000/09/xmldsig#" xmlns:m0="http://ws.unisoft/OP/ZPQueryOPUL" xmlns:ws="http://ws.unisoft/" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd" xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+ <soap:Header>
+ <wsse:Security soap:actor="http://smev.gosuslugi.ru/actors/smev">
+ <ds:Signature>
+ <ds:SignedInfo>
+ <ds:CanonicalizationMethod Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#"/>
+ <ds:SignatureMethod Algorithm="http://www.w3.org/2001/04/xmldsig-more#gostr34102001-gostr3411"/>
+ <ds:Reference URI="#body">
+ <ds:Transforms>
+ <ds:Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature"/>
+ <ds:Transform Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#"/>
+ </ds:Transforms>
+ <ds:DigestMethod Algorithm="http://www.w3.org/2001/04/xmldsig-more#gostr3411"/>
+ <ds:DigestValue>0bzevRQLFjsEhtvDkTCcpJu8BwpPNZqtmagJfqDb5vQ=</ds:DigestValue>
+ </ds:Reference>
+ </ds:SignedInfo>
+ <ds:SignatureValue>TEbV4SCKxYZJIaUdjtw3PYDX9ega9EcCdkcoD5KsEoS2o6J4EiqENbd1XcJn
+XYYYt410zD2y7dtsYRAfWXpZdw==</ds:SignatureValue>
+ <ds:KeyInfo>
+ <wsse:SecurityTokenReference>
+ <wsse:Reference URI="#CertId" ValueType="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-x509-token-profile-1.0#X509v3"/>
+ </wsse:SecurityTokenReference>
+ </ds:KeyInfo>
+ </ds:Signature>
+ <wsse:BinarySecurityToken EncodingType="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-soap-message-security-1.0#Base64Binary" wsu:Id="CertId" ValueType="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-x509-token-profile-1.0#X509v3">
+MIIB1DCCAYGgAwIBAgIJAOY5iJrhOIUbMAoGBiqFAwICAwUAMEUxCzAJBgNVBAYT
+AkFVMRMwEQYDVQQIDApTb21lLVN0YXRlMSEwHwYDVQQKDBhJbnRlcm5ldCBXaWRn
+aXRzIFB0eSBMdGQwHhcNMTIwNDA0MTA1MzU4WhcNMTIwNTA0MTA1MzU4WjBFMQsw
+CQYDVQQGEwJBVTETMBEGA1UECAwKU29tZS1TdGF0ZTEhMB8GA1UECgwYSW50ZXJu
+ZXQgV2lkZ2l0cyBQdHkgTHRkMGMwHAYGKoUDAgITMBIGByqFAwICIwEGByqFAwIC
+HgEDQwAEQE8IrSE1z/v+RhGhJmrcYGhXUNx53yylebtNziJPQaG7jEmq2Za3dlmZ
+v00syfwz485zRiWmsijvu0O2p8TomRijUDBOMB0GA1UdDgQWBBR/zayDtqF+GKwe
+vMtFkhbVELIXBDAfBgNVHSMEGDAWgBR/zayDtqF+GKwevMtFkhbVELIXBDAMBgNV
+HRMEBTADAQH/MAoGBiqFAwICAwUAA0EAU4QBJVfz5muEiA80rs9DTtiKDqqbkZ7u
+cn1U4qHlTgfohs0m/FFu3HSzK65VMDoeJh9R79z8K79aTYxvvyfmmg==
+</wsse:BinarySecurityToken>
+ </wsse:Security>
+ </soap:Header>
+<soap:Body wsu:Id="body"><ws:queryOPUL><smev:Message><smev:Sender><smev:Code>CZN0001</smev:Code><smev:Name>CZN</smev:Name></smev:Sender><smev:Recipient><smev:Code>NULL</smev:Code><smev:Name>NULL</smev:Name></smev:Recipient><smev:Originator><smev:Code>NULL</smev:Code><smev:Name>NULL</smev:Name></smev:Originator><smev:TypeCode>NULL</smev:TypeCode><smev:Date>2012-07-09T11:27:14+04:00</smev:Date><smev:RequestIdRef>NULL</smev:RequestIdRef><smev:OriginRequestIdRef>NULL</smev:OriginRequestIdRef><smev:ServiceCode>NULL</smev:ServiceCode><smev:CaseNumber>NULL</smev:CaseNumber></smev:Message><smev:MessageData><smev:AppData><m0:Документ ИдЗапрос="111111111111111111111111111111111111" ВерсФорм="4.02" ТипИнф="ЗапрПостУч"><m0:СвЮЛ НаимЮЛ="2" ИННЮЛ="2222222222" ОГРН="2222222222222"/><m0:ЗапросЮЛ ОГРН="2222222222222" ИННЮЛ="2222222222" КППОП="222222222"/></m0:Документ></smev:AppData></smev:MessageData></ws:queryOPUL></soap:Body></soap:Envelope>
