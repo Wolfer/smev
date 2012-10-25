@@ -1,6 +1,17 @@
 require 'smev'
+require 'spec_helper'
 
 describe Smev::Message do		
+
+	before(:all) do 
+		@wsdl = WSDL::Importer.import( "file://" + File.dirname(__FILE__) + "/test_xsd/wsdl" )
+		@xsd = @wsdl.find_by_action @wsdl.methods.first
+	end
+
+	it 'should be create from xsd' do
+		sm = Smev::Message.new @xsd
+		sm.should be_a(Smev::Message)
+	end
 
 	# it 'should be searchable' do
 	# 	sm = SmevMessage.new( Service.last(4).first.wsdl.collect_elements.find_name("doleResponse") )
@@ -66,19 +77,19 @@ describe Smev::Message do
 		
 	# end
 	
-	it 'testing spec' do
-	  # sm = SmevMessage.new( QueryType.last.wsdl.find_by_action("SendShortULRequest") )
-	  # sm.search_child("TypeCode").first.value.set "GSRV"
-	  # sm.search_child("Status").first.value.set "REQUEST"
-	  # sm.search_child("Status").first.value.set "REQUEST"
-	  # sm.search_child("Документ").first.attributes.first.set "4.02"
-	  # sm.search_child("Документ").first.attributes.last.set "123456789012345678901234567890123456"
-	  # z = sm.search_child("ЗапросЮЛ").first
-	  # z.attributes.first.set "123456789012345678901234567890123456"
-	  # puts ">DON't SEE ME>1" + z.valid?.inspect
-	  # puts ">>2" + z.children.first.valid?.inspect
-	  # sm.to_xml
-	  # assert sm.valid?, 'invalid'
-	end
+	# it 'testing spec' do
+	#   sm = SmevMessage.new( QueryType.last.wsdl.find_by_action("SendShortULRequest") )
+	#   sm.search_child("TypeCode").first.value.set "GSRV"
+	#   sm.search_child("Status").first.value.set "REQUEST"
+	#   sm.search_child("Status").first.value.set "REQUEST"
+	#   sm.search_child("Документ").first.attributes.first.set "4.02"
+	#   sm.search_child("Документ").first.attributes.last.set "123456789012345678901234567890123456"
+	#   z = sm.search_child("ЗапросЮЛ").first
+	#   z.attributes.first.set "123456789012345678901234567890123456"
+	#   puts ">DON't SEE ME>1" + z.valid?.inspect
+	#   puts ">>2" + z.children.first.valid?.inspect
+	#   sm.to_xml
+	#   assert sm.valid?, 'invalid'
+	# end
 
 end

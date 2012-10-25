@@ -86,6 +86,7 @@ PLATFORMS
 DEPENDENCIES
   nokogiri
   nori
+  rspec
   rspec-rails
   smev!
   soap4r!

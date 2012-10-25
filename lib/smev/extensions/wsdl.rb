@@ -9,9 +9,9 @@ module WSDL
 			op = self.porttypes.first.operations.find{ |o| o.name == action }
 			mes = ( output ? op.output : op.input).message
 			# что то делаем... РАЗОБРАТЬ
-			part = self.bindings.first.operations.find{ |o| o.name == action }.input.soapbody.parts
+			ps = self.bindings.first.operations.find{ |o| o.name == action }.input.soapbody.parts
 			#находим части messag
-			self.collect_elements.find_name self.message( mes ).parts.find{|p| part.present? ? p.name == part : true }.element.name
+			self.collect_elements.find_name self.message( mes ).parts.find{|p| ps.present? ? p.name == ps : true }.element.name
 		end
 
 		def methods

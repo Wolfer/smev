@@ -7,7 +7,7 @@ gemspec
 
 # jquery-rails is used by the dummy application
 group :test, :development do
-  gem 'rspec-rails'
+  gem 'rspec'
 end
 
 gem 'soap4r', :git => 'https://github.com/Wolfer/soap4r.git'
