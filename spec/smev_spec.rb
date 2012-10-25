@@ -1,31 +1,56 @@
-require 'smev'
+﻿require 'smev'
 require 'spec_helper'
 
 describe Smev::Message do		
 
-	before(:all) do 
-		@wsdl = WSDL::Importer.import( "file://" + File.dirname(__FILE__) + "/test_xsd/wsdl" )
-		@xsd = @wsdl.find_by_action @wsdl.methods.first
+	let(:xsd) do
+		wsdl = WSDL::Importer.import( "file://" + File.dirname(__FILE__) + "/test_xsd/wsdl" )
+		wsdl.find_by_action wsdl.methods.first
 	end
 
-	it 'should be create from xsd' do
-		sm = Smev::Message.new @xsd
-		sm.should be_a(Smev::Message)
+	describe "created" do
+
+		it 'from xsd' do
+			sm = Smev::Message.new xsd
+			sm.should be_a(Smev::Message)
+		end
+
 	end
 
-	# it 'should be searchable' do
-	# 	sm = SmevMessage.new( Service.last(4).first.wsdl.collect_elements.find_name("doleResponse") )
-	# 	assert sm.search_child("status").each{ |s| s.value.set "Безработный"}.present?, "Search FAIL"
-	# end
+	describe "should be" do
 
-	# it 'can be disable appdocument' do
-	# 	sm = SmevMessage.new( Service.first.wsdl.find_by_action("queryOPUL"))
-	# 	assert_raise(ArgumentError){ sm.to_xml }
-	# 	assert sm.load_from_xml File.read("#{Rails.root}/spec/query_opul.xml")
-	# 	sm.to_xml.index("AppDocument").should_not be_nil
-	# 	sm.remove_appdoc
-	# 	sm.to_xml.index("AppDocument").should be_nil
-	# end
+		let!(:sm){ Smev::Message.new xsd }
+
+		it 'searchable' do
+			result = sm.search_child("AppData")
+			result.should_not be_empty
+			result.first.should be_a(Smev::XSD::Element)
+		end
+
+		it 'validate' do
+			sm.valid?.should be_false
+
+			# check "choice" exclude concurent
+			sm.get_child("ИННЮЛ").set "1234567890"
+			sm.valid?.should be_false
+			sm.errors["SendRequestRq"]["MessageData"]["AppData"]["Документ"].should_not include("ЗапросНП")
+
+			# check full fill
+			sm.fill_test
+
+			sm.valid?.should be_true
+			sm.errors.should be_empty
+		end
+
+		it 'disable AppDocument' do
+			sm.get_child("AppDocument").should_not be_nil
+			sm.remove_appdoc
+			sm.get_child("AppDocument").should be_nil
+		end
+
+	end
+
+
 
 	# it 'should be load from xml and to_xml' do
 	# 	sm = SmevMessage.new( Service.first.wsdl.find_by_action("queryOPUL"))
@@ -77,19 +102,4 @@ describe Smev::Message do
 		
 	# end
 	
-	# it 'testing spec' do
-	#   sm = SmevMessage.new( QueryType.last.wsdl.find_by_action("SendShortULRequest") )
-	#   sm.search_child("TypeCode").first.value.set "GSRV"
-	#   sm.search_child("Status").first.value.set "REQUEST"
-	#   sm.search_child("Status").first.value.set "REQUEST"
-	#   sm.search_child("Документ").first.attributes.first.set "4.02"
-	#   sm.search_child("Документ").first.attributes.last.set "123456789012345678901234567890123456"
-	#   z = sm.search_child("ЗапросЮЛ").first
-	#   z.attributes.first.set "123456789012345678901234567890123456"
-	#   puts ">DON't SEE ME>1" + z.valid?.inspect
-	#   puts ">>2" + z.children.first.valid?.inspect
-	#   sm.to_xml
-	#   assert sm.valid?, 'invalid'
-	# end
-
 end
