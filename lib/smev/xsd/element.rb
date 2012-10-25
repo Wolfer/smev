@@ -152,7 +152,7 @@ module Smev
 					self.attributes.each do |attr| 
 						begin
 							attr.valid?
-						rescue XSD::ValueSpaceError => e
+						rescue ValueError => e
 							raise ArgumentError.new("\"#{self.name}\" @#{attr.name} #{e.to_s}")
 						end
 					end
@@ -160,7 +160,7 @@ module Smev
 
 				begin
 					self.leaf? ? self.value.valid? : self.children.valid?
-				rescue XSD::ValueSpaceError => e
+				rescue ValueError => e
 					raise ArgumentError.new("\"#{self.name}\" #{e.to_s}")
 				end
 			end

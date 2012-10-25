@@ -69,35 +69,39 @@ module Smev
 			
 			def check_enumeration
 				unless !self.enumeration.present? or self.enumeration.include?(@value)
-					raise XSD::ValueSpaceError.new(" must be in #{self.enumeration.inspect}")
+					raise ValueError.new(" must be in #{self.enumeration.inspect}")
 				end
 			end
 
 			def check_length
 				unless self.length.nil? or @value.to_s.size == self.length
-					raise XSD::ValueSpaceError.new(" length must be: value == #{self.length}")
+					raise ValueError.new(" length must be: value == #{self.length}")
 				end
 			end
 
 			def check_minlength
 				unless self.minlength.nil? or @value.to_s.size >= self.minlength
-					raise XSD::ValueSpaceError.new(" length must be: value > #{self.minlength}")
+					raise ValueError.new(" length must be: value > #{self.minlength}")
 				end
 			end
 
 			def check_maxlength
 				unless self.maxlength.nil? or @value.to_s.size <= self.maxlength
-					raise XSD::ValueSpaceError.new(" length must be: value < #{self.maxlength}")
+					raise ValueError.new(" length must be: value < #{self.maxlength}")
 				end
 			end
 
 			def check_pattern
 				unless self.pattern.nil? or self.pattern =~ @value.to_s
-					raise XSD::ValueSpaceError.new(" must be: value =~ #{self.pattern.inspect}")
+					raise ValueError.new(" must be: value =~ #{self.pattern.inspect}")
 				end
 			end
 
 
 		end
+
+		class ValueError < SmevException
+		end
+
 	end
 end

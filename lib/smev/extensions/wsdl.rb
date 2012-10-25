@@ -90,7 +90,7 @@ module WSDL
 		class SimpleType
 			private
 				def check_restriction(value)
-					@restriction.valid?(value) || raise(XSD::ValueSpaceError.new("#{@name}: cannot accept '#{value}'"))
+					@restriction.valid?(value) || raise(Smev::XSD::ValueError.new("#{@name}: cannot accept '#{value}'"))
 				end
 		end
 
