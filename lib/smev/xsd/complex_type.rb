@@ -9,6 +9,14 @@
 				parse_child xsd
 			end
 
+			def name
+				self.class.to_s
+			end
+
+			def leaf?
+				false
+			end
+
 			def parse_child xsd
 				@children = xsd.nested_elements.map do |elem| 
 					if elem.minoccurs > 1
@@ -81,11 +89,16 @@
 
 			def valid?
 				#FIXME TEST THIS
+				check = true
 				collect_children.group_by(&:name).each do |name, childs| 
-					return false unless childs.size.between?( childs.first.min_occurs, (childs.first.max_occurs || 999) )
-					childs.each{|child| return false unless child.valid? }
+					check = false unless childs.size.between?( childs.first.min_occurs, (childs.first.max_occurs || 999) )
+					childs.each{|child| check = false unless child.valid? }
 				end
-				return true
+				check
+			end
+
+			def errors
+				self.children.inject({}){ |res, child| res[child.name] = child.errors if child.errors.present?; res}
 			end
 
 		private

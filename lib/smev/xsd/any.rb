@@ -6,6 +6,10 @@ module Smev
 			attr_accessor :namespace
 
 
+			def name
+				"#any#"
+			end
+
 			#REWRITE
 			def initialize xsd
 				raise SmevException.new("[ERROR] Expect WSDL::XMLSchema::Any, but given #{xsd.class}\n") unless xsd.is_a? WSDL::XMLSchema::Any
@@ -55,6 +59,16 @@ module Smev
 				end
 
 			end
+
+			def to_ary
+				[]
+			end
+
+		private
+			def method_missing method, *argv, &block
+				puts "[ERROR] #{self.class} not respond to '#{method}' method"
+			end
+
 		end
 	end
 end

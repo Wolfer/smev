@@ -9,6 +9,7 @@ module Smev
 	  attr_reader :header_addition
 	  attr_accessor :namespaces
 	  attr_accessor :files
+	  attr_accessor :errors
 
 	   def self.gen_guid
 	    guid = Digest::MD5.hexdigest( Time.now.to_i.to_s )
@@ -54,6 +55,10 @@ module Smev
 	    return true
 	  end
 
+	  def errors
+	  	self.struct.inject({}){ |res, child| res[child.name] = child.errors if child.errors.present?; res}
+	  end
+
 	  def to_xml
 	    raise SmevException.new("Smev::Message not valid!") unless self.valid?
 	    
@@ -72,6 +77,10 @@ module Smev
 
 	  def get_child name
 	    self.search_child(name).first
+	  end
+
+	  def fill_test
+	    self.struct.each &:fill_test
 	  end
 
 	  def set_appdoc

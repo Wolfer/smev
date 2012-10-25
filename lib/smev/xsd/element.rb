@@ -25,6 +25,10 @@ module Smev
 				self.attributes.find{|a| a.name == name }
 			end
 
+			def set value
+				self.value.set value
+			end
+
 			def to_xml  nss
 				nss = {} unless nss.is_a? Hash
 				ns = nss.key(self.namespace)
@@ -104,12 +108,12 @@ module Smev
 				if hash.is_a? Hash
 					hash.fetch("@attr", {}).each { |k,v|   if  attr = self.attributes.find{|a| a.name == k}; attr.set(v); end }
 					if self.leaf?
-						self.value.set(hash.fetch("@value", nil) )
+						self.set(hash.fetch("@value", nil) )
 					else
 						self.children.load_from_hash hash 
 					end
 				else
-					self.value.set(hash) unless hash.nil?
+					self.set(hash) unless hash.nil?
 				end
 			end
 
@@ -123,7 +127,7 @@ module Smev
 				end
 
 				if self.leaf?#this_noko.children.group_by{|c| c.class}[Nokogiri::XML::Element].present?
-					self.value.set this_noko.children.map{|t| t.text }.join
+					self.set this_noko.children.map{|t| t.text }.join
 				else
 					self.children.load_from_nokogiri this_noko
 				end
@@ -148,28 +152,46 @@ module Smev
 			end
 
 			def valid?
+				@calc_errors = nil
+				@errors = {}
 				if self.attributes.present?
 					self.attributes.each do |attr| 
 						begin
 							attr.valid?
 						rescue ValueError => e
-							raise ArgumentError.new("\"#{self.name}\" @#{attr.name} #{e.to_s}")
+							@errors["@#{attr.name}"] = "got '#{attr.get}', but expect then #{e.to_s}"
 						end
 					end
 				end
 
-				begin
-					self.leaf? ? self.value.valid? : self.children.valid?
-				rescue ValueError => e
-					raise ArgumentError.new("\"#{self.name}\" #{e.to_s}")
+				if self.leaf?
+					begin
+						self.value.valid?
+					rescue ValueError => e
+						@errors["@value"] = "got '#{self.value.get}', but expect then #{e.to_s}"
+					end
+				else
+					return false unless self.children.valid?
+				end			 
+				@errors.empty?
+			end
+
+			def errors
+				@calc_errors ||= begin
+					errs = @errors
+					if !self.leaf?
+						errs.merge!(self.children.errors) if self.children.errors.present?
+					end
+					errs
 				end
 			end
 
 			def fill_test
+				self.attributes.each &:fill_test if self.attributes.present?
 				if self.leaf?
 					self.value.fill_test
 				else
-					self.children.each{|child| child.fill_test } 
+					self.children.each &:fill_test
 				end
 			end
 

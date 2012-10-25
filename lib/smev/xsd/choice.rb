@@ -5,14 +5,19 @@ module Smev
 			def parent; WSDL::XMLSchema::Choice; end
 
 			def to_xml nss
-				self.children.each{|child| return child.to_xml(nss) if child.valid? rescue Exception }
+				self.children.each{|child| return child.to_xml(nss) if child.valid? }
 				raise SmevException.new("Invalid choice!")
 			end
 
 			def valid?
-				self.children.each{|child| return true if child.valid? rescue Exception }
-				return false
+				check = false
+				self.children.each{|child| check = true if child.valid? }
 				#FIXME do choice validation
+				check
+			end
+
+			def errors
+				self.valid? ? {} : super 
 			end
 
 			def load_from_nokogiri noko

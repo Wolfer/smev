@@ -6,7 +6,7 @@ module Smev
 			attr_accessor :restriction
 			attr_accessor :max_occurs
 			attr_accessor :min_occurs
-
+			attr_accessor	:errors
 
 			def initialize xsd
 				raise NotImplementedError.new
@@ -28,8 +28,6 @@ module Smev
 				end
 				new_obj
 			end
-
-
 
 		private
 			
