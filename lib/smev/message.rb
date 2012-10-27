@@ -1,3 +1,4 @@
+require 'builder'
 module Smev
 
 	class Message
@@ -83,15 +84,17 @@ module Smev
 
 		###### Export Section
 
-		def to_xml
+		def to_xml sign = true
 			raise SmevException.new("Smev::Message not valid!") unless self.valid?
 			
 			collect_namespaces
-			body = self.struct.map{|s| s.to_xml( self.namespaces ) }.join("\n")
-			view = ActionView::Base.new(Rails.root.join("lib/smev/template")).render(:template => "response", :locals => {:result => body, :namespaces => self.namespaces})
-
-			doc = Nokogiri::XML::Document.parse view.gsub(/\t/, '')
-			doc = signature doc
+			# body = self.struct.map{|s| s.to_xml( self.namespaces ) }.join("\n")
+			# view = ActionView::Base.new(Rails.root.join("lib/smev/template")).render(:template => "response", :locals => {:result => body, :namespaces => self.namespaces})
+			result = self.struct.map{|s| s.to_xml( self.namespaces ) }.join("\n")
+			xml = Builder::XmlMarkup.new
+			eval File.read(File.dirname(__FILE__)+"/template/response.builder")
+			doc = Nokogiri::XML::Document.parse xml.target.gsub(/\t/, '')
+			doc = signature doc if sign
 			doc.to_s
 		end
 

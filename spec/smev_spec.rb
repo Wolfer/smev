@@ -67,6 +67,10 @@ describe Smev::Message do
       end
 
       it 'xml' do
+        sm.fill_test
+        xml = sm.to_xml(false)
+        xml.should be_a(String)
+        xml.should_not be_empty
       end
 
       it 'xsd' do
@@ -75,7 +79,11 @@ describe Smev::Message do
     end
 
     it 'import from xml' do
-
+        sm.fill_test
+        xml = sm.to_xml(false)
+        original_sm = sm.dup
+        sm.load_from_xml xml
+        (sm === original_sm).should be_true
     end
 
   end

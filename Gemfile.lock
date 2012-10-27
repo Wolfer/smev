@@ -84,6 +84,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  builder
   nokogiri
   nori
   rspec

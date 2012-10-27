@@ -13,6 +13,7 @@ end
 gem 'soap4r', :git => 'https://github.com/Wolfer/soap4r.git'
 gem 'nokogiri'#, :git => "git://github.com/tenderlove/nokogiri.git", :branch => "c14n"
 gem 'nori'
+gem 'builder'
 gem 'zipruby'
 
 
