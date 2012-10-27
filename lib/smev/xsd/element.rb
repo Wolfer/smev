@@ -51,6 +51,13 @@ module Smev
 				result 
 			end
 
+			def as_hash
+				super.tap do |hash| 
+					hash.merge value.as_hash if self.leaf? 
+					hash["attributes"] = self.attributes.map{|attr| attr.as_hash} if self.attributes.present?
+				end
+			end
+
 			def to_hash
 				result = {}
 				result["@attr"] = self.attributes.inject({}){| hash, attr |  hash[attr.name] = attr.get ; hash } if self.attributes.present?

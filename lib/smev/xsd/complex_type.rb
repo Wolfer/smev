@@ -31,7 +31,6 @@
 				self.children.map{|child| child.to_xml(nss) }.delete_if{|c| c.blank?}.join("\n")
 			end
 
-
 			def allow_child 
 				{ 
 					WSDL::XMLSchema::Choice => Choice, 

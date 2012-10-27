@@ -15,6 +15,48 @@ describe Smev::Message do
 			sm.should be_a(Smev::Message)
 		end
 
+		it 'from hash' do
+
+			hash = {"name"=>"SendRequestRq", "type"=>"element", "min_occurs"=>1, "max_occurs"=>1, "children"=>[
+							{"name"=>"Message", "type"=>"element", "min_occurs"=>1, "max_occurs"=>1, "children"=>[
+								{"name"=>"Sender", "type"=>"element", "min_occurs"=>1, "max_occurs"=>1, "children"=>[
+									{"name"=>"Code", "type"=>"element", "min_occurs"=>1, "max_occurs"=>1}, 
+									{"name"=>"Name", "type"=>"element", "min_occurs"=>1, "max_occurs"=>1}]}, 
+								{"name"=>"Recipient", "type"=>"element", "min_occurs"=>1, "max_occurs"=>1, "children"=>[
+									{"name"=>"Code", "type"=>"element", "min_occurs"=>1, "max_occurs"=>1}, 
+									{"name"=>"Name", "type"=>"element", "min_occurs"=>1, "max_occurs"=>1}]}, 
+								{"name"=>"Originator", "type"=>"element", "min_occurs"=>1, "max_occurs"=>1, "children"=>[
+									{"name"=>"Code", "type"=>"element", "min_occurs"=>1, "max_occurs"=>1}, 
+									{"name"=>"Name", "type"=>"element", "min_occurs"=>1, "max_occurs"=>1}]}, 
+								{"name"=>"TypeCode", "type"=>"element", "min_occurs"=>1, "max_occurs"=>1}, 
+								{"name"=>"Date", "type"=>"element", "min_occurs"=>1, "max_occurs"=>1}, 
+								{"name"=>"RequestIdRef", "type"=>"element", "min_occurs"=>0, "max_occurs"=>1}, 
+								{"name"=>"OriginRequestIdRef", "type"=>"element", "min_occurs"=>0, "max_occurs"=>1}, 
+								{"name"=>"ServiceCode", "type"=>"element", "min_occurs"=>0, "max_occurs"=>1}, 
+								{"name"=>"CaseNumber", "type"=>"element", "min_occurs"=>0, "max_occurs"=>1}]}, 
+							{"name"=>"MessageData", "type"=>"element", "min_occurs"=>1, "max_occurs"=>1, "children"=>[
+								{"name"=>"AppData", "type"=>"element", "min_occurs"=>0, "max_occurs"=>1, "children"=>[
+									{"name"=>"Документ", "type"=>"element", "min_occurs"=>1, "max_occurs"=>1, "children"=>[
+										{"name"=>"СвЮЛ", "type"=>"element", "min_occurs"=>1, "max_occurs"=>1, "attributes"=>[
+											{"value"=>"", "restriction"=>{"minlength"=>1, "maxlength"=>1000}, "name"=>"НаимЮЛ", "use"=>"required"}, 
+											{"value"=>"", "restriction"=>{}, "name"=>"ИННЮЛ", "use"=>"required"}, 
+											{"value"=>"", "restriction"=>{}, "name"=>"ОГРН", "use"=>"required"}]}, 
+										{"name"=>"ЗапросНП", "type"=>"element", "min_occurs"=>1, "max_occurs"=>1, "children"=>[
+											{"name"=>"ИННЮЛ", "type"=>"element", "min_occurs"=>1, "max_occurs"=>1}, 
+											{"name"=>"ИННФЛ", "type"=>"element", "min_occurs"=>1, "max_occurs"=>1}], "attributes"=>[
+											
+											{"value"=>"", "restriction"=>{}, "name"=>"ДатаНа", "use"=>"required"}]}], "attributes"=>[
+									{"value"=>"", "restriction"=>{"enumeration"=>["4.02"], "minlength"=>1, "maxlength"=>5}, "name"=>"ВерсФорм", "use"=>"required"}, 
+									{"value"=>"", "restriction"=>{"length"=>36}, "name"=>"ИдЗапросП", "use"=>"optional"}]}]}, 
+								{"name"=>"AppDocument", "type"=>"element", "min_occurs"=>0, "max_occurs"=>1, "children"=>[
+									{"name"=>"BinaryData", "type"=>"element", "min_occurs"=>1, "max_occurs"=>1}, 
+									{"name"=>"Reference", "type"=>"element", "min_occurs"=>1, "max_occurs"=>1, "children"=>[
+										{"name"=>"Include", "type"=>"element", "min_occurs"=>1, "max_occurs"=>1, "children"=>[], "attributes"=>[{"value"=>"", "restriction"=>{}, "name"=>"href", "use"=>"required"}]}]}, 
+									{"name"=>"DigestValue", "type"=>"element", "min_occurs"=>1, "max_occurs"=>1}]}]}]}
+			sm = Smev::Message.build_from_hash hash
+			sm.should be_a(Smev::Message)
+		end
+
 	end
 
 	describe "should be" do
@@ -48,7 +90,30 @@ describe Smev::Message do
 			sm.get_child("AppDocument").should be_nil
 		end
 
+		describe "export to" do
+
+			it 'hash' do
+				hash = sm.as_hash
+				hash.should be_a(Array)
+				hash.should_not be_empty
+				hash.first.should include("type")
+				puts hash.inspect
+			end
+
+			it 'xml' do
+			end
+
+			it 'xsd' do
+			end
+
+		end
+
+		it 'import from xml' do
+
+		end
+
 	end
+
 
 
 

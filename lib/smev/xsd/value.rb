@@ -40,6 +40,16 @@ module Smev
 			def to_s; @value.present? ? @value.to_s : ( self.default || '' ); end
 			def inspect; "#<Value \"#{@value}\" >"; end
 
+			def as_hash
+				{ "value" => self.get }.tap do |hash| 
+					hash["restriction"] = {}
+					%w(enumeration length minlength maxlength pattern).each do |m|
+						hash["restriction"][m] = self.send(m) if self.send(m).present?
+					end
+				end
+				
+			end
+
 			def blank?
 				@value.blank?
 			end

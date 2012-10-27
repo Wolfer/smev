@@ -3,7 +3,6 @@ module Smev
 		class Node
 
 			attr_accessor :children
-			attr_accessor :restriction
 			attr_accessor :max_occurs
 			attr_accessor :min_occurs
 			attr_accessor	:errors
@@ -11,6 +10,10 @@ module Smev
 			def initialize xsd
 				raise NotImplementedError.new
 			end	
+
+			def name
+				raise NotImplementedError.new
+			end
 
 			def leaf?
 				!children.present?
@@ -27,6 +30,15 @@ module Smev
 					end
 				end
 				new_obj
+			end
+
+			def as_hash
+				hash = { "name" => self.name, 
+								 "type" => self.class.name.split("::").last.downcase,
+								 "min_occurs" => (self.min_occurs||1), 
+								 "max_occurs" => (self.max_occurs||1) }
+				hash["children"] = self.children.map{|child| child.as_hash } unless self.leaf?
+				hash
 			end
 
 		private

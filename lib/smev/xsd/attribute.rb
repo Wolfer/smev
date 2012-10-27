@@ -23,6 +23,10 @@ module Smev
 				end
 			end
 
+			def as_hash
+				super.merge "name" => self.name, "use" => self.use
+			end
+
 			def inspect; "#<Attribute #{@name}=\"#{@value}\" >"; end
 
 			def valid?
