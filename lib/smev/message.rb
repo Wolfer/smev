@@ -20,8 +20,12 @@ module Smev
 			guid
 		end
 		
-		def initialize xsd
-			@struct = [*xsd].map{ |x| XSD::Element.new x }
+		def initialize value
+			if value.is_a? Hash
+				#@struct = [*xsd].map{ |x| XSD::Element.new x }
+			else
+				@struct = [*value].map{ |x| Smev::XSD.const_get(x.class.to_s.split("::").last).build_from_xsd x }
+			end			
 			self.files ||= []
 		end
 

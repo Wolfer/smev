@@ -2,12 +2,18 @@
 	module XSD
 		class ComplexType < Node
 
-			def initialize xsd
-				raise SmevException.new("[ERROR] #{self.class} expect #{self.parent}, but given #{xsd.class}\n") unless xsd.is_a? self.parent
-				self.min_occurs = xsd.minoccurs
-				self.max_occurs = xsd.maxoccurs
-				parse_child xsd
-			end
+			def self.build_from_xsd xsd
+				super do |obj, xsd|
+					obj.children = xsd.nested_elements.map do |elem| 
+						if elem.minoccurs > 1
+							elem.minoccurs.times.map{|i| child_factory elem }
+						else
+							child_factory elem
+						end
+					end.flatten
+					obj
+				end
+			end	
 
 			def name
 				self.class.to_s
@@ -15,16 +21,6 @@
 
 			def leaf?
 				false
-			end
-
-			def parse_child xsd
-				@children = xsd.nested_elements.map do |elem| 
-					if elem.minoccurs > 1
-						elem.minoccurs.times.map{|i| child_factory elem }
-					else
-						child_factory elem
-					end
-				end.flatten
 			end
 
 			def to_xml nss

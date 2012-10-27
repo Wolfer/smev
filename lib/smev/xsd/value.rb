@@ -2,7 +2,6 @@ module Smev
 	module XSD
 		class Value
 
-			attr_accessor :type
 			attr_accessor :default
 			
 			attr_accessor :length
@@ -19,17 +18,18 @@ module Smev
 			attr_accessor :fractiondigits
 			
 
-			def initialize type, default = nil, val = nil
-				self.type = type
-				if self.type.is_a? WSDL::XMLSchema::SimpleType and restrict = self.type.restriction
-					self.enumeration = restrict.enumeration || []
-					self.length = restrict.length
-					self.minlength = restrict.minlength
-					self.maxlength = restrict.maxlength
-					self.pattern = restrict.pattern
+			def self.build_from_xsd type, default = nil, val = nil
+				obj = self.new
+				if type.is_a? WSDL::XMLSchema::SimpleType and restrict = type.restriction
+					obj.enumeration = restrict.enumeration || []
+					obj.length = restrict.length
+					obj.minlength = restrict.minlength
+					obj.maxlength = restrict.maxlength
+					obj.pattern = restrict.pattern
 				end
-				self.default = default
-				@value = val
+				obj.default = default
+				obj.set val
+				obj
 			end	
 
 			def set val

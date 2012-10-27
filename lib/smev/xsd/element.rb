@@ -8,18 +8,17 @@ module Smev
 			attr_accessor :value
 
 
-			def initialize xsd
-				raise SmevException.new("[ERROR] Expect WSDL::XMLSchema::Element, but given #{xsd.class}\n") unless xsd.is_a? WSDL::XMLSchema::Element
-				self.name = xsd.name.name
-				self.namespace = xsd.name.namespace
-				self.min_occurs = xsd.minoccurs
-				self.max_occurs = xsd.maxoccurs
-				if xsd.complex_type
-					self.attributes = xsd.complex_type.attributes.map{|attr| Attribute.new attr }
-					self.children = child_factory xsd.complex_type.content_type
+			def self.build_from_xsd xsd
+				super do |obj, xsd|
+					obj.name = xsd.name.name
+					obj.namespace = xsd.name.namespace
+					if xsd.complex_type
+						obj.attributes = xsd.complex_type.attributes.map{|attr| Attribute.build_from_xsd attr }
+						obj.children = child_factory xsd.complex_type.content_type
+					end
+					obj.value = Value.build_from_xsd( xsd.simple_type, xsd.default ) if obj.leaf?
 				end
-				self.value = Value.new( xsd.simple_type, xsd.default ) if self.leaf?
-			end	
+			end
 
 			def attribute name
 				self.attributes.find{|a| a.name == name }

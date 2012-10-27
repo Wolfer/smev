@@ -11,11 +11,12 @@ module Smev
 			end
 
 			#REWRITE
-			def initialize xsd
-				raise SmevException.new("[ERROR] Expect WSDL::XMLSchema::Any, but given #{xsd.class}\n") unless xsd.is_a? WSDL::XMLSchema::Any
-				self.namespace = xsd.namespace
-				self.value = {}
-			end	
+			def self.build_from_xsd xsd
+				super do |obj, xsd|
+					obj.namespace = xsd.namespace
+					obj.value = {}
+				end
+			end
 
 			def allow_child 
 				{ 

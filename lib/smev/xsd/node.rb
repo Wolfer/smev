@@ -7,9 +7,13 @@ module Smev
 			attr_accessor :min_occurs
 			attr_accessor	:errors
 
-			def initialize xsd
-				raise NotImplementedError.new
-			end	
+			def self.build_from_xsd xsd
+				obj = self.new
+				obj.max_occurs = xsd.maxoccurs
+				obj.min_occurs = xsd.minoccurs
+				yield(obj, xsd) if block_given?
+				obj
+			end
 
 			def name
 				raise NotImplementedError.new
@@ -42,14 +46,16 @@ module Smev
 			end
 
 		private
-			
-			def child_factory child
+
+			def self.child_factory child
 				return nil unless child
-				raise ArgumentError.new( "#{child.class} not allow into #{self.class}!"  ) unless allow_child.keys.include? child.class
-				allow_child[ child.class ].new child
+				raise ArgumentError.new( "#{child.class} not allow into #{self.class}!"  ) if allow_child.is_a?(Hash) and not allow_child.keys.include? child.class
+				allow_child[ child.class ].build_from_xsd child
 			end
 
-			def allow_child; {}; end
+			def self.allow_child
+				->(klass){ Smev::XSD.const_get(klass.to_s.split("::").last) }
+			end
 
 			# # not really use but it's cool
 			# def method_missing method, *argv, &block

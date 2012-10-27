@@ -5,10 +5,11 @@ module Smev
 			attr_accessor :use
 			attr_reader :name
 			
-			def initialize xsd
-				super( (xsd.type || xsd.local_simpletype), xsd.default, xsd.fixed )
-				self.use = xsd.use || "required"
-				@name = xsd.name.name
+			def self.build_from_xsd xsd
+				obj = super( (xsd.type || xsd.local_simpletype), xsd.default, xsd.fixed )
+				obj.use = xsd.use || "required"
+				obj.instance_eval "@name = '#{xsd.name.name}'"
+				obj
 			end	
 
 			def required?
