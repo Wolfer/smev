@@ -12,49 +12,15 @@ describe Smev::Message do
 
     it 'from xsd' do
       sm = Smev::Message.new xsd
-      sm.should be_a(Smev::Message)
+      sm.struct.should_not be_empty
+      #FIXME add as_xsd checking
     end
 
     it 'from hash' do
-
-      hash = {"name"=>"SendRequestRq", "type"=>"element", "min_occurs"=>1, "max_occurs"=>1, "children"=>[
-              {"name"=>"Message", "type"=>"element", "min_occurs"=>1, "max_occurs"=>1, "children"=>[
-                {"name"=>"Sender", "type"=>"element", "min_occurs"=>1, "max_occurs"=>1, "children"=>[
-                  {"name"=>"Code", "type"=>"element", "min_occurs"=>1, "max_occurs"=>1}, 
-                  {"name"=>"Name", "type"=>"element", "min_occurs"=>1, "max_occurs"=>1}]}, 
-                {"name"=>"Recipient", "type"=>"element", "min_occurs"=>1, "max_occurs"=>1, "children"=>[
-                  {"name"=>"Code", "type"=>"element", "min_occurs"=>1, "max_occurs"=>1}, 
-                  {"name"=>"Name", "type"=>"element", "min_occurs"=>1, "max_occurs"=>1}]}, 
-                {"name"=>"Originator", "type"=>"element", "min_occurs"=>1, "max_occurs"=>1, "children"=>[
-                  {"name"=>"Code", "type"=>"element", "min_occurs"=>1, "max_occurs"=>1}, 
-                  {"name"=>"Name", "type"=>"element", "min_occurs"=>1, "max_occurs"=>1}]}, 
-                {"name"=>"TypeCode", "type"=>"element", "min_occurs"=>1, "max_occurs"=>1}, 
-                {"name"=>"Date", "type"=>"element", "min_occurs"=>1, "max_occurs"=>1}, 
-                {"name"=>"RequestIdRef", "type"=>"element", "min_occurs"=>0, "max_occurs"=>1}, 
-                {"name"=>"OriginRequestIdRef", "type"=>"element", "min_occurs"=>0, "max_occurs"=>1}, 
-                {"name"=>"ServiceCode", "type"=>"element", "min_occurs"=>0, "max_occurs"=>1}, 
-                {"name"=>"CaseNumber", "type"=>"element", "min_occurs"=>0, "max_occurs"=>1}]}, 
-              {"name"=>"MessageData", "type"=>"element", "min_occurs"=>1, "max_occurs"=>1, "children"=>[
-                {"name"=>"AppData", "type"=>"element", "min_occurs"=>0, "max_occurs"=>1, "children"=>[
-                  {"name"=>"Документ", "type"=>"element", "min_occurs"=>1, "max_occurs"=>1, "children"=>[
-                    {"name"=>"СвЮЛ", "type"=>"element", "min_occurs"=>1, "max_occurs"=>1, "attributes"=>[
-                      {"value"=>"", "restriction"=>{"minlength"=>1, "maxlength"=>1000}, "name"=>"НаимЮЛ", "use"=>"required"}, 
-                      {"value"=>"", "restriction"=>{}, "name"=>"ИННЮЛ", "use"=>"required"}, 
-                      {"value"=>"", "restriction"=>{}, "name"=>"ОГРН", "use"=>"required"}]}, 
-                    {"name"=>"ЗапросНП", "type"=>"element", "min_occurs"=>1, "max_occurs"=>1, "children"=>[
-                      {"name"=>"ИННЮЛ", "type"=>"element", "min_occurs"=>1, "max_occurs"=>1}, 
-                      {"name"=>"ИННФЛ", "type"=>"element", "min_occurs"=>1, "max_occurs"=>1}], "attributes"=>[
-                      
-                      {"value"=>"", "restriction"=>{}, "name"=>"ДатаНа", "use"=>"required"}]}], "attributes"=>[
-                  {"value"=>"", "restriction"=>{"enumeration"=>["4.02"], "minlength"=>1, "maxlength"=>5}, "name"=>"ВерсФорм", "use"=>"required"}, 
-                  {"value"=>"", "restriction"=>{"length"=>36}, "name"=>"ИдЗапросП", "use"=>"optional"}]}]}, 
-                {"name"=>"AppDocument", "type"=>"element", "min_occurs"=>0, "max_occurs"=>1, "children"=>[
-                  {"name"=>"BinaryData", "type"=>"element", "min_occurs"=>1, "max_occurs"=>1}, 
-                  {"name"=>"Reference", "type"=>"element", "min_occurs"=>1, "max_occurs"=>1, "children"=>[
-                    {"name"=>"Include", "type"=>"element", "min_occurs"=>1, "max_occurs"=>1, "children"=>[], "attributes"=>[{"value"=>"", "restriction"=>{}, "name"=>"href", "use"=>"required"}]}]}, 
-                  {"name"=>"DigestValue", "type"=>"element", "min_occurs"=>1, "max_occurs"=>1}]}]}]}
+      hash = {"name"=>"SendRequestRq", "type"=>"element", "min_occurs"=>1, "max_occurs"=>1, "children"=>[{"name"=>"Smev::XSD::Sequence", "type"=>"sequence", "min_occurs"=>1, "max_occurs"=>1, "children"=>[{"name"=>"Message", "type"=>"element", "min_occurs"=>1, "max_occurs"=>1, "children"=>[{"name"=>"Smev::XSD::Sequence", "type"=>"sequence", "min_occurs"=>1, "max_occurs"=>1, "children"=>[{"name"=>"Sender", "type"=>"element", "min_occurs"=>1, "max_occurs"=>1, "children"=>[{"name"=>"Smev::XSD::Sequence", "type"=>"sequence", "min_occurs"=>1, "max_occurs"=>1, "children"=>[{"name"=>"Code", "type"=>"element", "min_occurs"=>1, "max_occurs"=>1}, {"name"=>"Name", "type"=>"element", "min_occurs"=>1, "max_occurs"=>1}]}]}, {"name"=>"Recipient", "type"=>"element", "min_occurs"=>1, "max_occurs"=>1, "children"=>[{"name"=>"Smev::XSD::Sequence", "type"=>"sequence", "min_occurs"=>1, "max_occurs"=>1, "children"=>[{"name"=>"Code", "type"=>"element", "min_occurs"=>1, "max_occurs"=>1}, {"name"=>"Name", "type"=>"element", "min_occurs"=>1, "max_occurs"=>1}]}]}, {"name"=>"Originator", "type"=>"element", "min_occurs"=>1, "max_occurs"=>1, "children"=>[{"name"=>"Smev::XSD::Sequence", "type"=>"sequence", "min_occurs"=>1, "max_occurs"=>1, "children"=>[{"name"=>"Code", "type"=>"element", "min_occurs"=>1, "max_occurs"=>1}, {"name"=>"Name", "type"=>"element", "min_occurs"=>1, "max_occurs"=>1}]}]}, {"name"=>"TypeCode", "type"=>"element", "min_occurs"=>1, "max_occurs"=>1}, {"name"=>"Date", "type"=>"element", "min_occurs"=>1, "max_occurs"=>1}, {"name"=>"RequestIdRef", "type"=>"element", "min_occurs"=>0, "max_occurs"=>1}, {"name"=>"OriginRequestIdRef", "type"=>"element", "min_occurs"=>0, "max_occurs"=>1}, {"name"=>"ServiceCode", "type"=>"element", "min_occurs"=>0, "max_occurs"=>1}, {"name"=>"CaseNumber", "type"=>"element", "min_occurs"=>0, "max_occurs"=>1}]}]}, {"name"=>"MessageData", "type"=>"element", "min_occurs"=>1, "max_occurs"=>1, "children"=>[{"name"=>"Smev::XSD::Sequence", "type"=>"sequence", "min_occurs"=>1, "max_occurs"=>1, "children"=>[{"name"=>"AppData", "type"=>"element", "min_occurs"=>0, "max_occurs"=>1, "children"=>[{"name"=>"Smev::XSD::Sequence", "type"=>"sequence", "min_occurs"=>1, "max_occurs"=>1, "children"=>[{"name"=>"Документ", "type"=>"element", "min_occurs"=>1, "max_occurs"=>1, "children"=>[{"name"=>"Smev::XSD::Sequence", "type"=>"sequence", "min_occurs"=>1, "max_occurs"=>1, "children"=>[{"name"=>"СвЮЛ", "type"=>"element", "min_occurs"=>1, "max_occurs"=>1, "attributes"=>[{"value"=>"9", "restriction"=>{"minlength"=>1, "maxlength"=>1000}, "name"=>"НаимЮЛ", "use"=>"required"}, {"value"=>"", "restriction"=>{}, "name"=>"ИННЮЛ", "use"=>"required"}, {"value"=>"", "restriction"=>{}, "name"=>"ОГРН", "use"=>"required"}]}, {"name"=>"ЗапросНП", "type"=>"element", "min_occurs"=>1, "max_occurs"=>1, "children"=>[{"name"=>"Smev::XSD::Choice", "type"=>"choice", "min_occurs"=>1, "max_occurs"=>1, "children"=>[{"name"=>"ИННЮЛ", "type"=>"element", "min_occurs"=>1, "max_occurs"=>1}, {"name"=>"ИННФЛ", "type"=>"element", "min_occurs"=>1, "max_occurs"=>1}]}], "attributes"=>[{"value"=>"", "restriction"=>{}, "name"=>"ДатаНа", "use"=>"required"}]}]}], "attributes"=>[{"value"=>"4.02", "restriction"=>{"enumeration"=>["4.02"], "minlength"=>1, "maxlength"=>5}, "name"=>"ВерсФорм", "use"=>"required"}, {"value"=>"999999999999999999999999999999999999", "restriction"=>{"length"=>36}, "name"=>"ИдЗапросП", "use"=>"optional"}]}]}]}, {"name"=>"AppDocument", "type"=>"element", "min_occurs"=>0, "max_occurs"=>1, "children"=>[{"name"=>"Smev::XSD::Sequence", "type"=>"sequence", "min_occurs"=>1, "max_occurs"=>1, "children"=>[{"name"=>"BinaryData", "type"=>"element", "min_occurs"=>1, "max_occurs"=>1}, {"name"=>"Reference", "type"=>"element", "min_occurs"=>1, "max_occurs"=>1, "children"=>[{"name"=>"Smev::XSD::Sequence", "type"=>"sequence", "min_occurs"=>1, "max_occurs"=>1, "children"=>[{"name"=>"Include", "type"=>"element", "min_occurs"=>1, "max_occurs"=>1, "children"=>[{"name"=>"Smev::XSD::Sequence", "type"=>"sequence", "min_occurs"=>1, "max_occurs"=>1}], "attributes"=>[{"value"=>"", "restriction"=>{}, "name"=>"href", "use"=>"required"}]}]}]}, {"name"=>"DigestValue", "type"=>"element", "min_occurs"=>1, "max_occurs"=>1}]}]}]}]}]}]}
       sm = Smev::Message.new hash
-      sm.should be_a(Smev::Message)
+      sm.struct.should_not be_empty
+      sm.as_hash.should eq([hash])
     end
 
   end
@@ -82,6 +48,7 @@ describe Smev::Message do
 
       sm.valid?.should be_true
       sm.errors.should be_empty
+
     end
 
     it 'disable AppDocument' do

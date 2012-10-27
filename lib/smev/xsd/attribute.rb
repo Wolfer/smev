@@ -6,11 +6,19 @@ module Smev
 			attr_reader :name
 			
 			def self.build_from_xsd xsd
-				obj = super( (xsd.type || xsd.local_simpletype), xsd.default, xsd.fixed )
-				obj.use = xsd.use || "required"
-				obj.instance_eval "@name = '#{xsd.name.name}'"
-				obj
+				super( (xsd.type || xsd.local_simpletype), xsd.default, xsd.fixed ) do |obj|
+					obj.use = xsd.use || "required"
+					obj.instance_eval "@name = '#{xsd.name.name}'"
+					obj
+				end
 			end	
+
+			def self.build_from_hash hash
+				super hash do |obj, hash|
+					obj.instance_eval "@name = '#{hash["name"]}'"
+					obj.use = hash["use"]
+				end
+			end
 
 			def required?
 				self.use == "required"

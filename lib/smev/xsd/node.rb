@@ -9,9 +9,18 @@ module Smev
 
 			def self.build_from_xsd xsd
 				obj = self.new
-				obj.max_occurs = xsd.maxoccurs
-				obj.min_occurs = xsd.minoccurs
+				obj.max_occurs = xsd.maxoccurs || 1
+				obj.min_occurs = xsd.minoccurs || 1
 				yield(obj, xsd) if block_given?
+				obj
+			end
+
+			def self.build_from_hash hash
+				obj = self.new
+				obj.max_occurs = hash["max_occurs"] || 1
+				obj.min_occurs = hash["min_occurs"] || 1
+				obj.children = hash["children"].map{|child| Smev::XSD.const_get(child["type"].capitalize).build_from_hash child } if hash["children"].present?
+				yield(obj, hash) if block_given?
 				obj
 			end
 
@@ -41,7 +50,13 @@ module Smev
 								 "type" => self.class.name.split("::").last.downcase,
 								 "min_occurs" => (self.min_occurs||1), 
 								 "max_occurs" => (self.max_occurs||1) }
-				hash["children"] = self.children.map{|child| child.as_hash } unless self.leaf?
+			  if self.children.present? and not self.leaf?
+			  	hash["children"] = if self.children.respond_to? "as_hash"
+						[self.children.as_hash]
+					else
+						self.children.map{|child| child.as_hash }
+					end
+				end
 				hash
 			end
 

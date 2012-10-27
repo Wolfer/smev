@@ -21,11 +21,13 @@ module Smev
 		end
 		
 		def initialize value
-			if value.is_a? Hash
-				#@struct = [*xsd].map{ |x| XSD::Element.new x }
-			else
+			if value.is_a?(WSDL::Info)
 				@struct = [*value].map{ |x| Smev::XSD.const_get(x.class.to_s.split("::").last).build_from_xsd x }
-			end			
+			else
+				value = [value] unless value.is_a?(Array)
+				@struct = [*value].map{ |x| Smev::XSD.const_get(x["type"].capitalize).build_from_hash x }
+			end
+			
 			self.files ||= []
 		end
 

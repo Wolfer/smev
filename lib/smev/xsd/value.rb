@@ -29,8 +29,22 @@ module Smev
 				end
 				obj.default = default
 				obj.set val
+				yield(obj) if block_given?
 				obj
 			end	
+
+			def self.build_from_hash hash
+				obj = self.new
+				if hash
+					obj.instance_eval "@value = '#{hash["value"]}'"
+					%w(enumeration length minlength maxlength pattern).each do |m|
+						 obj.send("#{m}=", hash["restriction"][m]) if hash["restriction"][m].present?
+					end if hash["restriction"].present?
+				end
+				yield(obj, hash) if block_given?
+				obj
+			end
+
 
 			def set val
 				@value = val

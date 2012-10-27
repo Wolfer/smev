@@ -12,13 +12,13 @@ module Smev
 
 			#REWRITE
 			def self.build_from_xsd xsd
-				super do |obj, xsd|
+				super(xsd) do |obj, xsd|
 					obj.namespace = xsd.namespace
 					obj.value = {}
 				end
 			end
 
-			def allow_child 
+			def self.allow_child 
 				{ 
 					WSDL::XMLSchema::Choice => Choice, 
 					WSDL::XMLSchema::Sequence => Sequence, 

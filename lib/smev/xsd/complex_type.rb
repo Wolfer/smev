@@ -3,7 +3,7 @@
 		class ComplexType < Node
 
 			def self.build_from_xsd xsd
-				super do |obj, xsd|
+				super(xsd) do |obj, xsd|
 					obj.children = xsd.nested_elements.map do |elem| 
 						if elem.minoccurs > 1
 							elem.minoccurs.times.map{|i| child_factory elem }
@@ -27,7 +27,7 @@
 				self.children.map{|child| child.to_xml(nss) }.delete_if{|c| c.blank?}.join("\n")
 			end
 
-			def allow_child 
+			def self.allow_child 
 				{ 
 					WSDL::XMLSchema::Choice => Choice, 
 					WSDL::XMLSchema::Sequence => Sequence, 

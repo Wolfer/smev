@@ -9,7 +9,7 @@ module Smev
 
 
 			def self.build_from_xsd xsd
-				super do |obj, xsd|
+				super(xsd) do |obj, xsd|
 					obj.name = xsd.name.name
 					obj.namespace = xsd.name.namespace
 					if xsd.complex_type
@@ -19,6 +19,15 @@ module Smev
 					obj.value = Value.build_from_xsd( xsd.simple_type, xsd.default ) if obj.leaf?
 				end
 			end
+
+			def self.build_from_hash hash
+				super do |obj, hash|
+					obj.name = hash["name"]
+					obj.value = Value.build_from_hash hash["value"] if obj.leaf?
+					obj.attributes = hash["attributes"].map{|attr| Attribute.build_from_hash attr} if hash["attributes"].present?
+				end
+			end
+
 
 			def attribute name
 				self.attributes.find{|a| a.name == name }
@@ -139,7 +148,7 @@ module Smev
 				end
 			end
 
-			def allow_child 
+			def self.allow_child 
 				{ 
 					WSDL::XMLSchema::Choice => Choice, 
 					WSDL::XMLSchema::Sequence => Sequence,
