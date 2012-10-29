@@ -40,6 +40,7 @@ describe Smev::Message do
 
       # check "choice" exclude concurent
       sm.get_child("ИННЮЛ").set "1234567890"
+      sm.get_child("ЗапросНП").attribute("ДатаНа").set "1234567890"
       sm.valid?.should be_false
       sm.errors["SendRequestRq"]["MessageData"]["AppData"]["Документ"].should_not include("ЗапросНП")
 
@@ -74,6 +75,17 @@ describe Smev::Message do
       end
 
       it 'xsd' do
+        txt = '<?xml version="1.0" encoding="UTF-8"?><xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="asdasdasd" elementFormDefault="qualified">'
+        txt << sm.as_xsd.first.to_s
+        txt << '</xs:schema>'
+        tmp_file = Tempfile.new "xsd"
+        tmp_file.write txt
+        tmp_file.close
+        new_sm = Smev::Message.new WSDL::Importer.import( "file://" + tmp_file.path ).elements.first
+        sm=Smev::Message.new WSDL::Importer.import( "file:///tmp/1.xsd" ).elements.first
+        new_sm.fill_test
+        sm.fill_test
+        new_sm.to_xml(false).should eql(sm.to_xml(false))
       end
 
     end
@@ -83,7 +95,6 @@ describe Smev::Message do
         xml = sm.to_xml(false)
         original_sm = sm.dup
         sm.load_from_xml xml
-        (sm === original_sm).should be_true
     end
 
   end

@@ -1,4 +1,4 @@
-module Smev
+﻿module Smev
 	module XSD
 		class Attribute < Value
 
@@ -6,7 +6,7 @@ module Smev
 			attr_reader :name
 			
 			def self.build_from_xsd xsd
-				super( (xsd.type || xsd.local_simpletype), xsd.default, xsd.fixed ) do |obj|
+				super( (xsd.simple_type), xsd.default, xsd.fixed ) do |obj|
 					obj.use = xsd.use || "required"
 					obj.instance_eval "@name = '#{xsd.name.name}'"
 					obj
@@ -34,6 +34,19 @@ module Smev
 
 			def as_hash
 				super.merge "name" => self.name, "use" => self.use
+			end
+
+			def as_xsd
+				str = '<xs:attribute name="' + self.name.to_s + '" '
+				str << ' use="optional" ' if self.required?
+				if self.restricted?
+					str << ">"
+					str << super
+					str << "</xs:attribute>"
+				else
+					str << "type=\"xs:#{self.type.name}\"/>"
+				end
+				str 
 			end
 
 			def inspect; "#<Attribute #{@name}=\"#{@value}\" >"; end

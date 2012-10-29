@@ -60,6 +60,13 @@ module Smev
 				hash
 			end
 
+			def as_xsd
+				str = []
+				str << "minOccurs=\"#{self.min_occurs}\"" if self.min_occurs != 1
+				str << "maxOccurs=\"#{self.max_occurs}\"" if self.max_occurs != 1
+				str.join(" ").to_s
+			end
+
 		private
 
 			def self.child_factory child

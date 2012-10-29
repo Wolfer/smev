@@ -61,6 +61,10 @@ module Smev
 
 			end
 
+			def as_xsd
+				'<xs:any ' + super + '/>'
+			end
+
 			def to_ary
 				[]
 			end

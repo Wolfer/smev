@@ -102,6 +102,10 @@ module Smev
 			self.struct.map{|child| child.as_hash }
 		end
 
+		def as_xsd
+			self.struct.map{|child| child.as_xsd }
+		end
+
 
 		###### AppDocument Section
 

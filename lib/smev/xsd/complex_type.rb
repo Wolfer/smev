@@ -82,11 +82,24 @@
 				raise NotImplementedError.new
 			end
 
+			def as_xsd
+				klass = self.class.name.split("::").last.downcase
+				children_xsd = self.children.map(&:as_xsd).join()
+				str = "<xs:#{klass}"
+				if children_xsd.present?
+					str << ">#{children_xsd}</xs:#{klass}>"
+				else
+					str << "/>"
+				end
+				
+			end
+
 			def valid?
 				#FIXME TEST THIS
 				check = true
 				collect_children.group_by(&:name).each do |name, childs| 
-					check = false unless childs.size.between?( childs.first.min_occurs, (childs.first.max_occurs || 999) )
+					child_max = (childs.first.max_occurs == "unbounded" ? 999 : (childs.first.max_occurs || 1 ))
+					check = false unless childs.size.between?( childs.first.min_occurs, child_max )
 					childs.each{|child| check = false unless child.valid? }
 				end
 				check

@@ -3,6 +3,7 @@ module Smev
 		class Value
 
 			attr_accessor :default
+			attr_accessor :type
 			
 			attr_accessor :length
 			attr_accessor :minlength
@@ -20,7 +21,9 @@ module Smev
 
 			def self.build_from_xsd type, default = nil, val = nil
 				obj = self.new
+				return obj unless obj.type = type
 				if type.is_a? WSDL::XMLSchema::SimpleType and restrict = type.restriction
+					obj.type = type.base
 					obj.enumeration = restrict.enumeration || []
 					obj.length = restrict.length
 					obj.minlength = restrict.minlength
@@ -62,6 +65,22 @@ module Smev
 					end
 				end
 				
+			end
+
+			def as_xsd
+				return "" unless self.restricted?
+				str = "<xs:simpleType>"
+				str << "<xs:restriction base=\"xs:#{self.type.name}\">"
+				%w(length minlength maxlength pattern).each do |m|
+					 str << "<xs:#{m.downcase} value=\"#{self.send(m)}\"/>" if self.send(m)
+				end
+				str << enumeration.map{|e| "<enumeration value=\"#{e}\"/>" }.join
+				str << "</xs:restriction>"
+				str << "</xs:simpleType>"
+			end
+
+			def restricted?
+				(length || minlength || maxlength || pattern || enumeration).present?
 			end
 
 			def blank?
@@ -117,7 +136,8 @@ module Smev
 
 			def check_pattern
 				unless self.pattern.nil? or self.pattern =~ @value.to_s
-					raise ValueError.new(" must be: value =~ #{self.pattern.inspect}")
+					#FIXME make fill_test for pattern
+					# raise ValueError.new(" must be: value =~ #{self.pattern.inspect}")
 				end
 			end
 

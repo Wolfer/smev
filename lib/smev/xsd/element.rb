@@ -1,4 +1,4 @@
-module Smev
+﻿module Smev
 	module XSD
 		class Element < Node
 
@@ -64,6 +64,25 @@ module Smev
 					hash.merge value.as_hash if self.leaf? 
 					hash["attributes"] = self.attributes.map{|attr| attr.as_hash} if self.attributes.present?
 				end
+			end
+
+			def as_xsd
+				str = '<xs:element name="' + self.name.to_s + '" ' + super
+				if not self.leaf? or self.attributes.present?
+					str << ">"
+					str << "<xs:complexType>"
+					str << self.children.as_xsd if self.children
+					str << self.attributes.map(&:as_xsd).join if self.attributes.present?
+					str << "</xs:complexType>"
+					str << "</xs:element>"
+				elsif self.value.restricted?
+					str << ">"
+					str << self.value.as_xsd
+					str << "</xs:element>"
+				else
+					str << "/>"
+				end
+				str
 			end
 
 			def to_hash
