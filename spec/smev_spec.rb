@@ -75,17 +75,15 @@ describe Smev::Message do
       end
 
       it 'xsd' do
-        txt = '<?xml version="1.0" encoding="UTF-8"?><xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="asdasdasd" elementFormDefault="qualified">'
-        txt << sm.as_xsd.first.to_s
-        txt << '</xs:schema>'
         tmp_file = Tempfile.new "xsd"
-        tmp_file.write txt
+        tmp_file.write sm.as_xsd
         tmp_file.close
         new_sm = Smev::Message.new WSDL::Importer.import( "file://" + tmp_file.path ).elements.first
-        sm=Smev::Message.new WSDL::Importer.import( "file:///tmp/1.xsd" ).elements.first
         new_sm.fill_test
         sm.fill_test
-        new_sm.to_xml(false).should eql(sm.to_xml(false))
+        xml_sm = sm.get_child("AppData").children.first.to_xml([])
+        xml_new_sm = new_sm.struct.first.to_xml([])
+        xml_sm.should eql(xml_new_sm)
       end
 
     end
