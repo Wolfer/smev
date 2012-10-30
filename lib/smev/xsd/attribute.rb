@@ -38,7 +38,7 @@
 
 			def as_xsd
 				str = '<xs:attribute name="' + self.name.to_s + '" '
-				str << ' use="optional" ' if self.required?
+				str << ' use="required" ' if self.required?
 				if self.restricted?
 					str << ">"
 					str << super

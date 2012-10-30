@@ -71,10 +71,10 @@ module Smev
 				return "" unless self.restricted?
 				str = "<xs:simpleType>"
 				str << "<xs:restriction base=\"xs:#{self.type.name}\">"
-				%w(length minlength maxlength pattern).each do |m|
-					 str << "<xs:#{m.downcase} value=\"#{self.send(m)}\"/>" if self.send(m)
+				%w(length minLength maxLength pattern).each do |m|
+					 str << "<xs:#{m} value=\"#{self.send(m.downcase)}\"/>" if self.send(m.downcase)
 				end
-				str << enumeration.map{|e| "<enumeration value=\"#{e}\"/>" }.join
+				str << enumeration.map{|e| "<xs:enumeration value=\"#{e}\"/>" }.join
 				str << "</xs:restriction>"
 				str << "</xs:simpleType>"
 			end

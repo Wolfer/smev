@@ -102,8 +102,12 @@ module Smev
 			self.struct.map{|child| child.as_hash }
 		end
 
-		def as_xsd
-			self.struct.map{|child| child.as_xsd }
+		def as_xsd tns = "rnd-soft.ws"
+			# self.struct.map{|child| child.as_xsd }
+			txt = '<?xml version="1.0" encoding="UTF-8"?><xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="'+tns+'" elementFormDefault="qualified">'
+      txt << self.get_child("AppData").children.map(&:as_xsd).join
+      txt << '</xs:schema>'
+        
 		end
 
 
