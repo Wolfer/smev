@@ -4,6 +4,7 @@ require 'nokogiri'
 require 'nori'
 
 require 'ext/object'
+require 'ext/features'
 
 require 'smev/extensions/wsdl'
 require 'smev/extensions/nokogiri'
