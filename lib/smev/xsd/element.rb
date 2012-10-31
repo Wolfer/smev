@@ -25,6 +25,7 @@
 					obj.name = hash["name"]
 					obj.value = Value.build_from_hash hash["value"] if obj.leaf?
 					obj.attributes = hash["attributes"].map{|attr| Attribute.build_from_hash attr} if hash["attributes"].present?
+					obj.children = obj.children.first if obj.children
 				end
 			end
 
@@ -61,7 +62,7 @@
 
 			def as_hash
 				super.tap do |hash| 
-					hash.merge value.as_hash if self.leaf? 
+					hash["value"] = value.as_hash if self.leaf? and self.attributes.blank?
 					hash["attributes"] = self.attributes.map{|attr| attr.as_hash} if self.attributes.present?
 				end
 			end

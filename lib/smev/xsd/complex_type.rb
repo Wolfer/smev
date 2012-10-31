@@ -113,7 +113,7 @@
 			
 			def method_missing method, *argv, &block
 		#		@children.map{ |child| child.send( method, *argv ) if child.respond_to? method }.compact
-				@children.send method, *argv, &block
+				@children.send method, *argv, &block if @children
 			end
 
 		end

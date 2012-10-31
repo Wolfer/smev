@@ -30,6 +30,7 @@ module Smev
 					obj.maxlength = restrict.maxlength
 					obj.pattern = restrict.pattern
 				end
+				obj.type = obj.type.name while not obj.type.is_a? String
 				obj.default = default
 				obj.set val
 				yield(obj) if block_given?
@@ -40,9 +41,11 @@ module Smev
 				obj = self.new
 				if hash
 					obj.instance_eval "@value = '#{hash["value"]}'"
+					obj.type = hash["type"]
 					%w(enumeration length minlength maxlength pattern).each do |m|
 						 obj.send("#{m}=", hash["restriction"][m]) if hash["restriction"][m].present?
 					end if hash["restriction"].present?
+					obj.enumeration ||= []
 				end
 				yield(obj, hash) if block_given?
 				obj
@@ -58,7 +61,7 @@ module Smev
 			def inspect; "#<Value \"#{@value}\" >"; end
 
 			def as_hash
-				{ "value" => self.get }.tap do |hash| 
+				{ "value" => self.get, "type" => self.type }.tap do |hash| 
 					hash["restriction"] = {}
 					%w(enumeration length minlength maxlength pattern).each do |m|
 						hash["restriction"][m] = self.send(m) if self.send(m).present?
@@ -70,7 +73,7 @@ module Smev
 			def as_xsd
 				return "" unless self.restricted?
 				str = "<xs:simpleType>"
-				str << "<xs:restriction base=\"xs:#{self.type.name}\">"
+				str << "<xs:restriction base=\"xs:#{self.type}\">"
 				%w(length minLength maxLength pattern).each do |m|
 					 str << "<xs:#{m} value=\"#{self.send(m.downcase)}\"/>" if self.send(m.downcase)
 				end
