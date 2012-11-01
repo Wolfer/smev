@@ -15,6 +15,10 @@
 				end
 			end	
 
+			def children
+				@children || []
+			end
+
 			def name
 				self.class.to_s
 			end
@@ -113,7 +117,7 @@
 			
 			def method_missing method, *argv, &block
 		#		@children.map{ |child| child.send( method, *argv ) if child.respond_to? method }.compact
-				@children.send method, *argv, &block if @children
+				self.children.send method, *argv, &block 
 			end
 
 		end

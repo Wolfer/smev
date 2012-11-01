@@ -11,7 +11,7 @@ module Smev
 			end
 
 			#REWRITE
-			def self.build_from_xsd xsd
+			def self.build_from_xsd xsd, ns = nil
 				super(xsd) do |obj, xsd|
 					obj.namespace = xsd.namespace
 					obj.value = {}

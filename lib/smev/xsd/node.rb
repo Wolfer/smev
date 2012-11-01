@@ -15,11 +15,12 @@ module Smev
 				obj
 			end
 
-			def self.build_from_hash hash
+			def self.build_from_hash hash, ns = nil
 				obj = self.new
 				obj.max_occurs = hash["max_occurs"] || 1
 				obj.min_occurs = hash["min_occurs"] || 1
-				obj.children = hash["children"].map{|child| Smev::XSD.const_get(child["type"].capitalize).build_from_hash child } if hash["children"].present?
+				obj.namespace = hash["namespace"] || ns if obj.respond_to? "namespace"
+				obj.children = hash["children"].map{|child| Smev::XSD.const_get(child["type"].capitalize).build_from_hash child, (hash["namespace"]||ns) } if hash["children"].present?
 				yield(obj, hash) if block_given?
 				obj
 			end
@@ -45,15 +46,16 @@ module Smev
 				new_obj
 			end
 
-			def as_hash
+			def as_hash ns = nil
 				hash = { "name" => self.name, "type" => self.class.name.split("::").last.downcase }
 				hash["min_occurs"] = self.min_occurs if self.min_occurs and self.min_occurs != 1
 				hash["max_occurs"] = self.max_occurs if self.max_occurs and self.max_occurs != 1
+				hash["namespace"] = self.namespace if self.respond_to?("namespace") and self.namespace.present? and self.namespace != ns
 				if self.children.present? and not self.leaf?
 			  	hash["children"] = if self.children.respond_to? "as_hash"
-						[self.children.as_hash]
+						[self.children.as_hash(hash["namespace"]||ns)]
 					else
-						self.children.map{|child| child.as_hash }
+						self.children.map{|child| child.as_hash (hash["namespace"]||ns) }
 					end
 				end
 				hash

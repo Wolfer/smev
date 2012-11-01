@@ -51,7 +51,7 @@ describe Smev::Message do
       sm.valid?.should be_true
       sm.errors.should be_empty
 
-      # puts sm.as_hash
+      puts sm.as_hash
 
     end
 

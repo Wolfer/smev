@@ -20,9 +20,10 @@
 				end
 			end
 
-			def self.build_from_hash hash
+			def self.build_from_hash hash, ns = nil
 				super do |obj, hash|
 					obj.name = hash["name"]
+					obj.namespace = hash["namespace"] || ns
 					obj.value = Value.build_from_hash hash["value"] if obj.leaf?
 					obj.attributes = hash["attributes"].map{|attr| Attribute.build_from_hash attr} if hash["attributes"].present?
 					obj.children = obj.children.first if obj.children
@@ -60,7 +61,7 @@
 				result 
 			end
 
-			def as_hash
+			def as_hash ns = nil
 				super.tap do |hash| 
 					hash["value"] = value.as_hash if self.leaf? and self.attributes.blank?
 					hash["attributes"] = self.attributes.map{|attr| attr.as_hash} if self.attributes.present?
