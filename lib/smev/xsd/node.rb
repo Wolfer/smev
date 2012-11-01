@@ -46,11 +46,10 @@ module Smev
 			end
 
 			def as_hash
-				hash = { "name" => self.name, 
-								 "type" => self.class.name.split("::").last.downcase,
-								 "min_occurs" => (self.min_occurs||1), 
-								 "max_occurs" => (self.max_occurs||1) }
-			  if self.children.present? and not self.leaf?
+				hash = { "name" => self.name, "type" => self.class.name.split("::").last.downcase }
+				hash["min_occurs"] = self.min_occurs if self.min_occurs and self.min_occurs != 1
+				hash["max_occurs"] = self.max_occurs if self.max_occurs and self.max_occurs != 1
+				if self.children.present? and not self.leaf?
 			  	hash["children"] = if self.children.respond_to? "as_hash"
 						[self.children.as_hash]
 					else
