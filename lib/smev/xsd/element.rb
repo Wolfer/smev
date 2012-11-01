@@ -77,11 +77,11 @@
 					str << "</xs:complexType>"
 					str << "</xs:element>"
 				elsif self.value.restricted?
-					str << ">"
-					str << self.value.as_xsd
-					str << "</xs:element>"
+						str << ">"
+						str << self.value.as_xsd
+						str << "</xs:element>"
 				else
-					str << "/>"
+					str << " type=\"#{self.value.type}\" />"
 				end
 				str
 			end

@@ -44,7 +44,7 @@
 					str << super
 					str << "</xs:attribute>"
 				else
-					str << "type=\"xs:#{self.type.name}\"/>"
+					str << "type=\"xs:#{self.type}\"/>"
 				end
 				str 
 			end
