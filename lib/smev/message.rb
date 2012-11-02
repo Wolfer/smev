@@ -36,11 +36,12 @@ module Smev
 
 		def load_from_hash hash
 			struct.each{ |s| s.load_from_hash hash[s.name].dup if hash.include? s.name }
+			return true
 		rescue SmevException => e
-			Rails.logger.error "[ERROR] Loading from hash! #{e}"
-			Rails.logger.error e.backtrace.first(5).join("\n")
 			puts "[ERROR] Loading from hash! #{e}"
 			puts e.backtrace.first(5).join("\n")
+			self.errors << e.to_s
+			return false
 		end
 
 		def load_from_xml xml
@@ -52,11 +53,11 @@ module Smev
 			verify doc if doc.search_child("wsse:Security").size > 0
 			app_data = doc.search_child("Body").first
 			struct.each{ |s| s.load_from_nokogiri app_data }
+			return true
 		rescue SmevException => e
-			Rails.logger.error "[ERROR] Loading from xml! #{e}"
-			Rails.logger.error e.backtrace.first(5).join("\n")
 			puts "[ERROR] Loading from xml! #{e}"
 			puts e.backtrace.first(5).join("\n")
+			return false
 		end
 
 		###### Child Section
