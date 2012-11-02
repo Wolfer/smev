@@ -40,7 +40,8 @@ module Smev
 			def self.build_from_hash hash
 				obj = self.new
 				if hash
-					obj.instance_eval "@value = '#{hash["value"]}'"
+					# obj.instance_eval "@value = '#{hash["value"]}'"
+					obj.set hash["value"]
 					obj.type = hash["type"]
 					%w(enumeration length minlength maxlength pattern).each do |m|
 						 obj.send("#{m}=", hash["restriction"][m]) if hash["restriction"][m].present?
@@ -100,6 +101,7 @@ module Smev
 			end
 
 			def fill_test
+				return @value if @value.present?
 				@value =  if self.enumeration.present?
 					self.enumeration.first
 				elsif self.length

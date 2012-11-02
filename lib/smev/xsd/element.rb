@@ -32,7 +32,7 @@
 
 
 			def attribute name
-				self.attributes.find{|a| a.name == name }
+				self.attributes.find{|a| a.name == name } if self.attributes
 			end
 
 			def set value

@@ -51,8 +51,20 @@ describe Smev::Message do
       sm.valid?.should be_true
       sm.errors.should be_empty
 
-      puts sm.as_hash
+      # puts sm.as_hash
 
+    end
+
+    it "generate fault" do
+      hash =  {"name"=>"Fault", "type"=>"element", "namespace" => "http://schemas.xmlsoap.org/soap/envelope/", "children"=>[
+                {"name"=>"Smev::XSD::Sequence", "type"=>"sequence", "children"=>[
+                  {"name"=>"faultcode", "type"=>"element", "value"=>{"value"=>"Client", "type"=>"QName", "restriction"=>{}}},
+                  {"name"=>"faultstring", "type"=>"element", "value"=>{"value"=> "fault", "type"=>"string", "restriction"=>{}}}
+                ]}
+              ]}
+
+      sm = Smev::Message.new hash
+      sm.to_xml(false).should_not be_blank
     end
 
     it 'disable AppDocument' do
