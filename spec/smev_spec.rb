@@ -49,7 +49,7 @@ describe Smev::Message do
       sm.fill_test
 
       sm.valid?.should be_true
-      sm.errors.should be_empty
+      sm.errors.should eql({})
 
       # puts sm.as_hash
 

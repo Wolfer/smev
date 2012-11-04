@@ -10,7 +10,6 @@ module Smev
 		attr_reader :header_addition
 		attr_accessor :namespaces
 		attr_accessor :files
-		attr_accessor :errors
 
 		 def self.gen_guid
 			guid = Digest::MD5.hexdigest( Time.now.to_i.to_s )
@@ -28,19 +27,20 @@ module Smev
 				value = [value] unless value.is_a?(Array)
 				@struct = [*value].map{ |x| Smev::XSD.const_get(x["type"].capitalize).build_from_hash x }
 			end
-			
+			@errors = {}			
 			self.files ||= []
 		end
 
 		###### Import Section
 
 		def load_from_hash hash
+			raise SmevException.new("Expect Hash, but given #{hash.class}") unless hash.is_a? Hash
 			struct.each{ |s| s.load_from_hash hash[s.name].dup if hash.include? s.name }
 			return true
 		rescue SmevException => e
 			puts "[ERROR] Loading from hash! #{e}"
 			puts e.backtrace.first(5).join("\n")
-			self.errors << e.to_s
+			@errors["load_from_hash"] = e.to_s
 			return false
 		end
 
@@ -57,6 +57,7 @@ module Smev
 		rescue SmevException => e
 			puts "[ERROR] Loading from xml! #{e}"
 			puts e.backtrace.first(5).join("\n")
+			@errors["load_from_xml"] = e.to_s
 			return false
 		end
 
@@ -68,7 +69,7 @@ module Smev
 		end
 
 		def errors
-			self.struct.inject({}){ |res, child| res[child.name] = child.errors if child.errors.present?; res}
+			@errors.merge self.struct.inject({}){ |res, child| res[child.name] = child.errors if child.errors.present?; res}
 		end
 
 		def search_child name
