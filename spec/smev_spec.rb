@@ -113,7 +113,7 @@ describe Smev::Message do
         sm.fill_test
         xml = sm.to_xml(false)
         original_sm = sm.dup
-        sm.load_from_xml xml
+        sm.load_from_xml(xml).should be_true
     end
 
   end

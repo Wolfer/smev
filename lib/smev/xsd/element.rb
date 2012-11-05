@@ -154,7 +154,13 @@
 			end
 
 			def load_from_nokogiri noko
-				return false unless noko.is_a? Nokogiri::XML::Element and this_noko = noko.children.find{|c| c.name == self.name }
+				unless noko.is_a? Nokogiri::XML::Element and this_noko = noko.children.find{|c| c.name == self.name }
+					if min_occurs == 0
+						return false
+					else
+						raise SmevException.new("Wrong struct! Expect element #{self.name} in #{noko.class} #{noko.respond_to?("name") ? noko.name : '<undefined>' }")
+					end
+				end
 				this_noko.attributes.each do |k,v|
 					next if k == "nil" # skip nillable element
 					if attr = self.attributes.find{|a| a.name == k}

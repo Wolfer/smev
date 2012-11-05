@@ -21,7 +21,21 @@ module Smev
 			end
 
 			def load_from_nokogiri noko
-				@children.each{|child| child.load_from_nokogiri noko }
+				check = false
+				mb = []
+				@children.each do |child| 
+					begin
+						child.load_from_nokogiri noko
+						check = true
+					rescue SmevException => e
+						mb << e.to_s
+					end
+				end
+				if check
+					true
+				else
+					raise SmevException.new(mb.join(" OR "))
+				end
 			end
 
 		end
