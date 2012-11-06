@@ -9,8 +9,8 @@ module Smev
 
 			def self.build_from_xsd xsd
 				obj = self.new
-				obj.max_occurs = xsd.maxoccurs || 1
-				obj.min_occurs = xsd.minoccurs || 1
+				obj.max_occurs = (xsd.maxoccurs || 999).to_i
+				obj.min_occurs = xsd.minoccurs.to_i || 1
 				yield(obj, xsd) if block_given?
 				obj
 			end
@@ -31,6 +31,14 @@ module Smev
 
 			def leaf?
 				!children.present?
+			end
+
+			def can_occurs num
+				if num.between? self.min_occurs, self.max_occurs
+					true
+				else
+					raise SmevException.new("Expect that #{name} occurs #{self.min_occurs.to_i} - #{self.max_occurs}, but given #{num}")
+				end
 			end
 
 			def clone

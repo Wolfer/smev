@@ -35,7 +35,7 @@ module Smev
 
 		def load_from_hash hash
 			raise SmevException.new("Expect Hash, but given #{hash.class}") unless hash.is_a? Hash
-			struct.each{ |s| s.load_from_hash hash[s.name].dup if hash.include? s.name }
+			struct.each{ |s| s.load_from_hash hash }
 			return true
 		rescue SmevException => e
 			puts "[ERROR] Loading from hash! #{e}"
@@ -51,8 +51,8 @@ module Smev
 			
 			doc = Nokogiri::XML::Document.parse xml
 			verify doc if doc.search_child("wsse:Security").size > 0
-			app_data = doc.search_child("Body").first
-			struct.each{ |s| s.load_from_nokogiri app_data }
+			elements = doc.search_child("Body").first.children.find{|e| e.name != "text"}
+			struct.each{ |s| s.load_from_nokogiri elements }
 			return true
 		rescue SmevException => e
 			puts "[ERROR] Loading from xml! #{e}"

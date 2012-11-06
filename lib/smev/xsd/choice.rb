@@ -20,22 +20,28 @@ module Smev
 				self.valid? ? {} : super 
 			end
 
-			def load_from_nokogiri noko
-				check = false
-				mb = []
-				@children.each do |child| 
-					begin
-						child.load_from_nokogiri noko
-						check = true
-					rescue SmevException => e
-						mb << e.to_s
-					end
+			def to_hash
+				self.children.each do |child| 
+					next unless child.valid?
+					h = child.to_hash
+					return h if h.values.first.present?
 				end
-				if check
-					true
-				else
-					raise SmevException.new(mb.join(" OR "))
-				end
+
+				super
+			end
+
+			def load_from_nokogiri nokogiris
+				raise SmevException.new("Choice give more then one element: #{nokogiris.map(&:name).inspect}!") if nokogiris.size != 1
+				noko = nokogiris.first
+				raise SmevException.new("Expect #{@children.map(&:name).inspect}, but given #{noko.name}!") unless child = @children.find{|c| c.name == noko.name }
+				child.load_from_nokogiri noko
+			end
+
+			def load_from_hash hash
+				raise SmevException.new("Choice give more then one element: #{hash.keys.inspect}!") if hash.keys.size != 1
+				key = hash.keys.first
+				raise SmevException.new("Expect #{@children.map(&:name).inspect}, but given #{hash.keys.first}!") unless child = @children.find{|c| c.name == key }
+				child.load_from_hash hash[key]
 			end
 
 		end

@@ -31,6 +31,22 @@
 				self.children.map{|child| child.to_xml(nss) }.delete_if{|c| c.blank?}.join("\n")
 			end
 
+			def to_hash
+				@children.inject({}) do |result, child| 
+					hash = child.to_hash
+					if child.respond_to? "name" and result.include? child.name 
+						if result[child.name].is_a? Array
+							result[child.name] << hash.delete(child.name)
+						else
+							result[child.name] = [ result[child.name], hash.delete(child.name)]
+						end
+					else
+						result.merge! hash
+					end
+					result
+				end 
+			end
+
 			def self.allow_child 
 				{ 
 					WSDL::XMLSchema::Choice => Choice, 
@@ -72,16 +88,6 @@
 
 			end
 
-
-			def recreate_child child_name, new_count
-				all = @children.find_all{|child| child.name == child_name}
-				ind = @children.index(all.first)
-				@children -= all
-				@children[ind] = new_count.times.inject([]){ |res, i| res << all.first.clone; res }
-				@children.flatten!
-			end
-
-
 			def load_from_nokogiri doc
 				raise NotImplementedError.new
 			end
@@ -102,8 +108,7 @@
 				#FIXME TEST THIS
 				check = true
 				collect_children.group_by(&:name).each do |name, childs| 
-					child_max = (childs.first.max_occurs == "unbounded" ? 999 : (childs.first.max_occurs || 1 ))
-					check = false unless childs.size.between?( childs.first.min_occurs, child_max )
+					check = false unless childs.first.can_occurs(childs.size)
 					childs.each{|child| check = false unless child.valid? }
 				end
 				check
@@ -112,6 +117,15 @@
 			def errors
 				self.children.inject({}){ |res, child| res[child.name] = child.errors if child.errors.present?; res}
 			end
+
+			def recreate_child name, size
+				fchild = @children.find{|c| c.name == name }
+				position = @children.index(fchild)
+				@children.delete_if{|child| child.name == name }
+				size.times{ @children.insert(position, fchild.dup) }
+			end
+
+
 
 		private
 			

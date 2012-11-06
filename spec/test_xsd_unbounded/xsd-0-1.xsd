@@ -33,7 +33,7 @@
 						</xs:attribute>
 					</xs:complexType>
 				</xs:element>
-				<xs:element name="ЗапросНП" maxoccurs="unbounded">
+				<xs:element name="ЗапросНП" maxOccurs="unbounded">
 					<xs:annotation>
 						<xs:documentation>Сведения о налогоплательщике, в отношении которого осуществляется запрос</xs:documentation>
 					</xs:annotation>

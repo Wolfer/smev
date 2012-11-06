@@ -146,17 +146,32 @@ describe Smev::Message do
         end
 
         it "xml" do
-          xml = File.read File.dirname(__FILE__) + "/example.xml"
-          sm_unb.load_from_xml xml
-          inns = sm.search_child("ИННЮЛ")
+          sm_unb.load_from_xml File.read File.dirname(__FILE__) + "/example.xml"
+          inns = sm_unb.search_child("ИННЮЛ")
           inns.size.should eql(3)
-          inns.shift.get.should eql("9999999999")
-          inns.shift.get.should eql("8888888888")
-          inns.shift.get.should eql("7777777777")
+          inns.shift.value.get.should eql("9999999999")
+          inns.shift.value.get.should eql("8888888888")
+          inns.shift.value.get.should eql("7777777777")
+
+          sm_unb.load_from_xml File.read File.dirname(__FILE__) + "/example1.xml"
+          inns = sm_unb.search_child("ИННЮЛ")
+          inns.size.should eql(1)
+          inns.shift.value.get.should eql("9999999999")
         end
 
         it "hash" do
-          
+          sm_unb.load_from_hash ({"SendRequestRq"=>{"Message"=>{"Sender"=>{"Code"=>"", "Name"=>""}, "Recipient"=>{"Code"=>"", "Name"=>""}, "Originator"=>{"Code"=>"", "Name"=>""}, "TypeCode"=>"GSRV", "Date"=>"", "RequestIdRef"=>"", "OriginRequestIdRef"=>"", "ServiceCode"=>"", "CaseNumber"=>""}, "MessageData"=>{"AppData"=>{"Документ"=>{"@attr"=>{"ВерсФорм"=>"4.02", "ИдЗапросП"=>"999999999999999999999999999999999999"}, "СвЮЛ"=>{"@attr"=>{"НаимЮЛ"=>"9", "ИННЮЛ"=>"9999999999", "ОГРН"=>"9999999999999"}}, "ЗапросНП"=>[{"@attr"=>{"ДатаНа"=>"9999999999"}, "ИННЮЛ"=>"9999999999"}, {"@attr"=>{"ДатаНа"=>"8888888888"}, "ИННЮЛ"=>"8888888888"}, {"@attr"=>{"ДатаНа"=>"7777777777"}, "ИННЮЛ"=>"7777777777"}]}}, "AppDocument"=>{"BinaryData"=>"", "Reference"=>{"Include"=>{"@attr"=>{"href"=>""}}}, "DigestValue"=>""}}}})
+          inns = sm_unb.search_child("ИННЮЛ")
+          inns.size.should eql(3)
+          sm_unb.to_hash.should eql({"SendRequestRq"=>{"Message"=>{"Sender"=>{"Code"=>"", "Name"=>""}, "Recipient"=>{"Code"=>"", "Name"=>""}, "Originator"=>{"Code"=>"", "Name"=>""}, "TypeCode"=>"GSRV", "Date"=>"", "RequestIdRef"=>"", "OriginRequestIdRef"=>"", "ServiceCode"=>"", "CaseNumber"=>""}, "MessageData"=>{"AppData"=>{"Документ"=>{"@attr"=>{"ВерсФорм"=>"4.02", "ИдЗапросП"=>"999999999999999999999999999999999999"}, "СвЮЛ"=>{"@attr"=>{"НаимЮЛ"=>"9", "ИННЮЛ"=>"9999999999", "ОГРН"=>"9999999999999"}}, "ЗапросНП"=>[{"@attr"=>{"ДатаНа"=>"9999999999"}, "ИННЮЛ"=>"9999999999"}, {"@attr"=>{"ДатаНа"=>"8888888888"}, "ИННЮЛ"=>"8888888888"}, {"@attr"=>{"ДатаНа"=>"7777777777"}, "ИННЮЛ"=>"7777777777"}]}}, "AppDocument"=>{"BinaryData"=>"", "Reference"=>{"Include"=>{"@attr"=>{"href"=>""}}}, "DigestValue"=>""}}}})
+          inns.shift.value.get.should eql("9999999999")
+          inns.shift.value.get.should eql("8888888888")
+          inns.shift.value.get.should eql("7777777777")
+
+          sm_unb.load_from_hash ({"SendRequestRq"=>{"Message"=>{"Sender"=>{"Code"=>"", "Name"=>""}, "Recipient"=>{"Code"=>"", "Name"=>""}, "Originator"=>{"Code"=>"", "Name"=>""}, "TypeCode"=>"GSRV", "Date"=>"", "RequestIdRef"=>"", "OriginRequestIdRef"=>"", "ServiceCode"=>"", "CaseNumber"=>""}, "MessageData"=>{"AppData"=>{"Документ"=>{"@attr"=>{"ВерсФорм"=>"4.02", "ИдЗапросП"=>"999999999999999999999999999999999999"}, "СвЮЛ"=>{"@attr"=>{"НаимЮЛ"=>"9", "ИННЮЛ"=>"9999999999", "ОГРН"=>"9999999999999"}}, "ЗапросНП"=>{"@attr"=>{"ДатаНа"=>"9999999999"}, "ИННЮЛ"=>"9999999999"}}}, "AppDocument"=>{"BinaryData"=>"", "Reference"=>{"Include"=>{"@attr"=>{"href"=>""}}}, "DigestValue"=>""}}}})
+          inns = sm_unb.search_child("ИННЮЛ")
+          inns.size.should eql(1)
+          inns.shift.value.get.should eql("9999999999")
         end
 
       end

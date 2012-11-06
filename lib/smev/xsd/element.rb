@@ -51,7 +51,7 @@
 				if content.strip.present?
 					result << ">#{content}</#{ns}#{self.name}>"
 				else
-					if self.min_occurs == 0 and ( self.attributes.nil? or self.attributes.select{|a| a.present?}.blank? )
+					if self.min_occurs.zero? and ( self.attributes.nil? or self.attributes.select{|a| a.present?}.blank? )
 						result = ''
 					else
 						result << "/>"
@@ -99,18 +99,7 @@
 						result = self.value.get
 					end
 				else
-					self.children.each do |child| 
-						hash = child.to_hash
-						if child.respond_to? "name" and result.include? child.name 
-							if result[child.name].is_a? Array
-								result[child.name] << hash.delete(child.name)
-							else
-								result[child.name] = [ result[child.name], hash.delete(child.name)]
-							end
-						else
-							result.merge! hash
-						end
-					end 
+					result.merge! self.children.to_hash
 				end
 
 				{ self.name => result }
@@ -141,44 +130,51 @@
 			end
 
 			def load_from_hash hash
-				if hash.is_a? Hash
-					hash.fetch("@attr", {}).each { |k,v|   if  attr = self.attribute(k); attr.set(v); end }
-					if self.leaf?
-						self.set(hash.fetch("@value", nil) )
+				key, val = hash.is_a?(Hash) ? hash.to_a.first : [self.name, hash]
+				unless key == self.name
+					if min_occurs.zero?
+						return false
 					else
-						self.children.load_from_hash hash 
+						raise SmevException.new("Wrong struct! Expect element #{self.name}, but given #{key}")
+					end
+				end
+				if val.is_a? Hash
+					if val.include? "@attr"
+						val.fetch("@attr", {}).each { |k,v|   if  attr = self.attribute(k); attr.set(v); end }
+						val.delete "@attr"
+					end
+					if self.leaf?
+						self.set(val.fetch("@value", nil) )
+					else
+						self.children.load_from_hash val 
 					end
 				else
-					self.set(hash) unless hash.nil?
+					self.set(val) unless val.nil?
 				end
 			end
 
 			def load_from_nokogiri noko
-				unless noko.is_a? Nokogiri::XML::Element and this_noko = noko.children.find{|c| c.name == self.name }
-					if min_occurs == 0
+				unless noko.is_a? Nokogiri::XML::Element and noko.name == self.name
+					if min_occurs.zero?
 						return false
 					else
-						str = "Wrong struct! Expect element #{self.name} in "
-						str << if noko.respond_to?("name")
-							noko.name + ', but found only ' + noko.children.map(&:name).delete_if{|c| c == "text"}.inspect
-						else
-							'<undefined>'
-						end
+						str = "Wrong struct! Expect element #{self.name}, but given "
+						str << (noko.respond_to?("name") ?	noko.name : noko.inspect)
 						raise SmevException.new(str)
 					end
 				end
-				this_noko.attributes.each do |k,v|
+
+				noko.attributes.each do |k,v|
 					next if k == "nil" # skip nillable element
 					if attr = self.attribute(k)
-						
 						attr.set v.value
 					end
 				end
 
-				if self.leaf?#this_noko.children.group_by{|c| c.class}[Nokogiri::XML::Element].present?
-					self.set this_noko.children.map{|t| t.text }.join
+				if self.leaf?
+					self.set noko.children.map{|t| t.text }.join
 				else
-					self.children.load_from_nokogiri this_noko
+					self.children.load_from_nokogiri noko.children.select{|c| c.name != "text"}
 				end
 			end
 
