@@ -100,6 +100,21 @@ module Smev
 			doc.to_s
 		end
 
+		def to_hash
+			self.struct.inject({}) do |res,el| 
+				if res.include? el.name
+					if res[el.name].is_a? Array
+						res[el.name] << el.to_hash
+					else
+						res[el.name] = [ res[el.name], el.to_hash[el.name] ]
+					end
+				else
+					res.merge! el.to_hash
+				end
+				res
+			end
+		end
+
 		def as_hash
 			self.struct.map{|child| child.as_hash }
 		end

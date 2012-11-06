@@ -130,6 +130,13 @@ describe Smev::Message do
         sm.load_from_xml(xml).should be_true
     end
 
+    it 'import from hash' do
+        sm.fill_test
+        hash = sm.to_hash
+        original_sm = sm.dup
+        sm.load_from_hash(hash).should be_true
+    end
+
   end
 
 
