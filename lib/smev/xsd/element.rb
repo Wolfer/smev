@@ -238,6 +238,13 @@
 				end
 			end
 
+			def dup
+				super.tap do |obj| 
+					obj.attributes = self.attributes.map(&:dup) if self.attributes.present?
+					obj.value = self.value.dup if self.leaf?
+				end
+			end
+
 		end
 	end
 end

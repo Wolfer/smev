@@ -154,6 +154,10 @@ module Smev
 			bd = self.get_child("BinaryData") and bd.value.get.present?
 		end
 
+		def dup
+			super.tap{|obj| obj.instance_eval{ struct = self.struct.map(&:dup) } }
+		end
+
 	private
 
 		#FIXME deprecated

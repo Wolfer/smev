@@ -73,6 +73,20 @@ describe Smev::Message do
       sm.get_child("AppDocument").should be_nil
     end
 
+    it "dup" do
+      ap = sm.get_child("AppData")
+      d = ap.dup
+      d.as_hash.should eql(ap.as_hash)
+      ap.children.max_occurs = 3
+      d.children.max_occurs.should_not eql(3)
+      
+      ap.get_child("СвЮЛ").attribute("ОГРН").set "1111111111111"
+      d.get_child("СвЮЛ").attribute("ОГРН").get.should_not eql("1111111111111")
+
+      ap.get_child("ИННЮЛ").set "1111111111111"
+      d.get_child("ИННЮЛ").should_not eql("1111111111111")
+    end
+
     describe "export to" do
 
       it 'hash' do

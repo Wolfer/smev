@@ -68,6 +68,12 @@ module Smev
 				str.join(" ").to_s
 			end
 
+			def dup
+				obj = super
+				obj.children = (self.children.respond_to?("map") ? self.children.map(&:dup) : self.children.dup) unless self.leaf?
+				obj
+			end
+
 		private
 
 			def self.child_factory child
