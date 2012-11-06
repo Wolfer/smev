@@ -158,7 +158,13 @@
 					if min_occurs == 0
 						return false
 					else
-						raise SmevException.new("Wrong struct! Expect element #{self.name} in #{noko.class} #{noko.respond_to?("name") ? noko.name : '<undefined>' }")
+						str = "Wrong struct! Expect element #{self.name} in "
+						str << if noko.respond_to?("name")
+							noko.name + ', but found only ' + noko.children.map(&:name).delete_if{|c| c == "text"}.inspect
+						else
+							'<undefined>'
+						end
+						raise SmevException.new(str)
 					end
 				end
 				this_noko.attributes.each do |k,v|
