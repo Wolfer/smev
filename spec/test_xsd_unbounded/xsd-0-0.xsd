@@ -1,0 +1,127 @@
+<?xml version='1.0' encoding='UTF-8'?><!-- Published by JAX-WS RI at http://jax-ws.dev.java.net. RI's version is Metro/2.1.1 (branches/2.1-6844; 2011-07-29T12:07:24+0000) JAXWS-RI/2.2.5 JAXWS/2.2. --><xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xop="http://www.w3.org/2004/08/xop/include" xmlns:tns="http://smev.gosuslugi.ru/rev110801" targetNamespace="http://smev.gosuslugi.ru/rev110801" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<!-- imports -->
+	<xs:import namespace="http://www.w3.org/2004/08/xop/include" schemaLocation="xsd-0-0-0.xsd"/>
+	<!-- elements -->
+	<xs:element name="Reference" type="tns:TReference"/>
+	<xs:element name="BinaryData" type="xs:base64Binary"/>
+	<xs:element name="DigestValue" type="xs:base64Binary"/>
+	<xs:element name="Sender" type="tns:TOrgExternal">
+		<xs:annotation>
+			<xs:documentation>Данные о системе-инициаторе взаимодействия (Потребителе) (валидируется СМЭВ на соответствие сертификату)</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="Recipient" type="tns:TOrgExternal">
+		<xs:annotation>
+			<xs:documentation>Данные о системе-получателе сообщения (Поставщике) (валидируется СМЭВ рестру поставщиков)</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="Originator" type="tns:TOrgExternal">
+		<xs:annotation>
+			<xs:documentation>Данные о системе, инициировавашей цепочку из
+				нескольких запросов-ответов, объединенных единым процессом в рамках взаимодействия
+			</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="TypeCode" type="xs:string">
+		<xs:annotation>
+			<xs:documentation>Тип сообщения</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="Date" type="xs:dateTime">
+		<xs:annotation>
+			<xs:documentation>Дата создания запроса</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="RequestIdRef" type="tns:idType">
+		<xs:annotation>
+			<xs:documentation>Идентификатор сообщения-запроса, инициировавшего
+				взаимодействие
+			</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="OriginRequestIdRef" type="tns:idType">
+		<xs:annotation>
+			<xs:documentation>Идентификатор сообщения-запроса, инициировавшего
+				цепочку из нескольких запросов-ответов, объединенных единым
+				процессом в рамках взаимодействия
+			</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="ServiceCode" type="xs:string">
+		<xs:annotation>
+			<xs:documentation>Код услуги</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="CaseNumber" type="xs:string">
+		<xs:annotation>
+			<xs:documentation>Номер заявки в информационной системе-отправителе
+			</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<!-- types -->
+	<xs:simpleType name="idType">
+		<xs:restriction base="xs:string"/>
+	</xs:simpleType>
+	<xs:complexType name="TReference">
+		<xs:sequence>
+			<xs:element ref="xop:Include"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="TOrgExternal">
+		<xs:annotation>
+			<xs:documentation>Сведения об информационной системе</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="Code" type="xs:string">
+				<xs:annotation>
+					<xs:documentation>Идентификатор системы</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Name" type="xs:string">
+				<xs:annotation>
+					<xs:documentation>Наименование системы</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="TAppData">
+		<xs:sequence/>
+		<xs:anyAttribute processContents="lax"/>
+	</xs:complexType>
+	<xs:complexType name="TAppDocument">
+		<xs:sequence>
+			<xs:choice>
+				<xs:element ref="tns:BinaryData"/>
+				<xs:sequence>
+					<xs:element ref="tns:Reference"/>
+					<xs:element ref="tns:DigestValue"/>
+				</xs:sequence>
+			</xs:choice>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="TMessage">
+		<xs:sequence>
+			<xs:element ref="tns:Sender"/>
+			<xs:element ref="tns:Recipient"/>
+			<xs:element ref="tns:Originator"/>
+			<xs:element ref="tns:TypeCode"/>
+			<xs:element ref="tns:Date"/>
+			<xs:element ref="tns:RequestIdRef" minOccurs="0"/>
+			<xs:element ref="tns:OriginRequestIdRef" minOccurs="0"/>
+			<xs:element ref="tns:ServiceCode" minOccurs="0"/>
+			<xs:element ref="tns:CaseNumber" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="TMessageData">
+		<xs:sequence/>
+	</xs:complexType>
+	<xs:complexType name="TRoot">
+		<xs:sequence>
+			<xs:element name="Message" type="tns:TMessage">
+				<xs:annotation>
+					<xs:documentation>Служебный блок атрибутов СМЭВ</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+</xs:schema>

@@ -123,19 +123,46 @@ describe Smev::Message do
 
     end
 
-    it 'import from xml' do
-        sm.fill_test
-        xml = sm.to_xml(false)
-        original_sm = sm.dup
-        sm.load_from_xml(xml).should be_true
+    describe 'import from' do
+
+      it 'xml' do
+          sm.fill_test
+          xml = sm.to_xml(false)
+          original_sm = sm.dup
+          sm.load_from_xml(xml).should be_true
+      end
+
+      it 'hash' do
+          sm.fill_test
+          hash = sm.to_hash
+          original_sm = sm.dup
+          sm.load_from_hash(hash).should be_true
+      end
+
+      describe '(unbounded)' do
+        let(:sm_unb) do
+          wsdl = WSDL::Importer.import( "file://" + File.dirname(__FILE__) + "/test_xsd_unbounded/wsdl" )
+          Smev::Message.new wsdl.find_by_action(wsdl.methods.first)
+        end
+
+        it "xml" do
+          xml = File.read File.dirname(__FILE__) + "/example.xml"
+          sm_unb.load_from_xml xml
+          inns = sm.search_child("ИННЮЛ")
+          inns.size.should eql(3)
+          inns.shift.get.should eql("9999999999")
+          inns.shift.get.should eql("8888888888")
+          inns.shift.get.should eql("7777777777")
+        end
+
+        it "hash" do
+          
+        end
+
+      end
+
     end
 
-    it 'import from hash' do
-        sm.fill_test
-        hash = sm.to_hash
-        original_sm = sm.dup
-        sm.load_from_hash(hash).should be_true
-    end
 
   end
 
