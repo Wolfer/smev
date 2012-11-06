@@ -142,7 +142,7 @@
 
 			def load_from_hash hash
 				if hash.is_a? Hash
-					hash.fetch("@attr", {}).each { |k,v|   if  attr = self.attributes.find{|a| a.name == k}; attr.set(v); end }
+					hash.fetch("@attr", {}).each { |k,v|   if  attr = self.attribute(k); attr.set(v); end }
 					if self.leaf?
 						self.set(hash.fetch("@value", nil) )
 					else
@@ -163,7 +163,8 @@
 				end
 				this_noko.attributes.each do |k,v|
 					next if k == "nil" # skip nillable element
-					if attr = self.attributes.find{|a| a.name == k}
+					if attr = self.attribute(k)
+						
 						attr.set v.value
 					end
 				end
