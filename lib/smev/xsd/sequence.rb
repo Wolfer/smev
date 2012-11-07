@@ -20,22 +20,16 @@ module Smev
 				hash.each do |name, value|
 					value_size = value.is_a?(Array) ? value.size : 1
 					childrens = @children.select{|c| c.name == name}
-					next if childrens.size == value_size and childrens.first.can_occurs(value_size)					
-					recreate_child name, value_size
-				end
-				
-				children_loader(hash) do |child, h| 
-					name, value = *h
-					step_next = true
-					if value.is_a? Array
-						child.load_from_hash(name => value.shift)
-						step_next = false if value.present?
-					else
-						child.load_from_hash(name => value)
-					end
-					step_next
-				end
+					raise SmevException.new("#{name} have #{value_size} value, but schema doesn't allow this") unless childrens.first.can_occurs(value_size)
+					recreate_child name, value_size if childrens.size != value_size
 
+					child_iterator = @children.select{|c| c.name == name}.each
+					( value.is_a?(Array) ? value : [value]).each do |val|
+						child = child_iterator.next
+						child.load_from_hash({name => val})
+					end
+
+				end
 			end
 
 		private
@@ -75,7 +69,6 @@ module Smev
 				end
 
 			end
-
 
 		end 
 	end

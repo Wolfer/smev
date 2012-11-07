@@ -38,10 +38,17 @@ module Smev
 			end
 
 			def load_from_hash hash
-				raise SmevException.new("Choice give more then one element: #{hash.keys.inspect}!") if hash.keys.size != 1
-				key = hash.keys.first
-				raise SmevException.new("Expect #{@children.map(&:name).inspect}, but given #{hash.keys.first}!") unless child = @children.find{|c| c.name == key }
-				child.load_from_hash hash
+				hash.each do |key, val|
+					if child = @children.find{|c| c.name == key}
+						if val.is_a? Array
+							raise SmevException.new("Choice could't have unbounded element #{key}!")
+						else
+							child.load_from_hash({key => val})
+						end
+					else
+						raise SmevException.new("Expect #{@children.map(&:name).inspect}, but given #{key}!")
+					end
+				end
 			end
 
 		end
