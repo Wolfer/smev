@@ -17,8 +17,8 @@ module Smev
 
 			def self.build_from_hash hash, ns = nil
 				obj = self.new
-				obj.max_occurs = hash["max_occurs"] || 1
-				obj.min_occurs = hash["min_occurs"] || 1
+				obj.max_occurs = (hash["max_occurs"] || 1).to_i
+				obj.min_occurs = (hash["min_occurs"] || 1).to_i
 				obj.namespace = hash["namespace"] || ns if obj.respond_to? "namespace"
 				obj.children = hash["children"].map{|child| Smev::XSD.const_get(child["type"].capitalize).build_from_hash child, (hash["namespace"]||ns) } if hash["children"].present?
 				yield(obj, hash) if block_given?

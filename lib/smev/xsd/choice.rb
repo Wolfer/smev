@@ -41,7 +41,7 @@ module Smev
 				raise SmevException.new("Choice give more then one element: #{hash.keys.inspect}!") if hash.keys.size != 1
 				key = hash.keys.first
 				raise SmevException.new("Expect #{@children.map(&:name).inspect}, but given #{hash.keys.first}!") unless child = @children.find{|c| c.name == key }
-				child.load_from_hash hash[key]
+				child.load_from_hash hash
 			end
 
 		end

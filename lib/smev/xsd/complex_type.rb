@@ -32,14 +32,11 @@
 			end
 
 			def to_hash
-				@children.inject({}) do |result, child| 
+				children.inject({}) do |result, child| 
 					hash = child.to_hash
-					if child.respond_to? "name" and result.include? child.name 
-						if result[child.name].is_a? Array
-							result[child.name] << hash.delete(child.name)
-						else
-							result[child.name] = [ result[child.name], hash.delete(child.name)]
-						end
+					if child.max_occurs > 1
+						result[child.name] ||= []
+						result[child.name] << hash.delete(child.name)
 					else
 						result.merge! hash
 					end
