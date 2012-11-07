@@ -27,6 +27,10 @@
 				false
 			end
 
+			def fill_test
+				children.each(&:fill_test)
+			end
+
 			def to_xml nss
 				self.children.map{|child| child.to_xml(nss) }.delete_if{|c| c.blank?}.join("\n")
 			end

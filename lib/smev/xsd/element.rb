@@ -236,7 +236,7 @@
 				if self.leaf?
 					self.value.fill_test
 				else
-					self.children.each &:fill_test
+					self.children.fill_test
 				end
 			end
 

@@ -51,6 +51,13 @@ module Smev
 				end
 			end
 
+			def fill_test
+				iterator = children.each
+				while !self.valid?
+					iterator.next.fill_test
+				end
+			end
+
 		end
 	end
 end
