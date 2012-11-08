@@ -211,7 +211,7 @@
 
 				if self.leaf?
 					begin
-						self.value.valid?
+						self.value.valid? unless self.value.get.blank? and self.min_occurs.zero?
 					rescue ValueError => e
 						@errors["@value"] = "got '#{self.value.get}', but expect then #{e.to_s}"
 					end
