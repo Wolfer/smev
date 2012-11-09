@@ -107,7 +107,7 @@ describe Smev::Message do
         xml = Builder::XmlMarkup.new
         xml.instruct!
         xml.tag! "xs:schema", { "xmlns:xs" => "http://www.w3.org/2001/XMLSchema", "xmlns:tns" => "qweqwe", "targetNamespace" => "qweqwe", "elementFormDefault" => "qualified" } do
-          xml << sm.as_xsd
+          xml << sm.get_child("AppData").children.first.as_xsd
         end
 
         tmp_file = Tempfile.new "xsd"
