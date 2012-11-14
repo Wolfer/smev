@@ -102,15 +102,28 @@ module Smev
 
 			def fill_test
 				return @value if @value.present?
-				@value =  if self.enumeration.present?
-					self.enumeration.first
-				elsif self.length
-					"9" * self.length
-				elsif self.minlength
-					"9" * self.minlength
-				elsif self.maxlength
-					"9" * self.maxlength
-				end			
+				@value =  case self.type
+				when "string"
+					if self.enumeration.present?
+						self.enumeration.first
+					else
+						val = ''
+						val = regexp_to_str self.pattern if self.pattern.present?
+						while self.minlength.present? and val.size < self.minlength.to_i
+							val << "9"
+						end
+						while self.maxlength.present? and val.size > self.minlength.to_i
+							val = val[0..-2]
+						end
+						if self.length.present?
+							val << "9" while val.size < self.length.to_i
+							val = val[0..-2] while val.size > self.length.to_i
+						end
+						val
+					end			
+				when "dateTime"
+					Time.now.xmlschema
+				end
 			end
 
 		private
@@ -142,10 +155,35 @@ module Smev
 			def check_pattern
 				unless self.pattern.nil? or self.pattern =~ @value.to_s
 					#FIXME make fill_test for pattern
-					# raise ValueError.new(" must be: value =~ #{self.pattern.inspect}")
+					raise ValueError.new(" must be: value =~ #{self.pattern.inspect}")
 				end
 			end
 
+			def regexp_to_str reg
+				reg = reg.to_s.sub(/\(\?\-mix\:(.+)\)/,"\\1")
+				reg.gsub! /\d-(\d)/, '\\1'
+				reg.gsub! /\w-(\w)/, '\\1'
+				reg.gsub! /\[([^\]])+\]/, '\\1'
+				while reg.match /(.)\{(\d+)[^\}]*\}/
+				  reg.sub! /(.)\{(\d+)[^\}]*\}/, ($1 * $2.to_i)  # replace .{\d}
+				end
+
+				while reg.match /\([^\)]+\)/ # if skobka
+				  while reg.match /\(([^\)\|]+)\|[^\)]+\)/
+				    reg.gsub! /\(([^\)\|]+)\|[^\)]+\)/, '\\1' # replace (|)
+				  end
+
+
+				  while reg.match /\(([^\)\|]+)\)/
+				    reg.gsub! /\(([^\)\|]+)\)/, '\\1' # replace ()
+				  end
+				end
+
+				reg.gsub! /([^\\])\./, "\\1x"
+				reg.gsub! /([\\])\./, "."
+
+				reg
+			end
 
 		end
 
