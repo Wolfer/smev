@@ -17,7 +17,10 @@ module Smev
 			attr_accessor :mininclusive
 			attr_accessor :totaldigits
 			attr_accessor :fractiondigits
-			
+
+			# def pattern
+			# 	@pattern.is_a?(Regexp) ? @pattern.to_s.sub(/\(\?\-mix\:(.+)\)/,"\\1") : @pattern
+			# end			
 
 			def self.build_from_xsd type, default = nil, val = nil
 				obj = self.new
@@ -28,7 +31,7 @@ module Smev
 					obj.length = restrict.length
 					obj.minlength = restrict.minlength
 					obj.maxlength = restrict.maxlength
-					obj.pattern = restrict.pattern
+					obj.pattern = restrict.pattern.is_a?(Regexp) ? restrict.pattern.to_s.sub(/\(\?\-mix\:(.+)\)/,"\\1") : restrict.pattern
 				end
 				obj.type = obj.type.name while not obj.type.is_a? String
 				obj.default = default
@@ -153,9 +156,9 @@ module Smev
 			end
 
 			def check_pattern
-				unless self.pattern.nil? or self.pattern =~ @value.to_s
+				unless @pattern.nil? or Regexp.new(@pattern) =~ @value.to_s
 					#FIXME make fill_test for pattern
-					raise ValueError.new(" must be: value =~ #{self.pattern.inspect}")
+					raise ValueError.new(" must be: value =~ #{Regexp.new(@pattern).inspect}")
 				end
 			end
 
