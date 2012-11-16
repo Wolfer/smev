@@ -20,7 +20,7 @@
 			end
 
 			def name
-				self.class.to_s
+				self.class.to_s.split("::").last
 			end
 
 			def leaf?
