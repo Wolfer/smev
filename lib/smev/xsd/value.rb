@@ -65,7 +65,7 @@ module Smev
 			def inspect; "#<Value \"#{@value}\" >"; end
 
 			def as_hash
-				{ "value" => self.get, "type" => self.type }.tap do |hash| 
+				{ "type" => self.type }.tap do |hash| 
 					hash["restriction"] = {}
 					%w(enumeration length minlength maxlength pattern).each do |m|
 						hash["restriction"][m] = self.send(m) if self.send(m).present?
