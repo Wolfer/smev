@@ -47,8 +47,8 @@ module Smev
 					obj.set hash["value"]
 					obj.type = hash["type"]
 					%w(enumeration length minlength maxlength pattern).each do |m|
-						 obj.send("#{m}=", hash["restriction"][m]) if hash["restriction"][m].present?
-					end if hash["restriction"].present?
+						 obj.send("#{m}=", hash["restrictions"][m]) if hash["restrictions"][m].present?
+					end if hash["restrictions"].present?
 					obj.enumeration ||= []
 				end
 				yield(obj, hash) if block_given?
@@ -66,9 +66,9 @@ module Smev
 
 			def as_hash
 				{ "type" => self.type }.tap do |hash| 
-					hash["restriction"] = {}
+					hash["restrictions"] = {}
 					%w(enumeration length minlength maxlength pattern).each do |m|
-						hash["restriction"][m] = self.send(m) if self.send(m).present?
+						hash["restrictions"][m] = self.send(m) if self.send(m).present?
 					end
 				end
 				
