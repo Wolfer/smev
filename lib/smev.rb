@@ -3,12 +3,12 @@ require 'bundler/setup'
 require 'nokogiri'
 require 'nori'
 
+require 'smev/exception'
+
 require 'ext/object'
 require 'ext/features'
 require 'ext/wsdl'
 require 'ext/nokogiri'
-
-require 'smev/exception'
 
 require 'smev/crypt/error'
 require 'smev/crypt/openssl_gost'

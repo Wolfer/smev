@@ -146,14 +146,16 @@ describe Smev::Message do
     it "signed and verify" do
       sm.fill_test
       xml = sm.to_xml
+
       noko = Nokogiri::XML::Document.parse(xml)
       noko.search_child("SignatureValue").should_not be_empty
       noko.search_child("SignatureValue").first.children.first.to_s.should_not be_empty
 
       noko.search_child("SignatureValue").first.children.first.content = "wrong_value"
       bad_xml = noko.to_s
-      expect{ sm.load_from_xml(bad_xml) }.to raise_error(SignatureError)
-
+      sm.load_from_xml(bad_xml).should be_false
+      sm.errors["load_from_xml"].should be_present
+      
       sm.load_from_xml(xml).should be_true
 
     end

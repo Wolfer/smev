@@ -1,3 +1,3 @@
-class SignatureError < Exception
+class SignatureError < SmevException
 end
       
