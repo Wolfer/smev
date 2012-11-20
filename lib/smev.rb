@@ -5,9 +5,9 @@ require 'nori'
 
 require 'ext/object'
 require 'ext/features'
+require 'ext/wsdl'
+require 'ext/nokogiri'
 
-require 'smev/extensions/wsdl'
-require 'smev/extensions/nokogiri'
 require 'smev/exception'
 
 require 'smev/crypt/error'
@@ -41,3 +41,6 @@ NAMESPACES = {
 	"smev_2_4" => "http://smev.gosuslugi.ru/rev111111",
 	"smev_2_3" => "http://smev.gosuslugi.ru/rev110801"
 }
+
+PRIVATEKEY = File.join( File.dirname(__FILE__), "keys/seckey.pem")
+CERTIFICATE = File.join( File.dirname(__FILE__), "keys/cert.pem")
