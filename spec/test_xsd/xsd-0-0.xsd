@@ -58,6 +58,11 @@
 			</xs:documentation>
 		</xs:annotation>
 	</xs:element>
+	<xs:element name="RequestCode" type="xs:string">
+		<xs:annotation>
+			<xs:documentation>Код заявления</xs:documentation>
+		</xs:annotation>
+	</xs:element>
 	<!-- types -->
 	<xs:simpleType name="idType">
 		<xs:restriction base="xs:string"/>
@@ -87,9 +92,10 @@
 	<xs:complexType name="TAppData">
 		<xs:sequence/>
 		<xs:anyAttribute processContents="lax"/>
-	</xs:complexType>
+	</xs:complexType>	
 	<xs:complexType name="TAppDocument">
 		<xs:sequence>
+			<xs:element ref="tns:RequestCode" />
 			<xs:choice>
 				<xs:element ref="tns:BinaryData"/>
 				<xs:sequence>

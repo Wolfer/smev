@@ -76,7 +76,7 @@ describe Smev::Message do
       sm.get_child("AppDocument").should be_nil
     end
 
-    it "dup" do
+    it "dupable" do
       ap = sm.get_child("AppData")
       d = ap.dup
       d.as_hash.should eql(ap.as_hash)
@@ -88,6 +88,23 @@ describe Smev::Message do
 
       ap.get_child("ИННЮЛ").set "1111111111111"
       d.get_child("ИННЮЛ").should_not eql("1111111111111")
+    end
+
+    it "transfert files" do
+      sm.fill_test
+      source = Dir.glob(File.dirname(__FILE__) + "/test_xsd/*")
+      sm.files += source
+      sm.load_from_xml sm.to_xml(false)
+      sm.files = []
+      Dir.mktmpdir do |dir|
+        sm.get_appdoc dir
+        sm.files.size.should eql(source.size)
+        sm.files.each do |file|
+          next if File.basename(file) =~ /req_[^\.]+\.xml/
+          src = source.find{|s| s.index(File.basename(file)) }
+          File.read(file).should eql(File.read(src))
+        end
+      end
     end
 
     describe "export to" do

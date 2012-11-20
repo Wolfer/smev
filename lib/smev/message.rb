@@ -1,4 +1,7 @@
 require 'builder'
+require 'zipruby'
+require 'fileutils'
+
 module Smev
 
 	class Message
@@ -10,9 +13,10 @@ module Smev
 		attr_reader :header_addition
 		attr_accessor :namespaces
 		attr_accessor :files
+		attr_writer :attachment_schema
 
 		 def self.gen_guid
-			guid = Digest::MD5.hexdigest( Time.now.to_i.to_s )
+			guid = Digest::MD5.hexdigest( Time.now.to_f.to_s )
 			guid[20...20] = "-"
 			guid[16...16] = "-"
 			guid[12...12] = "-"
@@ -89,7 +93,11 @@ module Smev
 		def to_xml sign = true
 			raise SmevException.new("Smev::Message not valid!") unless self.valid?
 
-			remove_appdoc unless have_appdoc?			
+			if need_appdoc?
+				set_appdoc
+			else
+				remove_appdoc 
+			end
 			collect_namespaces
 			# body = self.struct.map{|s| s.to_xml( self.namespaces ) }.join("\n")
 			# view = ActionView::Base.new(Rails.root.join("lib/smev/template")).render(:template => "response", :locals => {:result => body, :namespaces => self.namespaces})
@@ -127,45 +135,89 @@ module Smev
 
 
 		###### AppDocument Section
-
 		def set_appdoc
-			return nil unless have_appdoc?
-			Zip::Archive.open('filename.zip', Zip::CREATE) do |ar|
-				self.files.each do |f|
-					ar.add_file(f) if File.exist? f
+			Dir.mktmpdir do |path|
+				guid = self.class.gen_guid
+				self.files.delete_if{|f| not File.exist? f }
+				return false if self.files.blank?
+				attachment_schema.children.recreate_child("AppliedDocument", self.files.size)
+				attachment_schema.children.zip(self.files).each do |xsd, f|
+					FileUtils.cp f, path
+					xsd.load_from_hash "AppliedDocument" => {
+								"Name" => File.basename(f), 
+								"Type" => "", 
+								"URL" => "./"
+					}
 				end
+				File.write("#{path}/req_#{guid}.xml", attachment_schema.to_xml(attachment_schema.collect_namespaces))
+
+				Zip::Archive.open("#{path}/req_#{guid}.zip", Zip::CREATE) do |ar|
+					Dir.glob("#{path}/*").each do |f|
+						ar.add_file(f)
+					end
+				end
+				self.get_child("RequestCode").set guid if self.get_child("RequestCode")
+				self.get_child("BinaryData").set Base64.encode64(File.read("#{path}/req_#{guid}.zip"))
 			end
 		end
 
-		def get_appdoc
-			return nil unless have_appdoc?
-			tmpdir = Dir.mktmpdir
+		def get_appdoc dir
+			return nil unless bd = self.get_child("BinaryData") and bd.get.present?
+			raise SmevException.new("get_appdoc must get tmpdir as argument") unless File.directory? dir
+
 			data = Base64.decode64 bd.value.get
+			att_files = []
 			Zip::Archive.open_buffer(data) do |ar|
 				ar.each do |f|
-					path = File.join( tmpdir, f.name )
+					path = File.join( dir, f.name )
 					if f.directory?
 						FileUtils.mkdir_p(path)
 					else  
 						buf = ''
 						f.read{ |chunk| buf << chunk }
 						File.write path, buf.force_encoding("UTF-8")
-						self.files << path
+						att_files << path
 					end
 				end
 			end
+			if req_xml = att_files.find{|af| af.match(/req_[^\.]+\.xml/) }
+				attachment_schema.load_from_nokogiri Nokogiri::XML::Document.parse(File.read(req_xml)).children.first
+				attachment_schema.search_child("AppliedDocument").each do |ad| 
+					self.files << File.join(dir, ad.get_child("URL").get, ad.get_child("Name").get)
+				end
+			else
+				raise SmevException.new("Not have req_<GUID>.xml")
+			end
 
-			tmpdir
+			dir
 		end
 
 		def remove_appdoc
-			return false unless md = self.get_child("MessageData") and md.get_child("AppDocument").min_occurs.zero?
+			return false unless md = self.get_child("MessageData")
 			md.children.delete_if{|child| child.name == "AppDocument" }
 		end
 
-		def have_appdoc?
-			bd = self.get_child("BinaryData") and bd.value.get.present?
+		def need_appdoc?
+			return false unless ad = self.get_child("AppDocument")
+			@files.present? or ad.min_occurs > 0
 		end
+
+		def attachment_schema
+			@attachment_schema ||= begin
+				hash = {"name"=>"AppliedDocuments", "type"=>"element", "namespace"=>"http://rnd-soft.ru", "children"=>[{"name"=>"Smev::XSD::Sequence", "type"=>"sequence", "children"=>[
+					{"name"=>"AppliedDocument", "min_occurs"=>0, "max_occurs"=>999, "type"=>"element", "children"=>[{"name"=>"Smev::XSD::Sequence", "type"=>"sequence", "children"=>[
+						{"name"=>"CodeDocument", "min_occurs"=>0, "type"=>"element", "value"=>{"type"=>"string", "restrictions"=>{}}}, 
+						{"name"=>"Name", "type"=>"element", "value"=>{"type"=>"string", "restrictions"=>{}}}, 
+						{"name"=>"Number", "min_occurs"=>0, "type"=>"element", "value"=>{"type"=>"string", "restrictions"=>{}}}, 
+						{"name"=>"URL", "type"=>"element", "value"=>{"type"=>"string", "restrictions"=>{}}}, 
+						{"name"=>"Type", "type"=>"element", "value"=>{"type"=>"string", "restrictions"=>{}}}, 
+						{"name"=>"DigestValue", "min_occurs"=>0, "type"=>"element", "value"=>{"type"=>"string", "restrictions"=>{}}}
+					]}], "attributes" => [{"name"=>"ID", "type"=>"string", "restrictions"=>{"minlength"=>1, "maxlength"=>1000}}] }
+				]}]}
+				Smev::XSD::Element.build_from_hash hash
+			end
+		end
+
 
 		def dup
 			super.tap{|obj| obj.instance_eval{ struct = self.struct.map(&:dup) } }

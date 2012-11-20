@@ -39,6 +39,10 @@
 				self.value.set value
 			end
 
+			def get
+				self.value.get
+			end
+
 			def to_xml  nss
 				nss = {} unless nss.is_a? Hash
 				ns = nss.key(self.namespace)
