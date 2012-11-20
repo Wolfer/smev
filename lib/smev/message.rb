@@ -6,8 +6,11 @@ module Smev
 
 	class Message
 
+	if RUBY_PLATFORM =~ /mingw/
+		include Crypt::CryptoPro
+	else
 		include Crypt::OpenSSL
-	#  include Crypt::CryptoPro
+  end
 
 		attr_reader :struct
 		attr_reader :header_addition
@@ -48,16 +51,19 @@ module Smev
 			return false
 		end
 
-		def load_from_xml xml
+		def load_from_xml xml, skip_check_sign = false
 			Nori.strip_namespaces = true
 			Nori.convert_tags_to { |tag| tag.camelcase(:lower).to_sym }
 			Nori.parser = :nokogiri
-			
 			doc = Nokogiri::XML::Document.parse xml
-			verify doc if doc.search_child("wsse:Security").size > 0
+
+			if not skip_check_sign and doc.search_child("Security").size > 0
+				puts (verify xml).inspect
+			end
+
 			elements = doc.search_child("Body").first.children.find{|e| e.name != "text"}
 			struct.each{ |s| s.load_from_nokogiri elements }
-			return true
+			true
 		rescue SmevException => e
 			puts "[ERROR] Loading from xml! #{e}"
 			puts e.backtrace.first(5).join("\n")
@@ -103,11 +109,9 @@ module Smev
 			# view = ActionView::Base.new(Rails.root.join("lib/smev/template")).render(:template => "response", :locals => {:result => body, :namespaces => self.namespaces})
 
 			result = self.struct.map{|s| s.to_xml( self.namespaces ) }.join("\n")
-			xml = Builder::XmlMarkup.new
-			eval File.read(File.dirname(__FILE__)+"/template/response.builder")
-			doc = Nokogiri::XML::Document.parse xml.target.gsub(/\t/, '')
-			doc = signature doc if sign
-			doc.to_s
+			xml = eval File.read(File.dirname(__FILE__)+"/template/response.builder")
+			result_xml = Nokogiri::XML::Document.parse(xml.gsub(/\t/, '')).to_s
+			sign ? signature(result_xml) : result_xml
 		end
 
 		def to_hash

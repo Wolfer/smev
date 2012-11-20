@@ -143,19 +143,33 @@ describe Smev::Message do
 
     end
 
+    it "signed and verify" do
+      sm.fill_test
+      xml = sm.to_xml
+      noko = Nokogiri::XML::Document.parse(xml)
+      noko.search_child("SignatureValue").should_not be_empty
+      noko.search_child("SignatureValue").first.children.first.to_s.should_not be_empty
+
+      noko.search_child("SignatureValue").first.children.first.content = "wrong_value"
+      bad_xml = noko.to_s
+      expect{ sm.load_from_xml(bad_xml) }.to raise_error(SignatureError)
+
+      sm.load_from_xml(xml).should be_true
+
+    end
+
+
     describe 'import from' do
 
       it 'xml' do
           sm.fill_test
           xml = sm.to_xml(false)
-          original_sm = sm.dup
           sm.load_from_xml(xml).should be_true
       end
 
       it 'hash' do
           sm.fill_test
           hash = sm.to_hash
-           original_sm = sm.dup
           sm.load_from_hash(hash).should be_true
       end
 
