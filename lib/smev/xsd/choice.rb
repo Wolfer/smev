@@ -21,12 +21,7 @@ module Smev
 			end
 
 			def to_hash
-				self.children.each do |child| 
-					next unless child.valid?
-					h = child.to_hash
-					return h if h.values.first.present?
-				end
-
+				self.children.each { |child| return child.to_hash if child.valid? }
 				super
 			end
 

@@ -138,19 +138,19 @@ module Smev
 			end
 
 			def check_length
-				unless self.length.nil? or @value.to_s.size == self.length
+				unless self.length.nil? or @value.to_s.size == self.length.to_i
 					raise ValueError.new(" length must be: value == #{self.length}")
 				end
 			end
 
 			def check_minlength
-				unless self.minlength.nil? or @value.to_s.size >= self.minlength
+				unless self.minlength.nil? or @value.to_s.size >= self.minlength.to_i
 					raise ValueError.new(" length must be: value > #{self.minlength}")
 				end
 			end
 
 			def check_maxlength
-				unless self.maxlength.nil? or @value.to_s.size <= self.maxlength
+				unless self.maxlength.nil? or @value.to_s.size <= self.maxlength.to_i
 					raise ValueError.new(" length must be: value < #{self.maxlength}")
 				end
 			end
