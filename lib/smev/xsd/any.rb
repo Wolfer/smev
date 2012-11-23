@@ -69,6 +69,14 @@ module Smev
 				[]
 			end
 
+			def search_child name
+				nil
+			end
+
+			def load_from_hash hash
+				true
+			end
+
 		private
 			def method_missing method, *argv, &block
 				puts "[ERROR] #{self.class} not respond to '#{method}' method"

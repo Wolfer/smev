@@ -111,22 +111,15 @@
 
 			def collect_namespaces
 				result = [ self.namespace ]
-				result << self.children.map(&:collect_namespaces).compact unless leaf?
+				result << self.children.collect_namespaces.compact unless leaf?
 				result
 			end
 
 			def search_child name
-				finder = lambda do |elem|
-					result = []
-					if elem.is_a? Element 
-						result << elem if elem.name == name
-						result << elem.children.map{|child| finder[child] } unless elem.leaf?
-					else
-						result << elem.children.map{|child| finder[child] } if elem.children
-					end
-					result
-				end
-				finder[self].flatten
+				result = []
+				result << self if self.name == name
+				result << self.children.search_child(name) unless self.leaf?
+				result.flatten.compact
 			end
 
 			def get_child name
@@ -167,6 +160,7 @@
 						raise SmevException.new(str)
 					end
 				end
+				# puts ">#{self.name}"
 
 				noko.attributes.each do |k,v|
 					next if k == "nil" # skip nillable element
@@ -178,8 +172,15 @@
 				if self.leaf?
 					self.set noko.children.map{|t| t.text }.join
 				else
-					self.children.load_from_nokogiri noko.children.select{|c| c.name != "text"}
+					child_i = noko.children.select{|c| c.name != "text"}.each
+					self.children.load_from_nokogiri child_i
+					#get end of iterator if his not stop iterate
+					if (not_approach = [].tap{|arr| loop{ arr << child_i.next.name } }).present?
+						raise SmevException.new("Element #{self.name} don't include #{not_approach.inspect}")
+					end
+					
 				end
+				true
 			end
 
 			def self.allow_child 

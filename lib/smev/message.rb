@@ -198,7 +198,7 @@ module Smev
 
 		def remove_appdoc
 			return false unless md = self.get_child("MessageData")
-			md.children.delete_if{|child| child.name == "AppDocument" }
+			md.children.delete "AppDocument"
 		end
 
 		def need_appdoc?

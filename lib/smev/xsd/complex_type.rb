@@ -4,13 +4,13 @@
 
 			def self.build_from_xsd xsd
 				super(xsd) do |obj, xsd|
-					obj.children = xsd.nested_elements.map do |elem| 
+					obj.children = xsd.elements.map do |elem| 
 						if elem.minoccurs > 1
 							elem.minoccurs.times.map{|i| child_factory elem }
 						else
 							child_factory elem
 						end
-					end.flatten
+					end
 					obj
 				end
 			end	
@@ -116,7 +116,12 @@
 			end
 
 			def errors
-				self.children.inject({}){ |res, child| res[child.name] = child.errors if child.errors.present?; res}
+				self.children.inject({}) do|res, child|
+					if child.errors.present?
+				 		 child.is_a?(Element) ? (res[child.name] = child.errors) : res.merge!(child.errors)
+				 	end
+				 	res
+				end
 			end
 
 			def recreate_child name, size
@@ -126,13 +131,25 @@
 				size.times{ @children.insert(position, fchild.dup) }
 			end
 
+			def delete name
+				self.children.delete_if do |child|
+					if child.is_a? Element
+						child.name == "AppDocument"
+					else
+						child.delete name
+					end
+				end
+			end
 
 
 		private
 			
 			def method_missing method, *argv, &block
-		#		@children.map{ |child| child.send( method, *argv ) if child.respond_to? method }.compact
-				self.children.send method, *argv, &block 
+				if self.children.respond_to? method
+					self.children.send( method, *argv ) 
+				else
+					self.children.map{ |child| child.send( method, *argv ) }.compact
+				end
 			end
 
 		end

@@ -30,11 +30,21 @@ module Smev
 				super
 			end
 
-			def load_from_nokogiri nokogiris
-				raise SmevException.new("Choice give more then one element: #{nokogiris.map(&:name).inspect}!") if nokogiris.size != 1
-				noko = nokogiris.first
-				raise SmevException.new("Expect #{@children.map(&:name).inspect}, but given #{noko.name}!") unless child = @children.find{|c| c.name == noko.name }
-				child.load_from_nokogiri noko
+			def load_from_nokogiri noko_i, noko = nil
+				unless noko
+					before = true
+					noko = noko_i.next
+				end
+				if child = @children.find{|c| c.name == noko.name }
+					#if have element
+					child.load_from_nokogiri noko	
+				elsif ( container = @children.select{|child| not child.is_a?(Element) }).present?
+					#try with sub-sequnce\choice
+					container.each{|child| noko = child.load_from_nokogiri noko_i, noko }
+				else
+					raise SmevException.new("Expect #{@children.map(&:name).inspect}, but given #{noko.name}!")
+				end
+				noko_i.next unless before
 			end
 
 			def load_from_hash hash
@@ -45,7 +55,9 @@ module Smev
 						else
 							child.load_from_hash({key => val})
 						end
-					else
+					elsif ( container = @children.select{|child| not child.is_a?(Element) }).present?
+						container.each{|child| child.load_from_hash({key => val}) }
+					else						
 						raise SmevException.new("Expect #{@children.map(&:name).inspect}, but given #{key}!")
 					end
 				end

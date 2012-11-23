@@ -43,6 +43,7 @@ describe Smev::Message do
       sm.get_child("ИННЮЛ").set "1234567890"
       sm.get_child("ЗапросНП").attribute("ДатаНа").set "09.12.1990"
       sm.valid?.should be_false
+
       sm.errors["SendRequestRq"]["MessageData"]["AppData"]["Документ"].should_not include("ЗапросНП")
 
       sm.get_child("ИННЮЛ").set ""
@@ -82,7 +83,7 @@ describe Smev::Message do
       d.as_hash.should eql(ap.as_hash)
       ap.children.max_occurs = 3
       d.children.max_occurs.should_not eql(3)
-      
+
       ap.get_child("СвЮЛ").attribute("ОГРН").set "1111111111111"
       d.get_child("СвЮЛ").attribute("ОГРН").get.should_not eql("1111111111111")
 
@@ -127,7 +128,7 @@ describe Smev::Message do
         xml = Builder::XmlMarkup.new
         xml.instruct!
         xml.tag! "xs:schema", { "xmlns:xs" => "http://www.w3.org/2001/XMLSchema", "xmlns:tns" => "qweqwe", "targetNamespace" => "qweqwe", "elementFormDefault" => "qualified" } do
-          xml << sm.get_child("AppData").children.first.as_xsd
+          xml << sm.get_child("AppData").as_xsd
         end
 
         tmp_file = Tempfile.new "xsd"
@@ -136,7 +137,7 @@ describe Smev::Message do
         new_sm = Smev::Message.new WSDL::Importer.import( "file://" + tmp_file.path ).elements.first
         new_sm.fill_test
         sm.fill_test
-        xml_sm = sm.get_child("AppData").children.first.to_xml([])
+        xml_sm = sm.get_child("AppData").to_xml([])
         xml_new_sm = new_sm.struct.first.to_xml([])
         xml_sm.should eql(xml_new_sm)
       end
@@ -196,10 +197,10 @@ describe Smev::Message do
         end
 
         it "hash" do
-          sm_unb.load_from_hash ({"SendRequestRq"=>{"Message"=>{"Sender"=>{"Code"=>"", "Name"=>""}, "Recipient"=>{"Code"=>"", "Name"=>""}, "Originator"=>{"Code"=>"", "Name"=>""}, "TypeCode"=>"GSRV", "Date"=>"", "RequestIdRef"=>"", "OriginRequestIdRef"=>"", "ServiceCode"=>"", "CaseNumber"=>""}, "MessageData"=>{"AppData"=>{"Документ"=>{"@attr"=>{"ВерсФорм"=>"4.02", "ИдЗапросП"=>"999999999999999999999999999999999999"}, "СвЮЛ"=>{"@attr"=>{"НаимЮЛ"=>"9", "ИННЮЛ"=>"9999999999", "ОГРН"=>"9999999999999"}}, "ЗапросНП"=>[{"@attr"=>{"ДатаНа"=>"9999999999"}, "ИННЮЛ"=>"9999999999"}, {"@attr"=>{"ДатаНа"=>"8888888888"}, "ИННЮЛ"=>"8888888888"}, {"@attr"=>{"ДатаНа"=>"7777777777"}, "ИННЮЛ"=>"7777777777"}]}}, "AppDocument"=>{"BinaryData"=>"", "Reference"=>{"Include"=>{"@attr"=>{"href"=>""}}}, "DigestValue"=>""}}}})
+          sm_unb.load_from_hash ({"SendRequestRq"=>{"Message"=>{"Sender"=>{"Code"=>"", "Name"=>""}, "Recipient"=>{"Code"=>"", "Name"=>""}, "Originator"=>{"Code"=>"", "Name"=>""}, "TypeCode"=>"GSRV", "Date"=>"", "RequestIdRef"=>"", "OriginRequestIdRef"=>"", "ServiceCode"=>"", "CaseNumber"=>""}, "MessageData"=>{"AppData"=>{"Документ"=>{"@attr"=>{"ВерсФорм"=>"4.02", "ИдЗапросП"=>"999999999999999999999999999999999999"}, "СвЮЛ"=>{"@attr"=>{"НаимЮЛ"=>"9", "ИННЮЛ"=>"9999999999", "ОГРН"=>"9999999999999"}}, "ЗапросНП"=>[{"@attr"=>{"ДатаНа"=>"9999999999"}, "ИННЮЛ"=>"9999999999"}, {"@attr"=>{"ДатаНа"=>"8888888888"}, "ИННЮЛ"=>"8888888888"}, {"@attr"=>{"ДатаНа"=>"7777777777"}, "ИННЮЛ"=>"7777777777"}]}}, "AppDocument"=>{"Reference"=>{"Include"=>{"@attr"=>{"href"=>""}, "#any#"=>[nil]}}, "DigestValue"=>""}}}})
           inns = sm_unb.search_child("ИННЮЛ")
           inns.size.should eql(3)
-          sm_unb.to_hash.should eql({"SendRequestRq"=>{"Message"=>{"Sender"=>{"Code"=>"", "Name"=>""}, "Recipient"=>{"Code"=>"", "Name"=>""}, "Originator"=>{"Code"=>"", "Name"=>""}, "TypeCode"=>"GSRV", "Date"=>"", "RequestIdRef"=>"", "OriginRequestIdRef"=>"", "ServiceCode"=>"", "CaseNumber"=>""}, "MessageData"=>{"AppData"=>{"Документ"=>{"@attr"=>{"ВерсФорм"=>"4.02", "ИдЗапросП"=>"999999999999999999999999999999999999"}, "СвЮЛ"=>{"@attr"=>{"НаимЮЛ"=>"9", "ИННЮЛ"=>"9999999999", "ОГРН"=>"9999999999999"}}, "ЗапросНП"=>[{"@attr"=>{"ДатаНа"=>"9999999999"}, "ИННЮЛ"=>"9999999999"}, {"@attr"=>{"ДатаНа"=>"8888888888"}, "ИННЮЛ"=>"8888888888"}, {"@attr"=>{"ДатаНа"=>"7777777777"}, "ИННЮЛ"=>"7777777777"}]}}, "AppDocument"=>{"BinaryData"=>"", "Reference"=>{"Include"=>{"@attr"=>{"href"=>""}}}, "DigestValue"=>""}}}})
+          sm_unb.to_hash.should eql({"SendRequestRq"=>{"Message"=>{"Sender"=>{"Code"=>"", "Name"=>""}, "Recipient"=>{"Code"=>"", "Name"=>""}, "Originator"=>{"Code"=>"", "Name"=>""}, "TypeCode"=>"GSRV", "Date"=>"", "RequestIdRef"=>"", "OriginRequestIdRef"=>"", "ServiceCode"=>"", "CaseNumber"=>""}, "MessageData"=>{"AppData"=>{"Документ"=>{"@attr"=>{"ВерсФорм"=>"4.02", "ИдЗапросП"=>"999999999999999999999999999999999999"}, "СвЮЛ"=>{"@attr"=>{"НаимЮЛ"=>"9", "ИННЮЛ"=>"9999999999", "ОГРН"=>"9999999999999"}}, "ЗапросНП"=>[{"@attr"=>{"ДатаНа"=>"9999999999"}, "ИННЮЛ"=>"9999999999"}, {"@attr"=>{"ДатаНа"=>"8888888888"}, "ИННЮЛ"=>"8888888888"}, {"@attr"=>{"ДатаНа"=>"7777777777"}, "ИННЮЛ"=>"7777777777"}]}}, "AppDocument"=>{"Reference"=>{"Include"=>{"@attr"=>{"href"=>""}, "#any#"=>[nil]}}, "DigestValue"=>""}}}})
           inns.shift.value.get.should eql("9999999999")
           inns.shift.value.get.should eql("8888888888")
           inns.shift.value.get.should eql("7777777777")
