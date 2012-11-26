@@ -44,7 +44,7 @@ describe Smev::Message do
       sm.get_child("ЗапросНП").attribute("ДатаНа").set "09.12.1990"
       sm.valid?.should be_false
 
-      sm.errors["SendRequestRq"]["MessageData"]["AppData"]["Документ"].should_not include("ЗапросНП")
+      sm.errors["getFNS"]["MessageData"]["AppData"]["Data"]["Документ"].should_not include("ЗапросНП")
 
       sm.get_child("ИННЮЛ").set ""
       sm.get_child("ЗапросНП").attribute("ДатаНа").set ""

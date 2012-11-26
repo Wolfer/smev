@@ -108,7 +108,7 @@
 			def valid?
 				#FIXME TEST THIS
 				check = true
-				collect_children.group_by(&:name).each do |name, childs| 
+				children.group_by(&:name).each do |name, childs| 
 					check = false unless childs.first.can_occurs(childs.size)
 					childs.each{|child| check = false unless child.valid? }
 				end

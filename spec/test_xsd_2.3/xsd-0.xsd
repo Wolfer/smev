@@ -1,0 +1,126 @@
+<?xml version='1.0' encoding='UTF-8'?><!-- Published by JAX-WS RI at http://jax-ws.dev.java.net. RI's version is Metro/2.1.1 (branches/2.1-6844; 2011-07-29T12:07:24+0000) JAXWS-RI/2.2.5 JAXWS/2.2. --><xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:Rq1="http://ws.unisoft/FNSZDL/Rq1" xmlns:Rs1="http://ws.unisoft/FNSZDL/Rs1" xmlns:Rq2="http://ws.unisoft/FNSZDL/Rq2" xmlns:Rs2="http://ws.unisoft/FNSZDL/Rs2" xmlns:tns="http://smev.gosuslugi.ru/rev110801" targetNamespace="http://smev.gosuslugi.ru/rev110801" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<!-- includes -->
+	<xs:include schemaLocation="xsd-0-0.xsd"/>
+	<!-- imports -->
+	<xs:import namespace="http://ws.unisoft/FNSZDL/Rq1" schemaLocation="xsd-0-1.xsd"/>
+	<xs:import namespace="http://ws.unisoft/FNSZDL/Rs1" schemaLocation="xsd-0-2.xsd"/>
+	<xs:import namespace="http://ws.unisoft/FNSZDL/Rq2" schemaLocation="xsd-0-3.xsd"/>
+	<xs:import namespace="http://ws.unisoft/FNSZDL/Rs2" schemaLocation="xsd-0-4.xsd"/>
+	<!-- types -->
+	<xs:complexType name="TMessageData_Rq1">
+		<xs:complexContent>
+			<xs:extension base="tns:TMessageData">
+				<xs:sequence>
+					<xs:element name="AppData" minOccurs="0">
+						<xs:complexType>
+							<xs:complexContent>
+								<xs:extension base="tns:TAppData">
+									<xs:sequence>
+										<xs:element ref="Rq1:Документ"/>
+									</xs:sequence>
+								</xs:extension>
+							</xs:complexContent>
+						</xs:complexType>
+					</xs:element>
+					<xs:element name="AppDocument" type="tns:TAppDocument" minOccurs="0"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="TMessageData_Rs1">
+		<xs:complexContent>
+			<xs:extension base="tns:TMessageData">
+				<xs:sequence>
+					<xs:element name="AppData" minOccurs="0">
+						<xs:complexType>
+							<xs:complexContent>
+								<xs:extension base="tns:TAppData">
+									<xs:sequence>
+										<xs:element ref="Rs1:Документ"/>
+									</xs:sequence>
+								</xs:extension>
+							</xs:complexContent>
+						</xs:complexType>
+					</xs:element>
+					<xs:element name="AppDocument" type="tns:TAppDocument" minOccurs="0"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="TMessageData_Rq2">
+		<xs:complexContent>
+			<xs:extension base="tns:TMessageData">
+				<xs:sequence>
+					<xs:element name="AppData" minOccurs="0">
+						<xs:complexType>
+							<xs:complexContent>
+								<xs:extension base="tns:TAppData">
+									<xs:sequence>
+										<xs:element ref="Rq2:Документ"/>
+									</xs:sequence>
+								</xs:extension>
+							</xs:complexContent>
+						</xs:complexType>
+					</xs:element>
+					<xs:element name="AppDocument" type="tns:TAppDocument" minOccurs="0"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="TMessageData_Rs2">
+		<xs:complexContent>
+			<xs:extension base="tns:TMessageData">
+				<xs:sequence>
+					<xs:element name="AppData" minOccurs="0">
+						<xs:complexType>
+							<xs:complexContent>
+								<xs:extension base="tns:TAppData">
+									<xs:sequence>
+										<xs:element ref="Rs2:Документ"/>
+									</xs:sequence>
+								</xs:extension>
+							</xs:complexContent>
+						</xs:complexType>
+					</xs:element>
+					<xs:element name="AppDocument" type="tns:TAppDocument" minOccurs="0"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="SendRequestRq">
+		<xs:complexContent>
+			<xs:extension base="tns:TRoot">
+				<xs:sequence>
+					<xs:element name="MessageData" type="tns:TMessageData_Rq1"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="SendRequestRs">
+		<xs:complexContent>
+			<xs:extension base="tns:TRoot">
+				<xs:sequence>
+					<xs:element name="MessageData" type="tns:TMessageData_Rs1"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="GetResponseRq">
+		<xs:complexContent>
+			<xs:extension base="tns:TRoot">
+				<xs:sequence>
+					<xs:element name="MessageData" type="tns:TMessageData_Rq2"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="GetResponseRs">
+		<xs:complexContent>
+			<xs:extension base="tns:TRoot">
+				<xs:sequence>
+					<xs:element name="MessageData" type="tns:TMessageData_Rs2"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+</xs:schema>

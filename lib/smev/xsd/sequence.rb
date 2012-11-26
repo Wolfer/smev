@@ -56,7 +56,7 @@ module Smev
 							child.load_from_hash({name => val})
 						end
 					else
-						@children.select{|c| not c.is_a?(Element)}.each{|child| child.load_from_hash hash }
+						@children.select{|c| not c.is_a?(Element)}.each{|child| child.load_from_hash({name => value}) }
 					end
 				end
 			end

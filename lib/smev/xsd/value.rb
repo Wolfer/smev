@@ -164,9 +164,13 @@ module Smev
 
 			def regexp_to_str reg
 				reg = reg.to_s.sub(/\(\?\-mix\:(.+)\)/,"\\1")
-				reg.gsub! /\d-(\d)/, '\\1'
-				reg.gsub! /\w-(\w)/, '\\1'
-				reg.gsub! /\[([^\]])+\]/, '\\1'
+				reg.gsub! /\d-(\d)/, '\\1' # 0-9
+				reg.gsub! /\w-(\w)/, '\\1' # A-Z
+				reg.gsub! /\[([^\]])+\]/, '\\1' # [<any>]
+
+				reg.gsub! /\\d/, '9' # \d
+				reg.gsub! /\\w/, 'X' # \w
+
 				while reg.match /(.)\{(\d+)[^\}]*\}/
 				  reg.sub! /(.)\{(\d+)[^\}]*\}/, ($1 * $2.to_i)  # replace .{\d}
 				end
