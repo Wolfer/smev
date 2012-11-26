@@ -142,20 +142,19 @@ module Smev
 		def set_appdoc
 			Dir.mktmpdir do |path|
 				guid = self.class.gen_guid
-				self.files.map! do |file|
+				files4send = self.files.map do |file|
 					file = { "Name" => file }	if file.is_a? String
 					file if File.exist? file["Name"]
 				end.compact
 
-				return false if self.files.blank?
-				attachment_schema.children.recreate_child("AppliedDocument", self.files.size)
-				attachment_schema.children.zip(self.files).each do |xsd, f|
+				return false if files4send.blank?
+				attachment_schema.children.recreate_child("AppliedDocument", files4send.size)
+				attachment_schema.children.zip(files4send).each do |xsd, f|
 					FileUtils.cp f["Name"], path
 					f["Url"] = './'
 					f["DigestValue"] = digest(File.read(f["Name"]))
 					f["Type"] = MIME::Types.type_for(f["Name"]).first || 'text/plain'
 					f["Name"] = File.basename(f["Name"])
-					puts f.inspect
 					xsd.load_from_hash "AppliedDocument" => f
 				end
 

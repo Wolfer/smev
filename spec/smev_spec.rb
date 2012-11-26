@@ -96,6 +96,7 @@ describe Smev::Message do
       source = Dir.glob(File.dirname(__FILE__) + "/test_xsd/*")
       sm.files += source
       sm.load_from_xml sm.to_xml(false)
+      File.write "/iteq/minstroi/spec/test_files.xml", sm.to_xml(false)
       sm.files = []
       Dir.mktmpdir do |dir|
         sm.get_appdoc dir
