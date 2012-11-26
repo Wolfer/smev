@@ -15,6 +15,7 @@ gem 'nokogiri'#, :git => "git://github.com/tenderlove/nokogiri.git", :branch => 
 gem 'nori'
 gem 'builder'
 gem 'zipruby'
+gem 'mime-types'
 
 
 # Declare any dependencies that are still in development here instead of in

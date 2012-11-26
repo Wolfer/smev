@@ -2,6 +2,7 @@ require 'bundler/setup'
 
 require 'nokogiri'
 require 'nori'
+require 'mime/types'
 
 require 'smev/exception'
 
