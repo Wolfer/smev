@@ -142,17 +142,19 @@ module Smev
 		def set_appdoc
 			Dir.mktmpdir do |path|
 				guid = self.class.gen_guid
-				self.files.delete_if{|f| not File.exist? f }
+				self.files.map! do |file|
+					file = { "Name" => file, "Type" => "", "URL" => "./"	}	if file.is_a? String
+					file if File.exist? file["Name"]
+				end.compact
+
 				return false if self.files.blank?
 				attachment_schema.children.recreate_child("AppliedDocument", self.files.size)
 				attachment_schema.children.zip(self.files).each do |xsd, f|
-					FileUtils.cp f, path
-					xsd.load_from_hash "AppliedDocument" => {
-								"Name" => File.basename(f), 
-								"Type" => "", 
-								"URL" => "./"
-					}
+					FileUtils.cp f["Name"], path
+					f["Name"] = File.basename(f["Name"])
+					xsd.load_from_hash "AppliedDocument" => f
 				end
+
 				File.write("#{path}/req_#{guid}.xml", attachment_schema.to_xml(attachment_schema.collect_namespaces))
 
 				Zip::Archive.open("#{path}/req_#{guid}.zip", Zip::CREATE) do |ar|
@@ -187,7 +189,9 @@ module Smev
 			if req_xml = att_files.find{|af| af.match(/req_[^\.]+\.xml/) }
 				attachment_schema.load_from_nokogiri Nokogiri::XML::Document.parse(File.read(req_xml)).children.first
 				attachment_schema.search_child("AppliedDocument").each do |ad| 
-					self.files << File.join(dir, ad.get_child("URL").get, ad.get_child("Name").get)
+					file = ad.children.to_hash
+					file["Name"] = File.join(dir, file["URL"], file["Name"])
+					self.files << file
 				end
 			else
 				raise SmevException.new("Not have req_<GUID>.xml")

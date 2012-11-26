@@ -101,9 +101,9 @@ describe Smev::Message do
         sm.get_appdoc dir
         sm.files.size.should eql(source.size)
         sm.files.each do |file|
-          next if File.basename(file) =~ /req_[^\.]+\.xml/
-          src = source.find{|s| s.index(File.basename(file)) }
-          File.read(file).should eql(File.read(src))
+          next if File.basename(file["Name"]) =~ /req_[^\.]+\.xml/
+          src = source.find{|s| s.index(File.basename(file["Name"])) }
+          File.read(file["Name"]).should eql(File.read(src))
         end
       end
     end
