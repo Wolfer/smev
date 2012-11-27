@@ -221,14 +221,14 @@
 						@errors["@value"] = "got '#{self.value.get}', but expect then #{e.to_s}"
 					end
 				else
-					return false unless self.min_occurs.zero? or self.children.valid?
+					return false unless self.children.valid?
 				end			 
 				@errors.empty?
 			end
 
 			def errors
 				@calc_errors ||= begin
-					errs = (@errors ||={})
+					errs = (@errors||{})
 					if !self.leaf?
 						errs.merge!(self.children.errors) if self.children.errors.present?
 					end

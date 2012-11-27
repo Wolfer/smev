@@ -110,7 +110,7 @@
 				check = true
 				children.group_by(&:name).each do |name, childs| 
 					check = false unless childs.first.can_occurs(childs.size)
-					childs.each{|child| check = false unless child.valid? }
+					childs.each{|child| check = false unless child.valid? or child.min_occurs.zero? }
 				end
 				check
 			end

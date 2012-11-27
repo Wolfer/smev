@@ -40,6 +40,8 @@ module Smev
 					end
 				end
 				noko
+			rescue StopIteration => e
+				raise SmevException.new("Except that Sequence have element #{@children.map(&:name).inspect}")
 			end # def
 
 
