@@ -228,7 +228,7 @@
 
 			def errors
 				@calc_errors ||= begin
-					errs = @errors
+					errs = (@errors ||={})
 					if !self.leaf?
 						errs.merge!(self.children.errors) if self.children.errors.present?
 					end
