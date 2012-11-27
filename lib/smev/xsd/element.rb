@@ -44,6 +44,7 @@
 			end
 
 			def to_xml  nss
+				raise SmevException.new("Not valid element #{self.name}") unless self.valid?(false)
 				nss = {} unless nss.is_a? Hash
 				ns = nss.key(self.namespace)
 				ns = ns ? ns.split(':').last.to_s+":" : ''
@@ -63,6 +64,12 @@
 				end
 						
 				result 
+			rescue SmevException => e
+				if self.min_occurs.zero?
+					''
+				else
+					raise e 
+				end
 			end
 
 			def as_hash ns = nil
@@ -201,7 +208,7 @@
 				new_obj
 			end
 
-			def valid?
+			def valid? with_children = true
 				@calc_errors = nil
 				@errors = {}
 				if self.attributes.present?
@@ -221,7 +228,7 @@
 						@errors["@value"] = "got '#{self.value.get}', but expect then #{e.to_s}"
 					end
 				else
-					return false unless self.children.valid?
+					return false if with_children and not self.children.valid?
 				end			 
 				@errors.empty?
 			end

@@ -59,6 +59,24 @@ describe Smev::Message do
 
     end
 
+    it 'may not filling min_occurs zero' do
+      sm.valid?.should be_false
+      sm.errors.should_not eql({})
+      sm.get_child("MessageData").fill_test
+      sm.get_child("Message").load_from_hash "Message" =>{
+        "Sender" => {"Code" => "FNS001611", "Name" => "FNS" }, 
+        "Recipient" => { "Code" => "MB0101611", "Name" => "Minstroi" },
+        "ServiceName" => "MB0101611", 
+        "TypeCode" => "GSRV", 
+        "Status" => "REQUEST", 
+        "Date" => Time.now.xmlschema, 
+        "ExchangeType" => "2", 
+      }
+      sm.valid?.should be_true
+      sm.errors.should_not eql({})
+      sm.to_xml(false).index("Originator").should be_nil, "Must delete from xml not valid element with min_occurs zero"
+    end
+
     it "generate fault" do
       hash =  {"name"=>"Fault", "type"=>"element", "namespace" => "http://schemas.xmlsoap.org/soap/envelope/", "children"=>[
                 {"name"=>"Sequence", "type"=>"sequence", "children"=>[
