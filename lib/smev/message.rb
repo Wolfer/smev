@@ -57,9 +57,7 @@ module Smev
 			Nori.parser = :nokogiri
 			doc = Nokogiri::XML::Document.parse xml
 
-			if not skip_check_sign and doc.search_child("Security").size > 0
-				puts (verify xml).inspect
-			end
+			verify(xml) if not skip_check_sign and doc.search_child("Security").size > 0
 
 			elements = doc.search_child("Body").first.children.find{|e| e.name != "text"}
 			struct.each{ |s| s.load_from_nokogiri elements }

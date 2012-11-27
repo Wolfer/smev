@@ -221,7 +221,7 @@
 						@errors["@value"] = "got '#{self.value.get}', but expect then #{e.to_s}"
 					end
 				else
-					return false unless self.children.valid?
+					return false unless self.min_occurs.zero? or self.children.valid?
 				end			 
 				@errors.empty?
 			end
