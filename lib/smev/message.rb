@@ -144,7 +144,7 @@ module Smev
 				guid = self.class.gen_guid
 				files4send = self.files.map do |file|
 					file = { "Name" => file }	if file.is_a? String
-					file if File.exist? file["Name"]
+					file if File.file? file["Name"]
 				end.compact
 
 				return false if files4send.blank?
