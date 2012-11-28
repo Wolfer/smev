@@ -16,7 +16,6 @@ module Smev
 		attr_reader :header_addition
 		attr_accessor :namespaces
 		attr_accessor :files
-		attr_writer :attachment_schema
 
 		 def self.gen_guid
 			guid = Digest::MD5.hexdigest( Time.now.to_f.to_s )
@@ -140,23 +139,31 @@ module Smev
 		def set_appdoc
 			Dir.mktmpdir do |path|
 				guid = self.class.gen_guid
+
 				files4send = self.files.map do |file|
 					file = { "Name" => file }	if file.is_a? String
 					file if File.file? file["Name"]
 				end.compact
 
-				return false if files4send.blank?
-				attachment_schema.children.recreate_child("AppliedDocument", files4send.size)
-				attachment_schema.children.zip(files4send).each do |xsd, f|
-					FileUtils.cp f["Name"], path
-					f["Url"] = './'
-					f["DigestValue"] = digest(File.read(f["Name"]))
-					f["Type"] = MIME::Types.type_for(f["Name"]).first || 'text/plain'
-					f["Name"] = File.basename(f["Name"])
-					xsd.load_from_hash "AppliedDocument" => f
+				if files4send.present? and ads = attachment_schema.get_child("AppliedDocuments")					
+					ads.children.recreate_child("AppliedDocument", files4send.size)
+					ads.children.zip(files4send).each do |xsd, f|
+						FileUtils.cp f["Name"], path
+						f["Url"] = './'
+						f["DigestValue"] = digest(File.read(f["Name"]))
+						f["Type"] = MIME::Types.type_for(f["Name"]).first || 'text/plain'
+						f["Name"] = File.basename(f["Name"])
+						xsd.load_from_hash "AppliedDocument" => f
+					end
+				else
+					return false if attachment_schema.name == "AppliedDocuments"
 				end
 
-				File.write("#{path}/req_#{guid}.xml", attachment_schema.to_xml(attachment_schema.collect_namespaces))
+				begin
+					File.write("#{path}/req_#{guid}.xml", attachment_schema.to_xml(attachment_schema.collect_namespaces))
+				rescue SmevException => e
+					raise SmevException.new("Attachment XML invalid! #{e.to_s}")
+				end
 
 				Zip::Archive.open("#{path}/req_#{guid}.zip", Zip::CREATE) do |ar|
 					Dir.glob("#{path}/*").each do |f|
@@ -209,12 +216,12 @@ module Smev
 
 		def need_appdoc?
 			return false unless ad = self.get_child("AppDocument")
-			@files.present? or ad.min_occurs > 0
+			@files.present? or @attachment_schema.present? or ad.min_occurs > 0
 		end
 
 		def attachment_schema
-			@attachment_schema ||= begin
-				hash = {"name"=>"AppliedDocuments", "type"=>"element", "namespace"=>"http://rnd-soft.ru", "children"=>[{"name"=>"Smev::XSD::Sequence", "type"=>"sequence", "children"=>[
+			unless @attachment_schema.is_a? Smev::XSD::Element
+				self.attachment_schema = {"name"=>"AppliedDocuments", "type"=>"element", "namespace"=>"http://rnd-soft.ru", "children"=>[{"name"=>"Smev::XSD::Sequence", "type"=>"sequence", "children"=>[
 					{"name"=>"AppliedDocument", "min_occurs"=>0, "max_occurs"=>999, "type"=>"element", "children"=>[{"name"=>"Smev::XSD::Sequence", "type"=>"sequence", "children"=>[
 						{"name"=>"CodeDocument", "min_occurs"=>0, "type"=>"element", "value"=>{"type"=>"string", "restrictions"=>{}}}, 
 						{"name"=>"Name", "type"=>"element", "value"=>{"type"=>"string", "restrictions"=>{}}}, 
@@ -224,8 +231,13 @@ module Smev
 						{"name"=>"DigestValue", "min_occurs"=>0, "type"=>"element", "value"=>{"type"=>"string", "restrictions"=>{}}}
 					]}], "attributes" => [{"name"=>"ID", "type"=>"string", "restrictions"=>{"minlength"=>1, "maxlength"=>1000}}] }
 				]}]}
-				Smev::XSD::Element.build_from_hash hash
 			end
+			@attachment_schema
+		end
+
+		def attachment_schema= hash
+			raise SmevException.new("Attachment_schema get XSD hash struct") unless hash.is_a? Hash
+			@attachment_schema = Smev::XSD::Element.build_from_hash hash
 		end
 
 

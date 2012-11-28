@@ -109,23 +109,46 @@ describe Smev::Message do
       d.get_child("ИННЮЛ").should_not eql("1111111111111")
     end
 
-    it "transfert files" do
-      sm.fill_test
-      source = Dir.glob(File.dirname(__FILE__) + "/test_xsd/*")
-      sm.files += source
-      sm.load_from_xml sm.to_xml(false)
+    describe "transfert" do
 
-      sm.files = []
-      Dir.mktmpdir do |dir|
-        sm.get_appdoc dir
-        sm.files.size.should eql(source.size)
-        sm.files.each do |file|
-          next if File.basename(file["Name"]) =~ /req_[^\.]+\.xml/
-          src = source.find{|s| s.index(File.basename(file["Name"])) }
-          File.read(file["Name"]).should eql(File.read(src))
+      it "files" do
+        sm.fill_test
+        source = Dir.glob(File.dirname(__FILE__) + "/test_xsd/*")
+        sm.files += source
+        sm.load_from_xml sm.to_xml(false)
+
+        sm.files = []
+        Dir.mktmpdir do |dir|
+          sm.get_appdoc dir
+          sm.files.size.should eql(source.size)
+          sm.files.each do |file|
+            next if File.basename(file["Name"]) =~ /req_[^\.]+\.xml/
+            src = source.find{|s| s.index(File.basename(file["Name"])) }
+            File.read(file["Name"]).should eql(File.read(src))
+          end
         end
       end
+
+      it "information" do
+        sm.fill_test
+        source = Dir.glob(File.dirname(__FILE__) + "/test_xsd/*")
+        sm.attachment_schema = {"name"=>"PeopleInfo", "type"=>"element", "namespace"=>"http://rnd-soft.ru", "children"=>[{"name"=>"Smev::XSD::Sequence", "type"=>"sequence", "children"=>[
+          {"name"=>"FIO", "type"=>"element", "children"=>[{"name"=>"Smev::XSD::Sequence", "type"=>"sequence", "children"=>[
+            {"name"=>"Surname", "type"=>"element", "value"=>{"type"=>"string", "restrictions"=>{"length"=>"1"}}}, 
+            {"name"=>"Name", "type"=>"element", "value"=>{"type"=>"string", "restrictions"=>{"length"=>"1"}}}, 
+            {"name"=>"Patronymic", "type"=>"element", "value"=>{"type"=>"string", "restrictions"=>{"length"=>"1"}}}
+        ]}]}]}]}
+        sm.attachment_schema.fill_test
+        start_hash = sm.attachment_schema.to_hash
+
+        sm.load_from_xml sm.to_xml(false)
+
+        Dir.mktmpdir { |dir| sm.get_appdoc dir }
+        sm.attachment_schema.to_hash.should eql(start_hash)
+      end
+
     end
+
 
     describe "export to" do
 
