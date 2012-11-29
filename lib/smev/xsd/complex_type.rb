@@ -131,12 +131,13 @@
 				size.times{ @children.insert(position, fchild.dup) }
 			end
 
-			def delete name
+			def remove_child name
 				self.children.delete_if do |child|
 					if child.is_a? Element
-						child.name == "AppDocument"
+						child.name == name
 					else
-						child.delete name
+						child.remove_child name
+						false
 					end
 				end
 			end
@@ -146,7 +147,7 @@
 			
 			def method_missing method, *argv, &block
 				if self.children.respond_to? method
-					self.children.send( method, *argv ) 
+					self.children.send( method, *argv, &block ) 
 				else
 					self.children.map{ |child| child.send( method, *argv ) }.compact
 				end
