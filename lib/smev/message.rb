@@ -235,9 +235,15 @@ module Smev
 			@attachment_schema
 		end
 
-		def attachment_schema= hash
-			raise SmevException.new("Attachment_schema get XSD hash struct") unless hash.is_a? Hash
-			@attachment_schema = Smev::XSD::Element.build_from_hash hash
+		def attachment_schema= obj
+			@attachment_schema = case obj
+			when Hash
+				Smev::XSD::Element.build_from_hash obj
+			when Smev::XSD::Element
+				obj
+			else
+				raise SmevException.new("Attachment_schema get XSD hash struct")
+			end
 		end
 
 
