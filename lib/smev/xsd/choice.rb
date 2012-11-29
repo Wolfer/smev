@@ -52,8 +52,6 @@ module Smev
 						end
 					elsif ( container = @children.select{|child| not child.is_a?(Element) }).present?
 						container.each{|child| child.load_from_hash({key => val}) }
-					else						
-						raise SmevException.new("Expect #{@children.map(&:name).inspect}, but given #{key}!")
 					end
 				end
 			end
