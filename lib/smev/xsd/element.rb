@@ -30,6 +30,13 @@
 				end
 			end
 
+			def can_occurs num
+				if num.between? self.min_occurs, self.max_occurs
+					true
+				else
+					raise SmevException.new("Expect that #{name} occurs #{self.min_occurs.to_i} - #{self.max_occurs}, but given #{num}")
+				end
+			end
 
 			def attribute name
 				self.attributes.find{|a| a.name == name } if self.attributes
