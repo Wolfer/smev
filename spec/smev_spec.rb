@@ -5,7 +5,7 @@ describe Smev::Message do
 
   let(:xsd) do
     wsdl = WSDL::Importer.import( "file://" + File.dirname(__FILE__) + "/test_xsd/wsdl" )
-    wsdl.find_by_action wsdl.methods.first
+    wsdl.find_by_action wsdl.soap_actions.first
   end
 
   describe "created" do
@@ -221,7 +221,7 @@ describe Smev::Message do
       describe '(unbounded)' do
         let(:sm_unb) do
           wsdl = WSDL::Importer.import( "file://" + File.dirname(__FILE__) + "/test_xsd_unbounded/wsdl" )
-          Smev::Message.new wsdl.find_by_action(wsdl.methods.first)
+          Smev::Message.new wsdl.find_by_action(wsdl.soap_actions.first)
         end
 
         it "xml" do

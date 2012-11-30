@@ -14,7 +14,7 @@ module WSDL
       self.collect_elements.find_name self.message( mes ).parts.find{|p| ps.present? ? p.name == ps : true }.element.name
     end
 
-    def methods
+    def soap_actions
       self.porttypes.map { |pt| pt.operations.map(&:name) }.flatten.uniq
     end
 
