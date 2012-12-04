@@ -152,7 +152,6 @@
 				if val.is_a? Hash
 					if val.include? "@attr"
 						val.fetch("@attr", {}).each { |k,v|   if  attr = self.attribute(k); attr.set(v); end }
-						val.delete "@attr"
 					end
 					if self.leaf?
 						self.set(val.fetch("@value", nil) )
