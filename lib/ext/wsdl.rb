@@ -6,7 +6,8 @@ module WSDL
     def find_by_action action, output = false
       #FIXME find from all
       #ищем операцию и  описывающий ещё wsdl:message
-      op = self.porttypes.first.operations.find{ |o| o.name == action }
+      raise Error.new("operation '#{action}' not found") unless op = self.porttypes.first.operations.find{ |o| o.name == action }
+
       mes = ( output ? op.output : op.input).message
       # что то делаем... РАЗОБРАТЬ
       ps = self.bindings.first.operations.find{ |o| o.name == action }.input.soapbody.parts
