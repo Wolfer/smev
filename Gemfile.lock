@@ -9,6 +9,7 @@ PATH
   remote: .
   specs:
     smev (0.0.1)
+      mime-types
       nokogiri
       zipruby
 
