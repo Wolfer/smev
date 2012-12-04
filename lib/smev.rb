@@ -3,6 +3,7 @@ require 'bundler/setup'
 require 'nokogiri'
 require 'nori'
 require 'mime/types'
+require 'httpi'
 
 require 'smev/exception'
 

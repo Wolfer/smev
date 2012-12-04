@@ -6,16 +6,19 @@ module Smev
 
 	class Message
 
-	if RUBY_PLATFORM =~ /mingw/
-		include Crypt::CryptoPro
-	else
-		include Crypt::OpenSSL
-  end
+		if RUBY_PLATFORM =~ /mingw/
+			include Crypt::CryptoPro
+		else
+			include Crypt::OpenSSL
+		end
 
 		attr_reader :struct
 		attr_reader :header_addition
 		attr_accessor :namespaces
 		attr_accessor :files
+
+		attr_accessor :endpoint
+		attr_accessor :soap_action
 
 		 def self.gen_guid
 			guid = Digest::MD5.hexdigest( Time.now.to_f.to_s )
@@ -24,6 +27,24 @@ module Smev
 			guid[12...12] = "-"
 			guid[8...8] = "-"
 			guid
+		end
+
+		def self.from_wsdl wsdl, action = nil, output = false
+			#FIXME write test for me
+			wsdl = WSDL::Importer.import( wsdl ) if wsdl.is_a? String
+			action ||= wsdl.soap_actions.first
+
+			sm = self.new wsdl.find_by_action( action, output ) do |sm|
+				sm.soap_action = action.to_s
+				sm.endpoint = wsdl.services.first.ports.first.soap_address.location
+			end
+			sm
+		end
+
+		def endpoint= url
+			url = URI(url.to_s) if url.is_a? String
+			raise SmevException.new("Except endpoint be valid URL") unless url.is_a? URI::HTTP
+			@endpoint = url 
 		end
 		
 		def initialize value
@@ -35,6 +56,7 @@ module Smev
 			end
 			@errors = {}			
 			self.files ||= []
+			yield self if block_given?
 		end
 
 		###### Import Section
@@ -249,6 +271,21 @@ module Smev
 
 		def dup
 			super.tap{|obj| obj.instance_eval{ struct = self.struct.map(&:dup) } }
+		end
+
+
+		def make_request body = ''
+			#FIXME write test for me
+			raise SmevException.new("Need endpoint and soap_action!") unless self.endpoint.present? and self.soap_action.present?
+			body = self.to_xml if body.blank?
+			
+			http = HTTPI::Request.new
+			http.url = self.endpoint
+			http.headers["SOAPAction"] = self.soap_action.to_s
+			http.headers["Content-Type"] = "application/soap+xml;charset=UTF-8"
+			http.headers["Content-Length"] = body.bytesize.to_s
+			http.body = body
+			HTTPI.post(http)
 		end
 
 	private
