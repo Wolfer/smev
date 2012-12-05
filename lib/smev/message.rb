@@ -21,7 +21,7 @@ module Smev
 		attr_accessor :soap_action
 
 		 def self.gen_guid
-			guid = Digest::MD5.hexdigest( Time.now.to_f.to_s )
+			guid = Digest::MD5.hexdigest( Time.now.to_f.to_s ).upcase
 			guid[20...20] = "-"
 			guid[16...16] = "-"
 			guid[12...12] = "-"
