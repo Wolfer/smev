@@ -278,14 +278,7 @@ module Smev
 			#FIXME write test for me
 			raise SmevException.new("Need endpoint and soap_action!") unless self.endpoint.present? and self.soap_action.present?
 			body = self.to_xml if body.blank?
-			
-			http = HTTPI::Request.new
-			http.url = self.endpoint
-			http.headers["SOAPAction"] = self.soap_action.to_s
-			http.headers["Content-Type"] = "application/soap+xml;charset=UTF-8"
-			http.headers["Content-Length"] = body.bytesize.to_s
-			http.body = body
-			HTTPI.post(http)
+			Smev::Request.do self.endpoint, self.soap_action.to_s, (body.present? ?  body : self.to_xml )
 		end
 
 	private

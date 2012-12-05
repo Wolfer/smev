@@ -28,6 +28,7 @@ require 'smev/xsd/choice'
 require 'smev/xsd/element'
 
 require 'smev/message'
+require 'smev/request'
 
 module Smev
 end
