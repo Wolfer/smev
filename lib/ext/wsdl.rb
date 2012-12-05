@@ -32,11 +32,11 @@ module WSDL
       end
       
       def complex_type
-        @complex_type ||= self.type ? self.root.collect_complextypes.find_name(self.type.name) : self.local_complextype
+        @complex_type ||= self.type ? self.root.collect_complextypes[self.type] : self.local_complextype
       end
 
       def simple_type
-        @simple_type ||= self.type ? ( self.root.collect_simpletypes.find_name(self.type.name) || self.type ) : self.local_simpletype
+        @simple_type ||= self.type ? ( self.root.collect_simpletypes[self.type] || self.type ) : self.local_simpletype
       end
 
       def search_child name
@@ -61,7 +61,7 @@ module WSDL
       attr_accessor :value
 
       def simple_type
-        @simple_type ||= self.type ? ( self.root.collect_simpletypes.find_name(self.type.name) || self.type ) : self.local_simpletype
+        @simple_type ||= self.type ? ( self.root.collect_simpletypes[self.type] || self.type ) : self.local_simpletype
       end
 
     end
