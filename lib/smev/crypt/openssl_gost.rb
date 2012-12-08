@@ -61,8 +61,8 @@ module Smev
 
       def verify_signature security
         certificate = "-----BEGIN CERTIFICATE-----\n"
-        certificate << security.search_child("BinarySecurityToken", NAMESPACES['wsse']).first.children.to_s.strip
-        certificate << "\n-----END CERTIFICATE-----"
+        certificate << Base64.encode64(Base64.decode64(security.search_child("BinarySecurityToken", NAMESPACES['wsse']).first.children.to_s.strip))
+        certificate << "-----END CERTIFICATE-----"
 
         public_key_file = Features::write_tmp Features::call_shell('openssl x509 -engine gost -pubkey -noout', certificate)
         signature_file = Features::write_tmp Base64.decode64(security.search_child("SignatureValue", NAMESPACES['ds']).first.children.to_s.strip)
