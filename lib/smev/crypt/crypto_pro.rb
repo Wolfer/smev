@@ -8,7 +8,7 @@ module Smev
       def signature doc
         xml4sign = Features::write_tmp doc
         signed_xml = Features::write_tmp ''
-        if Kernel.system(sign_path + "sign_xml.exe sign #{xml4sign.path} #{signed_xml.path} SZN 565454")
+        if Kernel.system(sign_path + "sign_xml.exe sign #{xml4sign.path} #{signed_xml.path} TEST 111111")
           doc = File.read signed_xml.path 
         else
           raise SignatureError.new("Signature failed")

@@ -53,7 +53,7 @@ module Smev
 
       def check_digest doc, ref
         if text = doc.css('*:regex("Id", "'+( ref["URI"].tr('#', '')) +'")', XPathFinder.new).first
-          raise SignatureError.new("Wrong hash content") unless digest(text) == ref.search_child("DigestValue", NAMESPACES['ds']).first.children.to_s.strip
+          raise SignatureError.new("Wrong digest value") unless digest(text) == ref.search_child("DigestValue", NAMESPACES['ds']).first.children.to_s.strip
         else
           raise SignatureError.new("Not found signed partial!")
         end

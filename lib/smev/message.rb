@@ -171,7 +171,7 @@ module Smev
 					ads.children.recreate_child("AppliedDocument", files4send.size)
 					ads.children.zip(files4send).each do |xsd, f|
 						FileUtils.cp f["Name"], path
-						f["Url"] = './'
+						f["URL"] = './'
 						f["DigestValue"] = digest(File.read(f["Name"]))
 						f["Type"] = MIME::Types.type_for(f["Name"]).first || 'text/plain'
 						f["Name"] = File.basename(f["Name"])
