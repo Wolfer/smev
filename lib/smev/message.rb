@@ -164,7 +164,7 @@ module Smev
 
 				files4send = self.files.map do |file|
 					file = { "Name" => file }	if file.is_a? String
-					file if File.file? file["Name"]
+					file.dup if File.file? file["Name"]
 				end.compact
 
 				if files4send.present? and ads = attachment_schema.get_child("AppliedDocuments")					
@@ -286,7 +286,7 @@ module Smev
 		#FIXME deprecated
 		def collect_namespaces
 			self.namespaces ||= {}
-			nss = struct.map( &:collect_namespaces ).flatten.uniq
+			nss = struct.map( &:collect_namespaces ).flatten.uniq.compact
 			nss.each_with_index do |ns, i| 
 				next if self.namespaces.values.include? ns
 				name =  "xmlns:" + (ns.index("smev.gosuslugi.ru") ?  "smev" : "m#{i}")
