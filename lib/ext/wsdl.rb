@@ -1,4 +1,4 @@
-require 'wsdl/importer'
+﻿require 'wsdl/importer'
 
 module WSDL
   class Definitions
@@ -73,7 +73,7 @@ module WSDL
       def parse_attr(attr, value) 
         case attr 
         when ValueAttrName 
-          parent.pattern = /#{value.source}/n
+          parent.pattern = Regexp.new value.source
           value.source 
         end 
       end 
