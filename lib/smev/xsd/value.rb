@@ -77,13 +77,18 @@ module Smev
 			def as_xsd
 				return "" unless self.restricted?
 				str = "<xs:simpleType>"
-				str << "<xs:restriction base=\"xs:#{self.type}\">"
+				str << "<xs:restriction base=\"#{self.type_with_namespace}\">"
 				%w(length minLength maxLength pattern).each do |m|
 					 str << "<xs:#{m} value=\"#{self.send(m.downcase)}\"/>" if self.send(m.downcase)
 				end
 				str << enumeration.map{|e| "<xs:enumeration value=\"#{e}\"/>" }.join
 				str << "</xs:restriction>"
 				str << "</xs:simpleType>"
+			end
+
+			#TODO hardcore kostyl. wait namespace work
+			def type_with_namespace
+				"#{(self.type == "file" ? "tns" : "xs")}:#{self.type}"
 			end
 
 			def restricted?
