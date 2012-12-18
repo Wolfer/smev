@@ -100,7 +100,7 @@
 						str << self.value.as_xsd
 						str << "</xs:element>"
 				else
-					str << " type=\"#{self.value.type}\" />"
+					str << " type=\"xs:#{self.value.type}\" />"
 				end
 				str
 			end
