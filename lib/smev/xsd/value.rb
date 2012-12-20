@@ -62,7 +62,7 @@ module Smev
 
 			def get; @value.present? ? @value.to_s : ( self.default || '' ); end
 			def to_s; @value.present? ? @value.to_s : ( self.default || '' ); end
-			def inspect; "#<Value \"#{@value}\" >"; end
+			def inspect; "#<Value #{@value.inspect} >"; end
 
 			def as_hash
 				{ "type" => self.type }.tap do |hash| 
@@ -100,12 +100,13 @@ module Smev
 			end
 
 			def valid?
+				raise ValueError.new("not nil") if @value.nil?
 				check_enumeration
 				check_length
 				check_minlength
 				check_maxlength
 				check_pattern
-				true		
+				true
 			end
 
 			def fill_test
@@ -131,6 +132,8 @@ module Smev
 					end			
 				when "dateTime"
 					Time.now.xmlschema
+				else
+					''
 				end
 			end
 

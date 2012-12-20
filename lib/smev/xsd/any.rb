@@ -77,6 +77,9 @@ module Smev
 				true
 			end
 
+			def fill_test
+			end
+
 		private
 			def method_missing method, *argv, &block
 				puts "[ERROR] #{self.class} not respond to '#{method}' method"

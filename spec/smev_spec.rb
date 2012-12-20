@@ -86,6 +86,7 @@ describe Smev::Message do
               ]}
 
       sm = Smev::Message.new hash
+      sm.fill_test
       sm.to_xml(false).should_not be_blank
     end
 
