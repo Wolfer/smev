@@ -73,9 +73,6 @@ module Smev
 		end
 
 		def load_from_xml xml, skip_check_sign = false
-			Nori.strip_namespaces = true
-			Nori.convert_tags_to { |tag| tag.camelcase(:lower).to_sym }
-			Nori.parser = :nokogiri
 			doc = Nokogiri::XML::Document.parse xml
 
 			verify(xml) if not skip_check_sign and doc.search_child("Security").size > 0
@@ -129,8 +126,7 @@ module Smev
 
 			result = self.struct.map{|s| s.to_xml( self.namespaces ) }.join("\n")
 			xml = eval File.read(File.dirname(__FILE__)+"/template/response.builder")
-			result_xml = Nokogiri::XML::Document.parse(xml.gsub(/\t/, '')).to_s
-			sign ? signature(result_xml) : result_xml
+			sign ? signature(xml) : xml
 		end
 
 		def to_hash

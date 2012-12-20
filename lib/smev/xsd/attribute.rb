@@ -26,7 +26,7 @@
 
 			def to_s
 				if self.required? or @value.present?
-					@name + '="'+ (@value.present? ? @value.to_s : ( self.default || '' )) +'"'
+					@name + "=\"#{(@value.present? ? @value : ( self.default || '' )).gsub('"','&quot;')}\""
 				else
 					''
 				end

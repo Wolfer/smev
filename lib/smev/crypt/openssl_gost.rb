@@ -27,7 +27,7 @@ module Smev
         end
         doc.search_child("Envelope", NAMESPACES['soap']).first.add_namespace("wsse", NAMESPACES['wsse']) unless doc.namespaces.values.include? NAMESPACES['wsse']
 
-        doc.to_s
+        doc.to_xml(:save_with => Nokogiri::XML::Node::SaveOptions::AS_XML )
       end
 
       def calculate_signature sig_info

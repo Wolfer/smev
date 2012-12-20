@@ -259,6 +259,37 @@ describe Smev::Message do
     end
 
 
+    describe "debug" do
+
+      it 'should choose fill branch of choice' do
+        hash =  {"name"=>"Test", "type"=>"element", "namespace" => "http://schemas.xmlsoap.org/soap/envelope/", "children"=>[
+                {"name"=>"Choice", "type"=>"choice", "children"=>[
+                  {"name"=>"first", "type"=>"element", "value"=>{"type"=>"string", "restrictions"=>{}}},
+                  {"name"=>"second", "type"=>"element", "value"=>{"type"=>"string", "restrictions"=>{}}}
+                ]}
+              ]}
+
+        sm = Smev::Message.new hash
+        sm.valid?.should be_false
+        sm.get_child("second").set ''
+        sm.valid?.should be_true
+        sm.to_xml(false).should match('second')
+      end
+
+      it 'escaping " in attribute' do
+        hash =  {"name"=>"test_elem", "type"=>"element", "value"=>{"type"=>"string", "restrictions"=>{}}, "attributes"=>[{"type"=>"string", "restrictions"=>{}, "name"=>"test_attr", "use"=>"required"}] }
+
+        sm = Smev::Message.new hash
+        sm.get_child("test_elem").attribute("test_attr").set ' company "Company" '
+        sm.get_child("test_elem").set ''
+        sm2 = Smev::Message.new hash
+        sm2.load_from_xml sm.to_xml
+        sm2.get_child("test_elem").attribute("test_attr").get.should eql(sm.get_child("test_elem").attribute("test_attr").get)
+      end
+
+    end
+
+
   end
 
 
