@@ -100,7 +100,7 @@ module Smev
 			end
 
 			def valid?
-				raise ValueError.new("not nil") if @value.nil?
+				raise ValueNilError.new("must not be nil") if @value.nil?
 				check_enumeration
 				check_length
 				check_minlength
@@ -203,6 +203,9 @@ module Smev
 		end
 
 		class ValueError < SmevException
+		end
+
+		class ValueNilError < SmevException
 		end
 
 	end

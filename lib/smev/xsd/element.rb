@@ -221,6 +221,8 @@
 					self.attributes.each do |attr| 
 						begin
 							attr.valid?
+						rescue ValueNilError => e
+							@errors["@value"] = e.to_s
 						rescue ValueError => e
 							@errors["@#{attr.name}"] = "got '#{attr.get}', but expect then #{e.to_s}"
 						end
@@ -230,6 +232,8 @@
 				if self.leaf?
 					begin
 						self.value.valid? unless self.value.get.blank? and self.min_occurs.zero?
+					rescue ValueNilError => e
+						@errors["@value"] = e.to_s unless self.attributes.present?
 					rescue ValueError => e
 						@errors["@value"] = "got '#{self.value.get}', but expect then #{e.to_s}"
 					end
