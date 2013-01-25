@@ -160,7 +160,10 @@ module Smev
 
 				files4send = self.files.map do |file|
 					file = { "Name" => file }	if file.is_a? String
-					file.dup if File.file? file["Name"]
+					if File.file? file["Name"].strip
+					  file["Name"] = file["Name"].strip
+					  file.dup 
+					end
 				end.compact
 
 				if files4send.present? and ads = attachment_schema.get_child("AppliedDocuments")					
