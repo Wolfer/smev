@@ -1,5 +1,5 @@
 xml = Builder::XmlMarkup.new
-xml.tag! "Header" do
+xml.tag! "soap:Header", "xmlns:soap" => "http://schemas.xmlsoap.org/soap/envelope/" do
 	xml.tag! "wsse:Security", "soap:actor" => "http://smev.gosuslugi.ru/actors/smev", "xmlns:wsse" => NAMESPACES["wsse"] do
 		xml.tag! "ds:Signature", "xmlns:ds" => NAMESPACES["ds"] do
 			xml.tag! "ds:SignedInfo" do
