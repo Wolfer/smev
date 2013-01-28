@@ -29,6 +29,7 @@ require 'smev/xsd/element'
 
 require 'smev/message'
 require 'smev/request'
+require 'smev/downloader'
 
 module Smev
 end
