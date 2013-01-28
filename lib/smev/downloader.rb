@@ -1,3 +1,4 @@
+require 'net/http'
 module Smev
   class Downloader
 
