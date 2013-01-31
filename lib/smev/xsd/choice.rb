@@ -4,6 +4,10 @@ module Smev
 
 			def parent; WSDL::XMLSchema::Choice; end
 
+			def min_occurs
+				children.find{|child| child.min_occurs.zero?}.present? ? 0 : 1
+			end
+
 			def to_xml nss
 				self.children.each{|child| return child.to_xml(nss) if child.valid? }
 				raise SmevException.new("Invalid choice!")

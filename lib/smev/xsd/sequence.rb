@@ -4,6 +4,10 @@ module Smev
 
 			def parent; WSDL::XMLSchema::Sequence; end
 
+			def min_occurs
+				children.find{|child| not child.min_occurs.zero?}.present? ? 1 : 0
+			end
+
 			def load_from_nokogiri noko_i, noko = nil
 				# puts "S #{noko_i.drop(0).map(&:name).inspect}"
 				# puts "c #{@children.map(&:name).inspect}"

@@ -287,6 +287,43 @@ describe Smev::Message do
         sm2.get_child("test_elem").attribute("test_attr").get.should eql(sm.get_child("test_elem").attribute("test_attr").get)
       end
 
+      describe "min_occurs for" do
+        let(:xml){ '<x:test xmlns:x="test"><anything>asd</anything></x:test>' }
+
+        it 'choice' do
+          hash =  {"name"=>"test", "type"=>"element", "namespace" => "http://schemas.xmlsoap.org/soap/envelope/", "children"=>[
+                {"name"=>"Sequence", "type"=>"sequence", "children"=>[
+                  {"name"=>"anything", "type"=>"element", "value"=>{"type"=>"string", "restrictions"=>{}}},
+                  {"name"=>"Choice", "type"=>"choice", "children"=>[
+                    {"name"=>"first", "type"=>"element", "min_occurs" => 0, "value"=>{"type"=>"string", "restrictions"=>{}}},
+                    {"name"=>"second", "type"=>"element", "value"=>{"type"=>"string", "restrictions"=>{}}}
+                  ]}
+                ]}
+              ]}
+          sm = Smev::Message.new hash
+          doc = Nokogiri::XML::Document.parse(xml).children
+          sm.struct.first.load_from_nokogiri doc.first
+          sm.valid?.should be_true
+        end
+
+        it 'sequence' do
+          hash =  {"name"=>"test", "type"=>"element", "namespace" => "http://schemas.xmlsoap.org/soap/envelope/", "children"=>[
+                {"name"=>"Sequence", "type"=>"sequence", "children"=>[
+                  {"name"=>"anything", "type"=>"element", "value"=>{"type"=>"string", "restrictions"=>{}}},
+                  {"name"=>"Sequence", "type"=>"sequence", "children"=>[
+                    {"name"=>"first", "type"=>"element", "min_occurs" => 0, "value"=>{"type"=>"string", "restrictions"=>{}}},
+                    {"name"=>"second", "type"=>"element", "min_occurs" => 0, "value"=>{"type"=>"string", "restrictions"=>{}}}
+                  ]}
+                ]}
+              ]}
+          sm = Smev::Message.new hash
+          doc = Nokogiri::XML::Document.parse(xml).children
+          sm.struct.first.load_from_nokogiri doc.first
+          sm.valid?.should be_true
+        end
+
+      end
+
     end
 
 
