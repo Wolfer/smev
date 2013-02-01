@@ -33,7 +33,7 @@ module Smev
     end
 
     def get_remote url, root_url = 'http:/'
-      url = root_url.gsub(/\?[^\?]+$/,'') + "/" + url unless url.strip.start_with? "http://"
+      url = URI::join(root_url, url) unless url.strip.start_with? "http://"
       puts "[GET] " + url.to_s
       res = Net::HTTP.get_response URI( url ) 
       if res.is_a?(Net::HTTPSuccess)
