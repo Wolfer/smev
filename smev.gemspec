@@ -17,6 +17,7 @@ Gem::Specification.new do |s|
 
   s.add_development_dependency "rspec-rails"
 #  s.add_dependency "soap4r"
+  s.add_dependency "nori"
   s.add_dependency "nokogiri"
   s.add_dependency "zipruby"
   s.add_dependency "mime-types"
