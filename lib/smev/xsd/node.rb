@@ -52,8 +52,6 @@ module Smev
 
 			def as_hash ns = nil
 				hash = { "name" => self.name, "type" => self.class.name.split("::").last.downcase }
-				hash["min_occurs"] = self.min_occurs if self.min_occurs and self.min_occurs != 1
-				hash["max_occurs"] = self.max_occurs if self.max_occurs and self.max_occurs != 1
 				hash["namespace"] = self.namespace if self.respond_to?("namespace") and self.namespace.present? and self.namespace != ns
 				if self.children.present? and not self.leaf?
 			  	hash["children"] = if self.children.respond_to? "as_hash"
@@ -63,13 +61,6 @@ module Smev
 					end
 				end
 				hash
-			end
-
-			def as_xsd
-				str = []
-				str << "minOccurs=\"#{self.min_occurs}\"" if self.min_occurs != 1
-				str << "maxOccurs=\"#{self.max_occurs}\"" if self.max_occurs != 1
-				str.join(" ").to_s
 			end
 
 			def dup

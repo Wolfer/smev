@@ -81,13 +81,17 @@
 
 			def as_hash ns = nil
 				super.tap do |hash| 
+					hash["min_occurs"] = self.min_occurs if self.min_occurs and self.min_occurs != 1
+					hash["max_occurs"] = self.max_occurs if self.max_occurs and self.max_occurs != 1
 					hash["value"] = value.as_hash if self.leaf? and self.attributes.blank?
 					hash["attributes"] = self.attributes.map{|attr| attr.as_hash} if self.attributes.present?
 				end
 			end
 
 			def as_xsd
-				str = '<xs:element name="' + self.name.to_s + '" ' + super
+				str = '<xs:element name="' + self.name.to_s + '"'
+				str << " minOccurs=\"#{self.min_occurs}\"" if self.min_occurs != 1
+				str << " maxOccurs=\"#{self.max_occurs}\"" if self.max_occurs != 1
 				if not self.leaf? or self.attributes.present?
 					str << ">"
 					str << "<xs:complexType>"
