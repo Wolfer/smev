@@ -74,6 +74,13 @@ module Smev
         signature_file.unlink   
       end
 
+      def sign_file file
+        Features::call_shell( "openssl smime -sign -engine gost -gost89  -inkey #{PRIVATEKEY} -signer #{CERTIFICATE} -in #{file} -out #{file}.sig -outform DER -binary", '' )
+      end
+
+      def verify_file file
+        /successful/ =~ Features::call_shell( "openssl smime -verify -engine gost -noverify -inform DER -in #{file}.sig -content #{file}", '')
+      end
 
     end
   end

@@ -116,7 +116,7 @@ module Smev
 			raise SmevException.new("Smev::Message not valid!") unless self.valid?
 
 			if need_appdoc?
-				set_appdoc
+				set_appdoc sign
 			else
 				remove_appdoc 
 			end
@@ -154,7 +154,7 @@ module Smev
 
 
 		###### AppDocument Section
-		def set_appdoc
+		def set_appdoc sign = true
 			Dir.mktmpdir do |path|
 				guid = self.class.gen_guid
 
@@ -185,6 +185,8 @@ module Smev
 				rescue SmevException => e
 					raise SmevException.new("Attachment XML invalid! #{e.to_s}")
 				end
+				
+				Dir.glob("#{path}/*").each{|f| sign_file f } if sign
 
 				Zip::Archive.open("#{path}/req_#{guid}.zip", Zip::CREATE) do |ar|
 					Dir.glob("#{path}/*").each do |f|
