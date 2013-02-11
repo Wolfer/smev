@@ -226,7 +226,7 @@
 						begin
 							attr.valid?
 						rescue ValueNilError => e
-							@errors["@value"] = e.to_s
+							@errors["@#{attr.name}"] = e.to_s if attr.required?
 						rescue ValueError => e
 							@errors["@#{attr.name}"] = "got '#{attr.get}', but expect then #{e.to_s}"
 						end

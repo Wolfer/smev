@@ -7,7 +7,7 @@
 			
 			def self.build_from_xsd xsd
 				super( (xsd.simple_type), xsd.default, xsd.fixed ) do |obj|
-					obj.use = xsd.use || "required"
+					obj.use = xsd.use || "optional"
 					obj.instance_eval "@name = '#{xsd.name.name}'"
 					obj
 				end
