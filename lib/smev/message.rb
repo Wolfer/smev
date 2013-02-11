@@ -113,13 +113,13 @@ module Smev
 		###### Export Section
 
 		def to_xml sign = true
-			raise SmevException.new("Smev::Message not valid!") unless self.valid?
-
 			if need_appdoc?
 				set_appdoc sign
 			else
 				remove_appdoc 
 			end
+
+			raise SmevException.new("Smev::Message not valid!") unless self.valid?
 			collect_namespaces
 			# body = self.struct.map{|s| s.to_xml( self.namespaces ) }.join("\n")
 			# view = ActionView::Base.new(Rails.root.join("lib/smev/template")).render(:template => "response", :locals => {:result => body, :namespaces => self.namespaces})
@@ -156,7 +156,7 @@ module Smev
 		###### AppDocument Section
 		def set_appdoc sign = true
 			Dir.mktmpdir do |path|
-				guid = self.class.gen_guid
+				guid = self.get_child("RequestCode").try(:get) || self.class.gen_guid
 
 				files4send = self.files.map do |file|
 					file = { "Name" => file }	if file.is_a? String
@@ -193,7 +193,7 @@ module Smev
 						ar.add_file(f)
 					end
 				end
-				self.get_child("RequestCode").set guid if self.get_child("RequestCode")
+				self.get_child("RequestCode").set guid if rc = self.get_child("RequestCode") and rc.get.blank?
 				self.get_child("BinaryData").set Base64.encode64(File.read("#{path}/req_#{guid}.zip"))
 			end
 		end
