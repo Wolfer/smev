@@ -156,7 +156,15 @@ module Smev
 		###### AppDocument Section
 		def set_appdoc sign = true
 			Dir.mktmpdir do |path|
-				guid = self.get_child("RequestCode").try(:get) || self.class.gen_guid
+				guid = if (rc = self.get_child("RequestCode"))
+					if rc.get.present?
+						rc.get
+					else
+						rc.set self.class.gen_guid
+					end
+				else
+					self.class.gen_guid
+				end
 
 				files4send = self.files.map do |file|
 					file = { "Name" => file }	if file.is_a? String
@@ -193,7 +201,6 @@ module Smev
 						ar.add_file(f)
 					end
 				end
-				self.get_child("RequestCode").set guid if rc = self.get_child("RequestCode") and rc.get.blank?
 				self.get_child("BinaryData").set Base64.encode64(File.read("#{path}/req_#{guid}.zip"))
 			end
 		end
