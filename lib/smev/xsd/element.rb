@@ -56,7 +56,7 @@
 				ns = nss.key(self.namespace)
 				ns = ns ? ns.split(':').last.to_s+":" : ''
 				result = "<"+ns+self.name
-				result << " "+self.attributes.select{|attr| attr.valid? and attr.present? }.join(" ") if self.attributes.present?
+				result << " "+self.attributes.select(&:valid?).join(" ") if self.attributes.present?
 
 				content = self.leaf? ? self.value.get : "\n"+self.children.to_xml( nss )+"\n"
 
