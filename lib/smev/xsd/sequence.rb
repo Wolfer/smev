@@ -1,4 +1,4 @@
-module Smev
+﻿module Smev
 	module XSD
 		class Sequence < ComplexType
 
@@ -45,7 +45,8 @@ module Smev
 				end
 				noko
 			rescue StopIteration => e
-				raise SmevException.new("Except that Sequence have element #{@children.map(&:name).inspect}")
+				text = "Except that Sequence have element #{@children.map(&:name).inspect}"
+				raise SmevException.new(text) unless self.min_occurs.zero?
 			end # def
 
 

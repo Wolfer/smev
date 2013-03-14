@@ -44,6 +44,9 @@ module Smev
 					raise SmevException.new("Expect #{@children.map(&:name).inspect}, but given #{noko.name}!")
 				end
 				noko_i.next unless before
+			rescue StopIteration => e
+				text = "Except that Choice have element #{@children.map(&:name).inspect}"
+				raise SmevException.new(text) unless self.min_occurs.zero?
 			end
 
 			def load_from_hash hash
