@@ -26,7 +26,9 @@ module Smev
 				obj = self.new
 				return obj unless obj.type = type
 				if type.is_a? WSDL::XMLSchema::SimpleType and restrict = type.restriction
-					obj.type = type.base
+					t = type
+					t = t.restriction.base_type while t.base.namespace != ::XSD::Namespace
+					obj.type = t.base
 					obj.enumeration = restrict.enumeration || []
 					obj.length = restrict.length
 					obj.minlength = restrict.minlength

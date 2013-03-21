@@ -118,6 +118,24 @@ module WSDL
     end
 
 
+    class SimpleRestriction
+
+      def base_type
+        @base_type ||= (st = self.root.collect_simpletypes[@base]) ? st : nil
+      end
+
+      %w(length minlength maxlength pattern enumeration whitespace maxinclusive 
+        maxexclusive minexclusive mininclusive totaldigits fractiondigits fixed).each do |attr|
+          self.class_eval "
+            def #{attr}
+              @#{attr} || ( base_type ? base_type.restriction.#{attr} : nil  )
+            end
+          "
+      end
+
+    end
+
+
     class Content
 
       # alias nested_elements_old nested_elements

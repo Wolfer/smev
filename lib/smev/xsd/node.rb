@@ -63,6 +63,10 @@ module Smev
 				hash
 			end
 
+			def as_xsd
+				''
+			end
+
 			def dup
 				obj = super
 				obj.children = (self.children.respond_to?("map") ? self.children.map(&:dup) : self.children.dup) unless self.leaf?

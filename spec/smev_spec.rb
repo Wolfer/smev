@@ -341,6 +341,22 @@ describe Smev::Message do
         sm.valid?.should be_true
       end
 
+      it 'inheritence restricted type' do
+        w = WSDL::Importer.import( "file://" + File.dirname(__FILE__) + "/restriction_base.xsd" )
+        e = Smev::XSD::Element.build_from_xsd w.elements.first
+        e.as_xsd.should_not match('xs:cc')
+        e.as_xsd.should match('value="2"')
+
+        doc = Nokogiri::XML::Document.parse '<tns:a xmlns:tns="http://ws.unisoft/EGRNXX/ResponseVIPFL" reg="00"/>'
+        e.load_from_nokogiri doc.children.first
+        e.valid?.should be_true
+
+        doc = Nokogiri::XML::Document.parse '<tns:a xmlns:tns="http://ws.unisoft/EGRNXX/ResponseVIPFL" reg="001"/>'
+        e.load_from_nokogiri doc.children.first
+        e.valid?.should be_false
+
+      end
+
     end
 
 

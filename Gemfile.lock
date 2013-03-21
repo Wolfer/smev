@@ -13,6 +13,7 @@ PATH
       mime-types
       nokogiri
       nori
+      uuid
       zipruby
 
 GEM
