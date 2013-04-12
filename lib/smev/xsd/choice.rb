@@ -30,23 +30,25 @@ module Smev
 			end
 
 			def load_from_nokogiri noko_i, noko = nil
-				unless noko
-					before = true
-					noko = noko_i.next
-				end
-				if child = @children.find{|c| c.name == noko.name }
-					#if have element
-					child.load_from_nokogiri noko	
-				elsif ( container = @children.select{|child| not child.is_a?(Element) }).present?
-					#try with sub-sequnce\choice
-					container.each{|child| noko = child.load_from_nokogiri noko_i, noko }
-				else
-					raise SmevException.new("Expect #{@children.map(&:name).inspect}, but given #{noko.name}!")
+				begin
+					unless noko
+						before = true
+						noko = noko_i.next
+					end
+					if child = @children.find{|c| c.name == noko.name }
+						#if have element
+						child.load_from_nokogiri noko	
+					elsif ( container = @children.select{|child| not child.is_a?(Element) }).present?
+						#try with sub-sequnce\choice
+						container.each{|child| noko = child.load_from_nokogiri noko_i, noko }
+					else
+						raise SmevException.new("Expect #{@children.map(&:name).inspect}, but given #{noko.name}!")
+					end
+				rescue StopIteration => e
+					text = "Except that Choice have element #{@children.map(&:name).inspect}"
+					raise SmevException.new(text) unless self.min_occurs.zero?
 				end
 				noko_i.next unless before
-			rescue StopIteration => e
-				text = "Except that Choice have element #{@children.map(&:name).inspect}"
-				raise SmevException.new(text) unless self.min_occurs.zero?
 			end
 
 			def load_from_hash hash

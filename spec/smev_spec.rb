@@ -357,6 +357,21 @@ describe Smev::Message do
 
       end
 
+
+      it 'failed last choice into sequence' do
+        hash =  {"name"=>"test", "type"=>"element", "namespace" => "http://schemas.xmlsoap.org/soap/envelope/", "children"=>[
+                  {"name"=>"Sequence", "type"=>"sequence", "children"=>[
+                    {"name"=>"Choice", "type"=>"choice", "children"=>[
+                      {"name"=>"first", "type"=>"element", "value"=>{"type"=>"string", "restrictions"=>{}}}
+                    ]}
+                  ]}
+                ]}
+        sm = Smev::Message.new hash
+        doc = Nokogiri::XML::Document.parse('<x:test xmlns:x="test"><first>1</first></x:test>').children
+        sm.struct.first.load_from_nokogiri doc.first
+        sm.valid?.should be_true
+      end
+
     end
 
 

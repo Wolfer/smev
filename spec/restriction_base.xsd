@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://ws.unisoft/EGRNXX/ResponseVIPFL" targetNamespace="http://ws.unisoft/EGRNXX/ResponseVIPFL" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<xs:element name="a" type="tns:Adr"/>
+	<xs:complexType name="Adr">
+		<xs:attribute name="reg" use="required">
+			<xs:simpleType>
+				<xs:restriction base="tns:cc"/>
+			</xs:simpleType>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:simpleType name="cc">
+		<xs:restriction base="xs:string">
+			<xs:length value="2"/>
+			<xs:pattern value="[0-9]{2}"/>
+		</xs:restriction>
+	</xs:simpleType>
+</xs:schema>
