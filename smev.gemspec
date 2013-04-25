@@ -15,12 +15,12 @@ Gem::Specification.new do |s|
 
   s.files = Dir["{lib}/**/*"] + ["MIT-LICENSE", "Rakefile", "README.rdoc"]
 
-  s.add_development_dependency "rspec-rails"
+  s.add_development_dependency "rspec"
 #  s.add_dependency "soap4r"
   s.add_dependency "nori"
   s.add_dependency "uuid"
   s.add_dependency "nokogiri"
-  s.add_dependency "zipruby"
+  s.add_dependency "rubyzip"
   s.add_dependency "mime-types"
   s.add_dependency "httpi"
 end

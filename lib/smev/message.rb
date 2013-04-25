@@ -1,7 +1,8 @@
 require 'builder'
-require 'zipruby'
 require 'fileutils'
 require 'uuid'
+require 'tempfile'
+require 'zip/zip'
 
 module Smev
 
@@ -198,9 +199,9 @@ module Smev
 				
 				Dir.glob("#{path}/*").each{|f| sign_file f } if sign
 
-				Zip::Archive.open("#{path}/req_#{guid}.zip", Zip::CREATE) do |ar|
+				Zip::ZipFile.open("#{path}/req_#{guid}.zip", Zip::ZipFile::CREATE) do |ar|
 					Dir.glob("#{path}/*").each do |f|
-						ar.add_file(f)
+						ar.add(File.basename(f), f)
 					end
 				end
 				self.get_child("BinaryData").set Base64.encode64(File.read("#{path}/req_#{guid}.zip"))
@@ -211,20 +212,23 @@ module Smev
 			return nil unless bd = self.get_child("BinaryData") and bd.get.present?
 			raise SmevException.new("get_appdoc must get tmpdir as argument") unless File.directory? dir
 
-			data = Base64.decode64 bd.value.get
 			att_files = []
-			Zip::Archive.open_buffer(data) do |ar|
-				ar.each do |f|
-					path = File.join( dir, f.name )
-					if f.directory?
-						FileUtils.mkdir_p(path)
-					else  
-						buf = ''
-						f.read{ |chunk| buf << chunk }
-						File.write path, buf.force_encoding("UTF-8")
-						att_files << path
-					end
+			tf = Tempfile.new '2'
+			begin
+				tf.write Base64.decode64 bd.value.get
+				tf.rewind
+				Zip::ZipFile.open(tf.path) do |zip_file|
+				 zip_file.each do |f|
+				   f_path=File.join(dir, f.name)
+				   FileUtils.mkdir_p(File.dirname(f_path))
+				   unless File.exist?(f_path)
+				   	att_files << f_path
+				   	zip_file.extract(f, f_path) 
+				   end
+				 end
 				end
+			ensure
+				tf.close
 			end
 			rq = self.get_child("RequestCode")
 			if req_xml = att_files.find{|af|  af.match( rq ? /req_#{rq.get}+\.xml$/ : /req_[^\.]+\.xml$/ ) }
