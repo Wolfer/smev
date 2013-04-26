@@ -62,7 +62,8 @@ module Smev
 				@value = val
 			end
 
-			def get; @value.present? ? @value.to_s : ( self.default || '' ); end
+			# def get; @value.present? ? @value.to_s : ( self.default || '' ); end
+			def get; @value.nil? ? ( self.default || nil ) : @value.to_s ; end
 			def to_s; @value.present? ? @value.to_s : ( self.default || '' ); end
 			def inspect; "#<Value #{@value.inspect} >"; end
 

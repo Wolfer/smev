@@ -60,7 +60,7 @@
 
 				content = self.leaf? ? self.value.get : "\n"+self.children.to_xml( nss )+"\n"
 
-				if content.strip.present?
+				if content.to_s.strip.present?
 					result << ">#{content}</#{ns}#{self.name}>"
 				else
 					if self.min_occurs.zero? and ( self.attributes.nil? or self.attributes.select{|a| a.present?}.blank? )
@@ -118,6 +118,7 @@
 							result["@value"] = val 
 						end
 					else
+						return {} if self.value.get.nil?
 						result = self.value.get
 					end
 				else
