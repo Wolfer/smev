@@ -215,7 +215,7 @@ module Smev
 			att_files = []
 			tf = Tempfile.new '2'
 			begin
-				tf.write Base64.decode64 bd.value.get
+				tf.write Base64.decode64(bd.value.get).force_encoding("utf-8")
 				tf.rewind
 				Zip::ZipFile.open(tf.path) do |zip_file|
 				 zip_file.each do |f|
