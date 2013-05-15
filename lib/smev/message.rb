@@ -132,7 +132,7 @@ module Smev
 			sign ? signature(xml) : xml
 		end
 
-		def to_hash
+		def to_hash short = true
 			self.struct.inject({}) do |res,el| 
 				if res.include? el.name
 					if res[el.name].is_a? Array
@@ -141,7 +141,7 @@ module Smev
 						res[el.name] = [ res[el.name], el.to_hash[el.name] ]
 					end
 				else
-					res.merge! el.to_hash
+					res.merge! el.to_hash(short)
 				end
 				res
 			end

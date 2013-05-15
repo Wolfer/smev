@@ -35,9 +35,9 @@
 				self.children.map{|child| child.to_xml(nss) }.delete_if{|c| c.blank?}.join("\n")
 			end
 
-			def to_hash
+			def to_hash short = true
 				children.inject({}) do |result, child| 
-					hash = child.to_hash
+					hash = child.to_hash(short)
 					if child.max_occurs > 1
 						result[child.name] ||= []
 						result[child.name] << hash.delete(child.name)

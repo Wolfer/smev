@@ -36,7 +36,7 @@ module Smev
 				true
 			end
 
-			def to_hash
+			def to_hash short = true
 				self.value || {}
 			end
 

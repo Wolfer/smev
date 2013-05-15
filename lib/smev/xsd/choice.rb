@@ -24,8 +24,8 @@ module Smev
 				self.valid? ? {} : super 
 			end
 
-			def to_hash
-				self.children.each { |child| return child.to_hash if child.valid? }
+			def to_hash short = true
+				self.children.each { |child| return child.to_hash(short) if child.valid? }
 				super
 			end
 

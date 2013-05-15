@@ -109,7 +109,7 @@
 				str
 			end
 
-			def to_hash
+			def to_hash short = true
 				result = {}
 				result["@attr"] = self.attributes.inject({}){| hash, attr |  hash[attr.name] = attr.get ; hash } if self.attributes.present?
 				if self.leaf?
@@ -118,11 +118,11 @@
 							result["@value"] = val 
 						end
 					else
-						return {} if self.value.get.nil?
+						return {} if short and self.value.get.nil?
 						result = self.value.get
 					end
 				else
-					result.merge! self.children.to_hash
+					result.merge! self.children.to_hash(short)
 				end
 
 				{ self.name => result }
