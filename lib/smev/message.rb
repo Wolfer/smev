@@ -9,7 +9,7 @@ module Smev
 	class Message
 
 		if RUBY_PLATFORM =~ /mingw/
-			include Crypt::CryptoPro
+			include Crypt::WinOpenSSL
 		else
 			include Crypt::OpenSSL
 		end

@@ -14,6 +14,7 @@ require 'ext/nokogiri'
 
 require 'smev/crypt/error'
 require 'smev/crypt/openssl_gost'
+require 'smev/crypt/win_openssl_gost'
 require 'smev/crypt/crypto_pro'
 
 require 'smev/xsd/node'
