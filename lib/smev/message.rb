@@ -204,7 +204,7 @@ module Smev
 						ar.add(File.basename(f), f)
 					end
 				end
-				self.get_child("BinaryData").set Base64.encode64(File.read("#{path}/req_#{guid}.zip"))
+				File.open("#{path}/req_#{guid}.zip", 'rb'){|f| self.get_child("BinaryData").set Base64.encode64(f.read) }
 			end
 		end
 
@@ -215,6 +215,7 @@ module Smev
 			att_files = []
 			tf = Tempfile.new '2'
 			begin
+				tf.binmode
 				tf.write Base64.decode64(bd.value.get).force_encoding("utf-8")
 				tf.rewind
 				Zip::ZipFile.open(tf.path) do |zip_file|
