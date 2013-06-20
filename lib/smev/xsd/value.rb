@@ -18,10 +18,6 @@ module Smev
 			attr_accessor :totaldigits
 			attr_accessor :fractiondigits
 
-			# def pattern
-			# 	@pattern.is_a?(Regexp) ? @pattern.to_s.sub(/\(\?\-mix\:(.+)\)/,"\\1") : @pattern
-			# end			
-
 			def self.build_from_xsd type, default = nil, val = nil
 				obj = self.new
 				return obj unless obj.type = type
@@ -33,7 +29,7 @@ module Smev
 					obj.length = restrict.length
 					obj.minlength = restrict.minlength
 					obj.maxlength = restrict.maxlength
-					obj.pattern = restrict.pattern.is_a?(Regexp) ? restrict.pattern.to_s.sub(/\(\?\-mix\:(.+)\)/,"\\1") : restrict.pattern
+					obj.pattern = (restrict.pattern||[]).map{|reg| reg.to_s[7..-2] } # RegExp to_s and del (?-mix: )
 				end
 				obj.type = obj.type.name while not obj.type.is_a? String
 				obj.default = default
@@ -81,10 +77,13 @@ module Smev
 				return "" unless self.restricted?
 				str = "<xs:simpleType>"
 				str << "<xs:restriction base=\"#{self.type_with_namespace}\">"
-				%w(length minLength maxLength pattern).each do |m|
+				%w(length minLength maxLength).each do |m|
 					 str << "<xs:#{m} value=\"#{self.send(m.downcase)}\"/>" if self.send(m.downcase)
 				end
-				str << enumeration.map{|e| "<xs:enumeration value=\"#{e}\"/>" }.join
+				%w(enumeration pattern).each do |m|
+					#FIXME remove support pattern as string
+					str << [*self.send(m)].map{|e| "<xs:#{m} value=\"#{e}\"/>" }.join
+				end
 				str << "</xs:restriction>"
 				str << "</xs:simpleType>"
 			end
@@ -120,7 +119,7 @@ module Smev
 						self.enumeration.first
 					else
 						val = ''
-						val = regexp_to_str self.pattern if self.pattern.present?
+						val = regexp_to_str self.pattern.first if self.pattern.present?
 						while self.minlength.present? and val.size < self.minlength.to_i
 							val << "9"
 						end
@@ -167,9 +166,8 @@ module Smev
 			end
 
 			def check_pattern
-				unless @pattern.nil? or Regexp.new(@pattern) =~ @value.to_s
-					#FIXME make fill_test for pattern
-					raise ValueError.new(" must be: value =~ #{Regexp.new(@pattern).inspect}")
+				if @pattern.present? and [*@pattern].select{|pattern| Regexp.new("^#{pattern}$") =~ @value.to_s }.blank?
+					raise ValueError.new(" must be: value =~ %s" % @pattern.join(" or "))
 				end
 			end
 

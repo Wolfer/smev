@@ -19,7 +19,7 @@ Gem::Specification.new do |s|
 #  s.add_dependency "soap4r"
   s.add_dependency "nori"
   s.add_dependency "uuid"
-  s.add_dependency "nokogiri"
+  s.add_dependency "nokogiri", '1.5.5'
   s.add_dependency "rubyzip"
   s.add_dependency "mime-types"
   s.add_dependency "httpi"

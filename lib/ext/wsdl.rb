@@ -68,20 +68,6 @@ module WSDL
 
 
 
-    class Pattern
-
-      def parse_attr(attr, value) 
-        case attr 
-        when ValueAttrName 
-          parent.pattern = Regexp.new value.source
-          value.source 
-        end 
-      end 
-
-    end
-
-
-
     class ComplexType
       def content_type
         if @content

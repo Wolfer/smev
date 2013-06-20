@@ -1,6 +1,6 @@
 GIT
   remote: https://github.com/Wolfer/soap4r.git
-  revision: 82cd64e415e26ebb88787efe075845b1399cf09f
+  revision: 7d9ced801f7a834ac5076748bee78877b3ab3553
   specs:
     soap4r (1.5.8)
       httpclient (>= 2.1.1)
@@ -11,7 +11,7 @@ PATH
     smev (0.0.1)
       httpi
       mime-types
-      nokogiri
+      nokogiri (= 1.5.5)
       nori
       rubyzip
       uuid
@@ -19,25 +19,25 @@ PATH
 GEM
   remote: http://rubygems.org/
   specs:
-    builder (3.0.4)
-    diff-lcs (1.1.3)
-    httpclient (2.3.0.1)
+    builder (3.2.2)
+    diff-lcs (1.2.4)
+    httpclient (2.3.3)
     httpi (2.0.2)
       rack
     macaddr (1.6.1)
       systemu (~> 2.5.0)
-    mime-types (1.19)
+    mime-types (1.23)
     nokogiri (1.5.5)
-    nori (1.1.3)
+    nori (2.2.0)
     rack (1.5.2)
-    rspec (2.11.0)
-      rspec-core (~> 2.11.0)
-      rspec-expectations (~> 2.11.0)
-      rspec-mocks (~> 2.11.0)
-    rspec-core (2.11.1)
-    rspec-expectations (2.11.3)
-      diff-lcs (~> 1.1.3)
-    rspec-mocks (2.11.3)
+    rspec (2.13.0)
+      rspec-core (~> 2.13.0)
+      rspec-expectations (~> 2.13.0)
+      rspec-mocks (~> 2.13.0)
+    rspec-core (2.13.1)
+    rspec-expectations (2.13.0)
+      diff-lcs (>= 1.1.3, < 2.0)
+    rspec-mocks (2.13.1)
     rubyzip (0.9.9)
     systemu (2.5.2)
     uuid (2.3.7)
@@ -49,7 +49,7 @@ PLATFORMS
 DEPENDENCIES
   builder
   mime-types
-  nokogiri
+  nokogiri (= 1.5.5)
   nori
   rspec
   rubyzip
