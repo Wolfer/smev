@@ -192,7 +192,7 @@ module Smev
 				end
 
 				begin
-					File.write("#{path}/req_#{guid}.xml", attachment_schema.to_xml(attachment_schema.collect_namespaces))
+					File.open("#{path}/req_#{guid}.xml", 'w'){|f| f.write attachment_schema.to_xml(attachment_schema.collect_namespaces) }
 				rescue SmevException => e
 					raise SmevException.new("Attachment XML invalid! #{e.to_s}")
 				end
