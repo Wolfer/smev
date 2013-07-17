@@ -10,6 +10,11 @@ module Smev
         OPENSSL_BAT
       end
 
+      def get_certificate; @certificate || CERTIFICATE; end
+      def get_private_key; @private_key || PRIVATEKEY; end
+      def get_certificate_file; @certificate_file || get_certificate; end
+      def get_private_key_file; @private_key_file || get_private_key; end
+
       def signature xml, actor = "http://smev.gosuslugi.ru/actors/smev"
         doc = Nokogiri::XML::Document.parse xml
 
@@ -17,7 +22,7 @@ module Smev
         security_with_header = Nokogiri::XML::Document.parse(sig_xml).children.first
         security = security_with_header.search_child("Security", NAMESPACES['wsse']).first
         
-        security.search_child("BinarySecurityToken", NAMESPACES['wsse']).first.children = File.read(CERTIFICATE).gsub(/\-{2,}[^\-]+\-{2,}/,'').gsub(/\n\n+/, "\n")
+        security.search_child("BinarySecurityToken", NAMESPACES['wsse']).first.children = File.read(get_certificate).gsub(/\-{2,}[^\-]+\-{2,}/,'').gsub(/\n\n+/, "\n")
         #digest
         security.search_child("DigestValue", NAMESPACES['ds']).first.children = digest doc.search_child("Body", NAMESPACES['soap']).first
         #signature
@@ -35,7 +40,7 @@ module Smev
       end
 
       def calculate_signature sig_info
-        (Base64.encode64 Features::call_shell("#{cmd} dgst -engine gost -sign #{PRIVATEKEY}", sig_info) ).strip
+        (Base64.encode64 Features::call_shell("#{cmd} dgst -engine gost -sign #{get_private_key}", sig_info) ).strip
       end
 
       def verify xml
@@ -79,7 +84,7 @@ module Smev
       end
 
       def sign_file file
-        Features::call_shell( "#{cmd} smime -sign -engine gost -gost89  -inkey #{PRIVATEKEY} -signer #{CERTIFICATE} -in #{file} -out #{file}.sig -outform DER -binary", '' )
+        Features::call_shell( "#{cmd} smime -sign -engine gost -gost89  -inkey #{get_private_key_file} -signer #{get_certificate_file} -in #{file} -out #{file}.sig -outform DER -binary", '' )
       end
 
       def verify_file file
