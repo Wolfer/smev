@@ -167,7 +167,7 @@ module Smev
 
 			def check_pattern
 				if @pattern.present? and [*@pattern].select{|pattern| Regexp.new("^#{pattern}$") =~ @value.to_s }.blank?
-					raise ValueError.new(" must be: value =~ %s" % @pattern.join(" or "))
+					raise ValueError.new(" must be: value =~ %s" % [*@pattern].join(" or "))
 				end
 			end
 
