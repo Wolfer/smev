@@ -119,7 +119,7 @@ module Smev
 						self.enumeration.first
 					else
 						val = ''
-						val = regexp_to_str self.pattern.first if self.pattern.present?
+						val = regexp_to_str [*self.pattern].first if self.pattern.present?
 						while self.minlength.present? and val.size < self.minlength.to_i
 							val << "9"
 						end
