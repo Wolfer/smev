@@ -6,6 +6,12 @@ module Smev
   module Crypt
     module WinOpenSSL
 
+      def self.included base
+        base.class_eval do
+          attr_accessor :certificate, :private_key, :certificate_file, :private_key_file
+        end
+      end
+
       def cmd
         OPENSSL_BAT
       end
