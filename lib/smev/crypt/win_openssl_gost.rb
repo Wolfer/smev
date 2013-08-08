@@ -20,12 +20,12 @@ module Smev
       def get_private_key; @private_key || PRIVATEKEY; end
       def get_certificate_file; @certificate_file || get_certificate; end
       def get_private_key_file; @private_key_file || get_private_key; end
+      def get_signature_template; eval(File.read(File.dirname(__FILE__)+"/../template/signature.builder")); end
 
       def signature xml, actor = "http://smev.gosuslugi.ru/actors/smev"
         doc = Nokogiri::XML::Document.parse xml
 
-        sig_xml = eval(File.read(File.dirname(__FILE__)+"/../template/signature.builder"))
-        security_with_header = Nokogiri::XML::Document.parse(sig_xml).children.first
+        security_with_header = Nokogiri::XML::Document.parse(get_signature_template).children.first
         security = security_with_header.search_child("Security", NAMESPACES['wsse']).first
         
         security.search_child("BinarySecurityToken", NAMESPACES['wsse']).first.children = File.read(get_certificate).gsub(/\-{2,}[^\-]+\-{2,}/,'').gsub(/\n\n+/, "\n")
