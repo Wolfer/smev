@@ -49,26 +49,6 @@
 				raise SmevException.new(text) unless self.min_occurs.zero?
 			end # def
 
-
-			def load_from_hash hash
-				hash.each do |name, value|
-					value_size = value.is_a?(Array) ? value.size : 1
-					if (childrens = @children.select{|c| c.name == name}).present?
-						raise SmevException.new("#{name} have #{value_size} value, but schema doesn't allow this") unless childrens.first.can_occurs(value_size)
-						recreate_child name, value_size if childrens.size != value_size
-
-						child_iterator = @children.select{|c| c.name == name}.each
-						( value.is_a?(Array) ? value : [value]).each do |val|
-							child = child_iterator.next
-							child.load_from_hash({name => val})
-						end
-					else
-						@children.select{|c| not c.is_a?(Element)}.each{|child| child.load_from_hash({name => value}) }
-					end
-				end
-			end
-
-
 		end 
 	end
 end

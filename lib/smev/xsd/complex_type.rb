@@ -68,25 +68,21 @@
 
 
 			def load_from_hash hash
+				hash.each do |name, value|
+					value_size = value.is_a?(Array) ? value.size : 1
+					if (childrens = @children.select{|c| c.name == name}).present?
+						raise SmevException.new("#{name} have #{value_size} value, but schema doesn't allow this") unless childrens.first.can_occurs(value_size)
+						recreate_child name, value_size if childrens.size != value_size
 
-				collect_children.group_by(&:name).each do |name, childs| 
-					next unless hash.include? name
-					if hash[name].is_a? Array
-						mas = hash[name]
-						if childs.size == mas.size
-							childs.each_with_index { |child, i| 
-								child.load_from_hash mas[i] 
-							}
-						else
-							#удаляем все unbound-элемент, создаем заново нужное количество и вызывает заполнение из хэша заново для этого элемента
-							self.recreate_child name, mas.size
-							return self.load_from_hash hash
+						child_iterator = @children.select{|c| c.name == name}.each
+						( value.is_a?(Array) ? value : [value]).each do |val|
+							child = child_iterator.next
+							child.load_from_hash({name => val})
 						end
 					else
-						childs.first.load_from_hash( hash[name] ) 
+						@children.select{|c| not c.is_a?(Element)}.each{|child| child.load_from_hash({name => value}) }
 					end
 				end
-
 			end
 
 			def load_from_nokogiri doc
