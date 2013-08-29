@@ -13,7 +13,7 @@ PATH
       mime-types
       nokogiri (= 1.5.5)
       nori
-      rubyzip
+      rubyzip (~> 1.0)
       uuid
 
 GEM
@@ -22,8 +22,9 @@ GEM
     builder (3.2.2)
     diff-lcs (1.2.4)
     httpclient (2.3.3)
-    httpi (2.0.2)
+    httpi (2.1.0)
       rack
+      rubyntlm (~> 0.3.2)
     macaddr (1.6.1)
       systemu (~> 2.5.0)
     mime-types (1.23)
@@ -38,7 +39,8 @@ GEM
     rspec-expectations (2.13.0)
       diff-lcs (>= 1.1.3, < 2.0)
     rspec-mocks (2.13.1)
-    rubyzip (0.9.9)
+    rubyntlm (0.3.4)
+    rubyzip (1.0.0)
     systemu (2.5.2)
     uuid (2.3.7)
       macaddr (~> 1.0)
@@ -52,7 +54,7 @@ DEPENDENCIES
   nokogiri (= 1.5.5)
   nori
   rspec
-  rubyzip
+  rubyzip (~> 1.0)
   smev!
   soap4r!
   uuid

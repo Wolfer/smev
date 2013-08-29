@@ -31,6 +31,7 @@ require 'smev/xsd/element'
 require 'smev/message'
 require 'smev/request'
 require 'smev/downloader'
+require 'zip'
 
 module Smev
 end
@@ -49,3 +50,8 @@ NAMESPACES = {
 
 PRIVATEKEY = File.join( File.dirname(__FILE__), "keys/seckey.pem")
 CERTIFICATE = File.join( File.dirname(__FILE__), "keys/cert.pem")
+Zip.setup do |c|
+  c.on_exists_proc = true
+  c.continue_on_exists_proc = true
+  c.unicode_names = true
+end

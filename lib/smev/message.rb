@@ -2,7 +2,6 @@ require 'builder'
 require 'fileutils'
 require 'uuid'
 require 'tempfile'
-require 'zip/zip'
 
 module Smev
 
@@ -199,7 +198,7 @@ module Smev
 				
 				Dir.glob("#{path}/*").each{|f| sign_file f } if sign
 
-				Zip::ZipFile.open("#{path}/req_#{guid}.zip", Zip::ZipFile::CREATE) do |ar|
+				Zip::File.open("#{path}/req_#{guid}.zip", Zip::File::CREATE) do |ar|
 					Dir.glob("#{path}/*").each do |f|
 						ar.add(File.basename(f), f)
 					end
@@ -218,7 +217,7 @@ module Smev
 				tf.binmode
 				tf.write Base64.decode64(bd.value.get).force_encoding("utf-8")
 				tf.rewind
-				Zip::ZipFile.open(tf.path) do |zip_file|
+				Zip::File.open(tf.path) do |zip_file|
 				 zip_file.each do |f|
 				   f_path=File.join(dir, f.name)
 				   FileUtils.mkdir_p(File.dirname(f_path))

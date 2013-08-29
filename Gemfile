@@ -14,7 +14,7 @@ gem 'soap4r', :git => 'https://github.com/Wolfer/soap4r.git'
 gem 'nokogiri', '1.5.5'#, :git => "git://github.com/tenderlove/nokogiri.git", :branch => "c14n"
 gem 'nori'
 gem 'builder'
-gem 'rubyzip'
+gem 'rubyzip', '~> 1.0'
 gem 'mime-types'
 gem 'uuid'
 
