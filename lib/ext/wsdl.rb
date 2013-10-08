@@ -142,3 +142,25 @@ module WSDL
 
 
 end
+
+
+module XSD
+  # Когда делается include в подключаемом файле может не задаваться targetnamespace
+  # soap4r в таких случаях всем элементам проставляет пустой namespace
+  # по спецификации элементы таких файлов надо считать как принадлежащие тому же namespace'у что и импортирующий файл
+  # поправить этот функционал нельзя так как импорченые файлы запоминаются в том виде, в котором были импортированы(с теми же namespace)
+  class NamedElements
+    def [](idx)
+      if idx.is_a?(Numeric)
+        @elements[idx]
+      else
+        @cache[idx] ||= @elements.find { |item| item.name == idx or item.name == XSD::QName.new(nil, idx.name) }
+      end
+    end
+  end
+end
+
+
+
+
+
