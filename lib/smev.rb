@@ -11,6 +11,7 @@ require 'ext/object'
 require 'ext/features'
 require 'ext/wsdl'
 require 'ext/nokogiri'
+require 'xsd/xmlparser/nokogiri'
 
 require 'smev/crypt/error'
 require 'smev/crypt/openssl_gost'
