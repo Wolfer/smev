@@ -256,6 +256,21 @@ describe Smev::Message do
 
       end
 
+      describe 'missing element for <all>' do
+        it 'min_occurs 0' do
+          hash =  {"name"=>"fault", "type"=>"element", "namespace" => "http://schemas.xmlsoap.org/soap/envelope/", "children"=>[
+            {"name"=>"All", "type"=>"all", "children"=>[
+              {"name"=>"code", "type"=>"element", "min_occurs" => 0, "value"=>{"type"=>"string", "restrictions"=>{}}},
+              {"name"=>"string", "type"=>"element", "value"=>{"type"=>"string", "restrictions"=>{}}}
+            ]}
+          ]}
+          sm = Smev::Message.new hash
+          sm.load_from_xml("<Body><fault><string>123</string></fault></Body>").should be_true
+          sm.load_from_xml("<Body><fault><code>123</code></fault></Body>").should be_false
+        end
+
+      end
+
     end
 
 
