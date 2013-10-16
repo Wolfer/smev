@@ -9,7 +9,7 @@ module Smev
 
 			def self.build_from_xsd xsd
 				obj = self.new
-				obj.max_occurs = (xsd.maxoccurs || 999).to_i
+				obj.max_occurs = (xsd.maxoccurs || 9999).to_i
 				obj.min_occurs = xsd.minoccurs.to_i || 1
 				yield(obj, xsd) if block_given?
 				obj
