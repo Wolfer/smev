@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
   s.version     = Smev::VERSION
   s.authors     = ["S. Fedosov"]
   s.email       = ["wolferingys@gmail.com"]
-  s.homepage    = "TODO"
+  s.homepage    = "https://github.com/Wolfer/smev"
   s.summary     = "Easy work with Smev."
   s.description = "Easy work with Smev messages in Ruby."
 
@@ -19,7 +19,7 @@ Gem::Specification.new do |s|
 #  s.add_dependency "soap4r"
   s.add_dependency "nori"
   s.add_dependency "uuid"
-  s.add_dependency "nokogiri", '1.5.5'
+  s.add_dependency "nokogiri", '~> 1.5.5'
   s.add_dependency "rubyzip", '~> 1.0'
   s.add_dependency "mime-types"
   s.add_dependency "httpi"
