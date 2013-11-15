@@ -257,7 +257,7 @@ module Smev
 
 		def attachment_schema
 			unless @attachment_schema.is_a? Smev::XSD::Element
-				self.attachment_schema = {"name"=>"AppliedDocuments", "type"=>"element", "namespace"=>"http://rnd-soft.ru", "children"=>[{"name"=>"Smev::XSD::Sequence", "type"=>"sequence", "children"=>[
+				self.attachment_schema = {"name"=>"AppliedDocuments", "type"=>"element", "namespace"=>"http://smev.gosuslugi.ru/request/rev111111", "children"=>[{"name"=>"Smev::XSD::Sequence", "type"=>"sequence", "children"=>[
 					{"name"=>"AppliedDocument", "min_occurs"=>0, "max_occurs"=>9999, "type"=>"element", "children"=>[{"name"=>"Smev::XSD::Sequence", "type"=>"sequence", "children"=>[
 						{"name"=>"CodeDocument", "min_occurs"=>0, "type"=>"element", "value"=>{"type"=>"string", "restrictions"=>{}}}, 
 						{"name"=>"Name", "type"=>"element", "value"=>{"type"=>"string", "restrictions"=>{}}}, 
