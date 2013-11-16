@@ -2,8 +2,9 @@ require 'net/http'
 module Smev
   class Downloader
 
-    def initialize  dir_path
+    def initialize dir_path, max_attempt = 3
       @dir_path = dir_path
+      @max_attempt = max_attempt
     end
 
     def run wsdl_url
@@ -11,9 +12,12 @@ module Smev
       @imports = {}
       get_remote wsdl_url do |body|
         process4xsd body, 'xsd', wsdl_url
-        File.open( @dir_path+"/wsdl", 'w' ){|f| f.write body }
+        File.open( File.join(@dir_path, "wsdl"), 'w' ){|f| f.write body }
       end
       true
+    end
+
+    class AttemptException < SmevException
     end
 
   private
@@ -25,20 +29,25 @@ module Smev
             child = "#{name}-#{i}"
             @imports[match.last] = child
             process4xsd body, child, root_url
-            File.open( @dir_path+"/#{child}", 'w' ){|f| f.write body } 
+            File.open( File.join(@dir_path, child), 'w' ){|f| f.write body } 
           end
         end
         text.sub! match.first, "schemaLocation=\"#{@imports[match.last]}\""       
       end
     end
 
-    def get_remote url, root_url = 'http:/'
+    def get_remote url, root_url = 'http:/', attempt = 0
       url = URI::join(root_url, url) unless url.strip.start_with? "http://"
+      raise AttemptException.new("Failed download #{url}") if attempt > @max_attempt
       puts "[GET] " + url.to_s
       res = Net::HTTP.get_response URI( url ) 
       if res.is_a?(Net::HTTPSuccess)
-        yield res.body.force_encoding("UTF-8") if block_given?
+        body = res.body.force_encoding("UTF-8")
+        if body.index("schema") and block_given?
+          return yield(body)
+        end
       end
+      get_remote url, root_url, attempt+1
     end
 
   end
