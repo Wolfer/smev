@@ -25,4 +25,4 @@ gem 'uuid'
 
 # To use debugger
 # gem 'debugger'
-gem 'sslgem', :github => "kinnalru/sslgem", :branch => "compiling"
+#gem 'sslgem', :github => "kinnalru/sslgem", :branch => "compiling"

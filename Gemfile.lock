@@ -1,11 +1,4 @@
 GIT
-  remote: git://github.com/kinnalru/sslgem.git
-  revision: b5c919d11e66e1ab2678b1f0ebfaa732b58aa1b8
-  branch: compiling
-  specs:
-    sslgem (0.0.1)
-
-GIT
   remote: https://github.com/Wolfer/soap4r.git
   revision: ce1ac75040adaab368aa91ac75c32011f7e76ce4
   specs:
@@ -64,5 +57,4 @@ DEPENDENCIES
   rubyzip (~> 1.0)
   smev!
   soap4r!
-  sslgem!
   uuid
