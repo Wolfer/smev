@@ -20,6 +20,7 @@
 
 				noko ||= noko_i.next
 				check_tail = false
+				children_names = children_size.keys
 				@children.each_with_index do |child, i|
 					# puts "beg #{child.name} #{check_tail}"
 					if check_tail
@@ -28,6 +29,9 @@
 					end
 					begin
 						if child.is_a?(Element)
+							if noko.respond_to?(:name) and not children_names.include?(noko.name.to_s)
+								raise SmevException.new("Element #{noko.name.to_s} not expect here!")
+							end
 							begin
 								noko = noko_i.next if child.load_from_nokogiri noko
 							rescue SmevException => e

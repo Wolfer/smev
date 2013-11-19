@@ -77,6 +77,18 @@ describe Smev::Message do
       sm.to_xml(false).index("Originator").should be_nil, "Must delete from xml not valid element with min_occurs zero"
     end
 
+    it 'raise when extra element into sequence' do
+      hash =  {"name"=>"fault", "type"=>"element", "namespace" => "http://schemas.xmlsoap.org/soap/envelope/", "children"=>[
+        {"name"=>"Sequence", "type"=>"sequence", "children"=>[
+          {"name"=>"string", "type"=>"element", "value"=>{"type"=>"string", "restrictions"=>{}}},
+          {"name"=>"code", "type"=>"element", "min_occurs" => 0, "value"=>{"type"=>"string", "restrictions"=>{}}}          
+        ]}
+      ]}
+      sm = Smev::Message.new hash
+      sm.load_from_xml("<Body><fault><string>123</string><extra>123</extra></fault></Body>").should be_false
+      sm.errors["load_from_xml"].should eql("Element extra not expect here!")
+    end
+
     it "generate fault" do
       hash =  {"name"=>"Fault", "type"=>"element", "namespace" => "http://schemas.xmlsoap.org/soap/envelope/", "children"=>[
                 {"name"=>"Sequence", "type"=>"sequence", "children"=>[
@@ -226,7 +238,7 @@ describe Smev::Message do
         end
 
         it "xml" do
-          sm_unb.load_from_xml File.read File.dirname(__FILE__) + "/example.xml"
+          sm_unb.load_from_xml File.read(File.dirname(__FILE__) + "/example.xml")
           inns = sm_unb.search_child("ИННЮЛ")
           inns.size.should eql(3)
           inns.shift.value.get.should eql("9999999999")
@@ -256,25 +268,23 @@ describe Smev::Message do
 
       end
 
-      describe 'missing element for <all>' do
-        it 'min_occurs 0' do
-          hash =  {"name"=>"fault", "type"=>"element", "namespace" => "http://schemas.xmlsoap.org/soap/envelope/", "children"=>[
-            {"name"=>"All", "type"=>"all", "children"=>[
-              {"name"=>"code", "type"=>"element", "min_occurs" => 0, "value"=>{"type"=>"string", "restrictions"=>{}}},
-              {"name"=>"string", "type"=>"element", "value"=>{"type"=>"string", "restrictions"=>{}}}
-            ]}
-          ]}
-          sm = Smev::Message.new hash
-          sm.load_from_xml("<Body><fault><string>123</string></fault></Body>").should be_true
-          sm.load_from_xml("<Body><fault><code>123</code></fault></Body>").should be_false
-        end
-
-      end
 
     end
 
+    describe 'missing element for <all>' do
+      it 'min_occurs 0' do
+        hash =  {"name"=>"fault", "type"=>"element", "namespace" => "http://schemas.xmlsoap.org/soap/envelope/", "children"=>[
+          {"name"=>"All", "type"=>"all", "children"=>[
+            {"name"=>"code", "type"=>"element", "min_occurs" => 0, "value"=>{"type"=>"string", "restrictions"=>{}}},
+            {"name"=>"string", "type"=>"element", "value"=>{"type"=>"string", "restrictions"=>{}}}
+          ]}
+        ]}
+        sm = Smev::Message.new hash
+        sm.load_from_xml("<Body><fault><string>123</string></fault></Body>").should be_true
+        sm.load_from_xml("<Body><fault><code>123</code></fault></Body>").should be_false
+      end
 
-
+    end
 
   end
 
