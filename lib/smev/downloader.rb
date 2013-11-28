@@ -37,7 +37,7 @@ module Smev
     end
 
     def get_remote url, root_url = 'http:/', attempt = 0
-      url = URI::join(root_url, url) unless url.strip.start_with? "http://"
+      url = URI::join(root_url, url) if url.is_a?(String) and not url.strip.start_with? "http://"
       raise AttemptException.new("Failed download #{url}") if attempt > @max_attempt
       puts "[GET] " + url.to_s
       res = Net::HTTP.get_response URI( url ) 
