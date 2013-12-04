@@ -58,7 +58,13 @@
 				result = "<"+ns+self.name
 				result << " "+self.attributes.select(&:valid?).join(" ") if self.attributes.present?
 
-				content = self.leaf? ? self.value.get : "\n"+self.children.to_xml( nss )+"\n"
+				content = if self.leaf?
+					if txt = self.value.get
+						txt.gsub("<", "&lt;").gsub( ">", "&gt;")
+					end
+				else
+					"\n"+self.children.to_xml( nss )+"\n"
+				end
 
 				if content.to_s.strip.present?
 					result << ">#{content}</#{ns}#{self.name}>"
