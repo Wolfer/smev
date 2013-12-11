@@ -47,7 +47,7 @@
 						check_tail = true
 					end
 				end
-				noko
+				noko unless check_tail
 			rescue StopIteration => e
 				text = "Except that Sequence have element #{@children.map(&:name).inspect}"
 				raise SmevException.new(text) unless self.min_occurs.zero?

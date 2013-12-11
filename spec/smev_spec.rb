@@ -89,6 +89,21 @@ describe Smev::Message do
       sm.errors["load_from_xml"].should eql("Element extra not expect here!")
     end
 
+    it 'non find element in next sequence' do
+      hash =  {"name"=>"fault", "type"=>"element", "namespace" => "http://schemas.xmlsoap.org/soap/envelope/", "children"=>[
+        {"name"=>"Sequence", "type"=>"sequence", "children"=>[
+          {"name"=>"Sequence", "type"=>"sequence", "children"=>[
+            {"name"=>"string", "type"=>"element", "value"=>{"type"=>"string", "restrictions"=>{}}}
+          ]},
+          {"name"=>"Sequence", "type"=>"sequence", "children"=>[
+            {"name"=>"code", "type"=>"element", "min_occurs" => 0, "value"=>{"type"=>"string", "restrictions"=>{}}}          
+          ]}
+        ]}
+      ]}
+      sm = Smev::Message.new hash
+      sm.load_from_xml("<Body><fault><string>123</string></fault></Body>").should be_true
+    end
+
     it "generate fault" do
       hash =  {"name"=>"Fault", "type"=>"element", "namespace" => "http://schemas.xmlsoap.org/soap/envelope/", "children"=>[
                 {"name"=>"Sequence", "type"=>"sequence", "children"=>[
