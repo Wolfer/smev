@@ -20,7 +20,7 @@
 
 				noko ||= noko_i.next
 				check_tail = false
-				children_names = children_size.keys
+				children_names = @children.map(&:element_name).flatten
 				@children.each_with_index do |child, i|
 					# puts "beg #{child.name} #{check_tail}"
 					if check_tail

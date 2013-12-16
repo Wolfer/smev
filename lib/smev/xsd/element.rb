@@ -38,6 +38,10 @@
 				end
 			end
 
+			def element_name
+				self.name
+			end
+
 			def attribute name
 				self.attributes.find{|a| a.name == name } if self.attributes
 			end
