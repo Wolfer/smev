@@ -18,8 +18,8 @@ module Smev
       def get_private_key_file; @private_key_file || get_private_key; end
       def get_signature_template; eval(File.read(File.dirname(__FILE__)+"/../template/signature.builder")); end
 
-      def signature xml, actor = "http://smev.gosuslugi.ru/actors/smev"
-        doc = Nokogiri::XML::Document.parse xml
+      def signature doc, actor = "http://smev.gosuslugi.ru/actors/smev"
+        doc = Nokogiri::XML::Document.parse(doc) unless doc.is_a? Nokogiri::XML::Document
 
         security_with_header = Nokogiri::XML::Document.parse(get_signature_template).children.first
         security = security_with_header.search_child("Security", NAMESPACES['wsse']).first
@@ -45,8 +45,8 @@ module Smev
         (Base64.encode64 Features::call_shell("openssl dgst -engine gost -sign #{get_private_key}", sig_info) ).strip
       end
 
-      def verify xml
-        doc = Nokogiri::XML::Document.parse xml
+      def verify doc
+        doc = Nokogiri::XML::Document.parse(doc) unless doc.is_a? Nokogiri::XML::Document
         doc.search_child("Security", NAMESPACES['wsse']).each do |security|
           next unless security["actor"] == "http://smev.gosuslugi.ru/actors/smev"
           # verify digest value
