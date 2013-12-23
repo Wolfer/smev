@@ -7,10 +7,11 @@ module WSDL
       #FIXME find from all
       #ищем операцию и  описывающий ещё wsdl:message
       raise Error.new("operation '#{action}' not found") unless op = self.porttypes.first.operations.find{ |o| o.name == action }
-
-      mes = ( output ? op.output : op.input).message
+      changer = ->(obj){ output ? obj.output : obj.input }
+      mes = changer[op].message
       # что то делаем... РАЗОБРАТЬ
-      ps = self.bindings.first.operations.find{ |o| o.name == action }.input.soapbody.parts
+      ps = self.bindings.first.operations.find{ |o| o.name == action }
+      ps = changer[ps].soapbody.parts
       #находим части messag
       self.collect_elements.find_name self.message( mes ).parts.find{|p| ps.present? ? p.name == ps : true }.element.name
     end
