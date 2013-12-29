@@ -314,6 +314,23 @@ describe Smev::Message do
 
     end
 
+    it 'choice right to_xml with min_occurs 0' do
+      hash =  {"name"=>"fault", "type"=>"element", "namespace" => "http://schemas.xmlsoap.org/soap/envelope/", "children"=>[
+        {"name"=>"Sequence", "type"=>"sequence", "children"=>[
+          {"name"=>"text", "type"=>"element", "value"=>{"type"=>"string", "restrictions"=>{}}},
+          {"name"=>"Choice", "type"=>"choice", "children"=>[
+            {"name"=>"string", "type"=>"element", "min_occurs" => 0, "children"=>[
+              {"name"=>"Sequence", "type"=>"sequence", "children"=>[
+                {"name"=>"text", "type"=>"element", "value"=>{"type"=>"string", "restrictions"=>{}}}]}]}
+          ]}
+        ]}
+      ]}
+      sm = Smev::Message.new hash
+      sm.get_child("text").set "123"
+      sm.to_xml(false).should be_a(String)
+    end
+
+
   end
 
 

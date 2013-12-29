@@ -10,7 +10,7 @@ module Smev
 
 			def to_xml nss
 				self.children.each{|child| return child.to_xml(nss) if child.valid? }
-				raise SmevException.new("Invalid choice!")
+				raise SmevException.new("Invalid choice!") unless self.min_occurs.zero?
 			end
 
 			def valid?
