@@ -8,19 +8,19 @@
 			attr_accessor :value
 
 
-			def self.build_from_xsd xsd
-				super(xsd) do |obj, xsd|
+			def self.build_from_xsd xsd, root_message = nil
+				super do |obj, xsd|
 					obj.name = xsd.name.name
 					obj.namespace = xsd.name.namespace
 					if xsd.complex_type
 						obj.attributes = xsd.complex_type.attributes.map{|attr| Attribute.build_from_xsd attr }
-						obj.children = child_factory xsd.complex_type.content_type
+						obj.children = child_factory xsd.complex_type.content_type, root_message
 					end
 					obj.value = Value.build_from_xsd( xsd.simple_type, xsd.default ) if obj.leaf?
 				end
 			end
 
-			def self.build_from_hash hash, ns = nil
+			def self.build_from_hash hash, root_message = nil, ns = nil
 				super do |obj, hash|
 					obj.name = hash["name"]
 					obj.namespace = hash["namespace"] || ns
@@ -189,6 +189,16 @@
 					end
 				end
 				# puts ">#{self.name}"
+
+				if xsi_type = noko.attributes["type"] and xsi_type.namespace.try(:href) == "http://www.w3.org/2001/XMLSchema-instance"
+						ns_name = xsi_type.value.split(":")
+						if root_message.wsdl.present? and ns = xsi_type.namespaces["xmlns:#{ns_name.first}"]
+							if ct = root_message.wsdl.collect_complextypes[ ::XSD::QName.new(ns, ns_name.last) ]
+								self.attributes = ct.attributes.map{|attr| Attribute.build_from_xsd attr }
+								self.children = self.class.child_factory ct.content_type, root_message
+							end
+						end
+				end
 
 				noko.attributes.each do |k,v|
 					next if k == "nil" # skip nillable element

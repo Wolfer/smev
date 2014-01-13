@@ -20,6 +20,7 @@ module Smev
 
 		attr_accessor :endpoint
 		attr_accessor :soap_action
+		attr_accessor :wsdl
 
 		 def self.gen_guid
 			# guid = Digest::MD5.hexdigest( Time.now.to_f.to_s ).upcase
@@ -37,6 +38,7 @@ module Smev
 			action ||= wsdl.soap_actions.first
 
 			sm = self.new wsdl.find_by_action( action, output ) do |sm|
+				sm.wsdl = wsdl
 				sm.soap_action = action.to_s
 				sm.endpoint = wsdl.services.first.ports.first.soap_address.location
 			end
@@ -51,10 +53,10 @@ module Smev
 		
 		def initialize value
 			if value.is_a?(WSDL::Info)
-				@struct = [*value].map{ |x| Smev::XSD.const_get(x.class.to_s.split("::").last).build_from_xsd x }
+				@struct = [*value].map{ |x| Smev::XSD.const_get(x.class.to_s.split("::").last).build_from_xsd x, self }
 			else
 				value = [value] unless value.is_a?(Array)
-				@struct = [*value].map{ |x| Smev::XSD.const_get(x["type"].capitalize).build_from_hash x }
+				@struct = [*value].map{ |x| Smev::XSD.const_get(x["type"].capitalize).build_from_hash x, self }
 			end
 			@errors = {}			
 			self.files ||= []
@@ -274,7 +276,7 @@ module Smev
 		def attachment_schema= obj
 			@attachment_schema = case obj
 			when Hash
-				Smev::XSD::Element.build_from_hash obj
+				Smev::XSD::Element.build_from_hash obj, self
 			when Smev::XSD::Element
 				obj
 			else

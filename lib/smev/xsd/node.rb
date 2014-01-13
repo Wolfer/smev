@@ -6,17 +6,20 @@ module Smev
 			attr_accessor :max_occurs
 			attr_accessor :min_occurs
 			attr_accessor	:errors
+			attr_accessor	:root_message
 
-			def self.build_from_xsd xsd
+			def self.build_from_xsd xsd, root_message = nil
 				obj = self.new
+				obj.root_message = root_message
 				obj.max_occurs = (xsd.maxoccurs || 9999).to_i
 				obj.min_occurs = xsd.minoccurs.to_i || 1
 				yield(obj, xsd) if block_given?
 				obj
 			end
 
-			def self.build_from_hash hash, ns = nil
+			def self.build_from_hash hash, root_message = nil, ns = nil
 				obj = self.new
+				obj.root_message = root_message
 				obj.max_occurs = (hash["max_occurs"] || 1).to_i
 				obj.min_occurs = (hash["min_occurs"] || 1).to_i
 				obj.namespace = hash["namespace"] || ns if obj.respond_to? "namespace"
@@ -75,10 +78,10 @@ module Smev
 
 		private
 
-			def self.child_factory child
+			def self.child_factory child, root_message = nil
 				return nil unless child
-				raise ArgumentError.new( "#{child.class} not allow into #{self.class}!"  ) if allow_child.is_a?(Hash) and not allow_child.keys.include? child.class
-				allow_child[ child.class ].build_from_xsd child
+				raise ArgumentError.new( "#{child.class} not allow into #{self}!"  ) if allow_child.is_a?(Hash) and not allow_child.keys.include? child.class
+				allow_child[ child.class ].build_from_xsd child, root_message
 			end
 
 			def self.allow_child
