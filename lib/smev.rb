@@ -56,3 +56,11 @@ Zip.setup do |c|
   c.continue_on_exists_proc = true
   c.unicode_names = true
 end
+module Nokogiri
+	module XML
+		class ParseOptions
+			remove_const(:DEFAULT_XML)
+			DEFAULT_XML = RECOVER | NONET | HUGE
+		end
+	end
+end
