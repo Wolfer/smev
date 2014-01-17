@@ -28,7 +28,7 @@ GEM
     macaddr (1.6.1)
       systemu (~> 2.5.0)
     mime-types (1.23)
-    nokogiri (1.5.5)
+    nokogiri (1.5.11)
     nori (2.2.0)
     rack (1.5.2)
     rspec (2.13.0)
