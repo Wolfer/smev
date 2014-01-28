@@ -48,7 +48,8 @@ module Smev
       def verify doc
         doc = Nokogiri::XML::Document.parse(doc) unless doc.is_a? Nokogiri::XML::Document
         doc.search_child("Security", NAMESPACES['wsse']).each do |security|
-          next unless security["actor"] == "http://smev.gosuslugi.ru/actors/smev"
+          actor = security.attribute("actor")
+          next unless actor and actor.value == "http://smev.gosuslugi.ru/actors/smev"
           # verify digest value
           security.search_child("Reference", NAMESPACES['ds']).each { |ref|  check_digest doc, ref } 
           # check signature
@@ -63,7 +64,7 @@ module Smev
       end
 
       def check_digest doc, ref
-        if text = doc.css('*:regex("Id", "'+( ref["URI"].tr('#', '')) +'")', XPathFinder.new).first
+        if text = doc.css('*:regex("Id", "'+( ref.attribute("URI").value.tr('#', '')) +'")', XPathFinder.new).first
           raise SignatureError.new("Wrong digest value") unless digest(text) == ref.search_child("DigestValue", NAMESPACES['ds']).first.children.to_s.strip
         else
           raise SignatureError.new("Not found signed partial!")

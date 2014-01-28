@@ -1,6 +1,6 @@
 class XPathFinder
 	def regex node_set, attr, value
-		node_set.find_all { |node| node[attr] == value }
+		node_set.find_all { |node| node.attribute(attr).value == value if node.attribute(attr)}
 	end
 end
 
