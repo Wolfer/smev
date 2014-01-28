@@ -1,0 +1,2 @@
+* Do signer like as https://github.com/benoist/xmldsig
+* Look at https://github.com/webgago/web-xml-signer
