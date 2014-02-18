@@ -8,7 +8,7 @@ end
 Nokogiri::XML::Node.class_eval <<CLASSEVAL
 
 	def search_child name, ns = false
-		result = self.children.find_all{ |e| e.name.downcase == name.downcase and ( !ns or e.namespace.href == ns )  } 
+		result = self.children.find_all{ |e| e.name.downcase == name.downcase and ( !ns or e.namespace.try(:href) == ns )  } 
 		unless result.present?
 			self.children.each do |c| 
 				result  = c.search_child name, ns
