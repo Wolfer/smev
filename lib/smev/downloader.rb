@@ -46,6 +46,8 @@ module Smev
         if body.index("schema") and block_given?
           return yield(body)
         end
+      elsif res.code == "301"
+        return get_remote(res.header['location'], attempt)
       end
       get_remote url, root_url, attempt+1
     end
