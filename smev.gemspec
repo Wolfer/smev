@@ -18,6 +18,7 @@ Gem::Specification.new do |s|
   s.add_development_dependency "rspec"
 #  s.add_dependency "soap4r"
   s.add_dependency "nori"
+  s.add_dependency "macaddr", '= 1.6.1'
   s.add_dependency "uuid"
   s.add_dependency "nokogiri", '~> 1.6.1'
   s.add_dependency "rubyzip", '~> 1.0'
