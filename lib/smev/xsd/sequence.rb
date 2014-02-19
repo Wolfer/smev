@@ -22,7 +22,7 @@
 				check_tail = false
 				children_names = @children.map(&:element_name).flatten
 				@children.each_with_index do |child, i|
-					# puts "beg #{child.name} #{check_tail}"
+					# puts "beg #{child.name} #{check_tail} #{i} from #{@children.map(&:name)}"
 					if check_tail
 						raise SmevException.new("Expect #{child.name}, but nothing given") unless child.min_occurs.zero?
 						next
@@ -30,7 +30,7 @@
 					begin
 						if child.is_a?(Element)
 							if noko.respond_to?(:name) and not children_names.include?(noko.name.to_s)
-								raise SmevException.new("Element #{noko.name.to_s} not expect here!")
+								raise UnexpectedElement.new("Element #{noko.name.to_s} not expect here!", noko)
 							end
 							begin
 								noko = noko_i.next if child.load_from_nokogiri noko
@@ -40,7 +40,13 @@
 								raise SmevException.new(e.to_s)				
 							end
 						else
-							noko = child.load_from_nokogiri( noko_i, noko)
+							begin
+								noko = child.load_from_nokogiri( noko_i, noko)
+							rescue UnexpectedElement => e
+								unless noko = e.element
+									raise UnexpectedElement.new(e.to_s)
+								end
+							end
 						end
 					rescue StopIteration => e
 						# puts "--#{noko_i.drop(0).map(&:name).inspect}"

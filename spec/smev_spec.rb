@@ -102,19 +102,37 @@ describe Smev::Message do
       sm.load_from_xml("<Body><fault><string>123</string></fault></Body>").should be_true
     end
 
-    it 'non find element in next sequence' do
-      hash =  {"name"=>"fault", "type"=>"element", "namespace" => "http://schemas.xmlsoap.org/soap/envelope/", "children"=>[
-        {"name"=>"Sequence", "type"=>"sequence", "children"=>[
+    describe 'non find element in next sequence' do
+      it 'if second have min_occurs 0 ' do 
+        hash =  {"name"=>"fault", "type"=>"element", "namespace" => "http://schemas.xmlsoap.org/soap/envelope/", "children"=>[
           {"name"=>"Sequence", "type"=>"sequence", "children"=>[
-            {"name"=>"string", "type"=>"element", "value"=>{"type"=>"string", "restrictions"=>{}}}
-          ]},
-          {"name"=>"Sequence", "type"=>"sequence", "children"=>[
-            {"name"=>"code", "type"=>"element", "min_occurs" => 0, "value"=>{"type"=>"string", "restrictions"=>{}}}          
+            {"name"=>"Sequence", "type"=>"sequence", "children"=>[
+              {"name"=>"string", "type"=>"element", "value"=>{"type"=>"string", "restrictions"=>{}}}
+            ]},
+            {"name"=>"Sequence", "type"=>"sequence", "children"=>[
+              {"name"=>"code", "type"=>"element", "min_occurs" => 0, "value"=>{"type"=>"string", "restrictions"=>{}}}          
+            ]}
           ]}
         ]}
-      ]}
-      sm = Smev::Message.new hash
-      sm.load_from_xml("<Body><fault><string>123</string></fault></Body>").should be_true
+        sm = Smev::Message.new hash
+        sm.load_from_xml("<Body><fault><string>123</string></fault></Body>").should be_true
+      end
+
+      it 'if first have min_occurs 0 ' do 
+        hash =  {"name"=>"fault", "type"=>"element", "namespace" => "http://schemas.xmlsoap.org/soap/envelope/", "children"=>[
+          {"name"=>"Sequence", "type"=>"sequence", "children"=>[
+            {"name"=>"Sequence", "type"=>"sequence", "children"=>[
+              {"name"=>"string", "type"=>"element", "value"=>{"type"=>"string", "restrictions"=>{}}},
+              {"name"=>"string2", "type"=>"element", "min_occurs" => 0, "value"=>{"type"=>"string", "restrictions"=>{}}}
+            ]},
+            {"name"=>"Sequence", "type"=>"sequence", "children"=>[
+              {"name"=>"code", "type"=>"element", "value"=>{"type"=>"string", "restrictions"=>{}}}          
+            ]}
+          ]}
+        ]}
+        sm = Smev::Message.new hash
+        sm.load_from_xml("<Body><fault><string>123</string><code>123</code></fault></Body>").should be_true
+      end
     end
 
     it "generate fault" do
