@@ -10,6 +10,7 @@ PATH
   specs:
     smev (0.0.1)
       httpi
+      macaddr (= 1.6.1)
       mime-types
       nokogiri (~> 1.6.1)
       nori
