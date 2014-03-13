@@ -4,6 +4,7 @@ module Smev
 
 			attr_accessor :default
 			attr_accessor :type
+			attr_accessor :example
 			
 			attr_accessor :length
 			attr_accessor :minlength
@@ -44,6 +45,7 @@ module Smev
 					# obj.instance_eval "@value = '#{hash["value"]}'"
 					obj.set hash["value"]
 					obj.type = hash["type"]
+					obj.example = hash["example"]
 					%w(enumeration length minlength maxlength pattern).each do |m|
 						 obj.send("#{m}=", hash["restrictions"][m]) if hash["restrictions"][m].present?
 					end if hash["restrictions"].present?
@@ -64,7 +66,8 @@ module Smev
 			def inspect; "#<Value #{@value.inspect} >"; end
 
 			def as_hash
-				{ "type" => self.type }.tap do |hash| 
+				{ "type" => self.type }.tap do |hash|
+					hash["example"] = self.example if self.example.present?
 					hash["restrictions"] = {}
 					%w(enumeration length minlength maxlength pattern).each do |m|
 						hash["restrictions"][m] = self.send(m) if self.send(m).present?
@@ -103,35 +106,14 @@ module Smev
 
 			def valid?
 				raise ValueNilError.new("must not be nil") if @value.nil?
-				check_enumeration
-				check_length
-				check_minlength
-				check_maxlength
-				check_pattern
-				true
+				check_value @value
 			end
 
 			def fill_test
 				return @value if @value.present?
 				@value =  case self.type
 				when "string"
-					if self.enumeration.present?
-						self.enumeration.first
-					else
-						val = ''
-						val = regexp_to_str [*self.pattern].first if self.pattern.present?
-						while self.minlength.present? and val.size < self.minlength.to_i
-							val << "9"
-						end
-						while self.maxlength.present? and val.size > self.minlength.to_i
-							val = val[0..-2]
-						end
-						if self.length.present?
-							val << "9" while val.size < self.length.to_i
-							val = val[0..-2] while val.size > self.length.to_i
-						end
-						val
-					end			
+					fill_string
 				when "dateTime"
 					Time.now.xmlschema
 				else
@@ -140,33 +122,59 @@ module Smev
 			end
 
 		private
+
+			def fill_string
+				return self.enumeration.first if self.enumeration.present?					
+				val = (self.example || 'example')
+				val = regexp_to_str [*self.pattern].first if self.pattern.present?
+				while self.minlength.present? and val.size < self.minlength.to_i
+					val << "9"
+				end
+				while self.maxlength.present? and val.size > self.minlength.to_i
+					val = val[0..-2]
+				end
+				if self.length.present?
+					val << "9" while val.size < self.length.to_i
+					val = val[0..-2] while val.size > self.length.to_i
+				end
+				val
+			end
+
+			def check_value str
+				check_enumeration str
+				check_length str
+				check_minlength str
+				check_maxlength str
+				check_pattern str
+				true
+			end
 			
-			def check_enumeration
-				unless !self.enumeration.present? or self.enumeration.include?(@value)
+			def check_enumeration str
+				unless !self.enumeration.present? or self.enumeration.include?(str)
 					raise ValueError.new(" must be in #{self.enumeration.inspect}")
 				end
 			end
 
-			def check_length
-				unless self.length.nil? or @value.to_s.size == self.length.to_i
+			def check_length str
+				unless self.length.nil? or str.to_s.size == self.length.to_i
 					raise ValueError.new(" length must be: value == #{self.length}")
 				end
 			end
 
-			def check_minlength
-				unless self.minlength.nil? or @value.to_s.size >= self.minlength.to_i
+			def check_minlength str
+				unless self.minlength.nil? or str.to_s.size >= self.minlength.to_i
 					raise ValueError.new(" length must be: value > #{self.minlength}")
 				end
 			end
 
-			def check_maxlength
-				unless self.maxlength.nil? or @value.to_s.size <= self.maxlength.to_i
+			def check_maxlength str
+				unless self.maxlength.nil? or str.to_s.size <= self.maxlength.to_i
 					raise ValueError.new(" length must be: value < #{self.maxlength}")
 				end
 			end
 
-			def check_pattern
-				if @pattern.present? and [*@pattern].select{|pattern| Regexp.new("^#{pattern}$") =~ @value.to_s }.blank?
+			def check_pattern str
+				if @pattern.present? and [*@pattern].select{|pattern| Regexp.new("^#{pattern}$") =~ str.to_s }.blank?
 					raise ValueError.new(" must be: value =~ %s" % [*@pattern].join(" or "))
 				end
 			end
