@@ -126,7 +126,11 @@ module Smev
 			def fill_string
 				return self.enumeration.first if self.enumeration.present?					
 				val = (self.example || 'example')
-				val = regexp_to_str [*self.pattern].first if self.pattern.present?
+				begin
+					check_pattern val
+				rescue ValueError
+					val = regexp_to_str [*self.pattern].first 
+				end
 				while self.minlength.present? and val.size < self.minlength.to_i
 					val << "9"
 				end
