@@ -10,6 +10,7 @@ PATH
   specs:
     smev (0.0.1)
       httpi
+      httpi (~> 2.1.0)
       macaddr (= 1.6.1)
       mime-types
       nokogiri (~> 1.6.1)
@@ -53,6 +54,7 @@ PLATFORMS
 
 DEPENDENCIES
   builder
+  httpi (~> 2.1.0)
   mime-types
   nokogiri (~> 1.6.1)
   nori

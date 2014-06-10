@@ -10,6 +10,7 @@ group :test, :development do
   gem 'rspec'
 end
 
+gem 'httpi', '~> 2.1.0'
 gem 'soap4r', :git => 'https://github.com/Wolfer/soap4r.git'
 gem 'nokogiri', '~> 1.6.1'#, :git => "git://github.com/tenderlove/nokogiri.git", :branch => "c14n"
 gem 'nori'
