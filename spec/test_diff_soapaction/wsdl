@@ -1,0 +1,42 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<definitions name="RosreestrService" targetNamespace="http://portal.fccland.ru/rt/" xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:smev="http://smev.gosuslugi.ru/rev111111" xmlns:soapenv="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tns="http://portal.fccland.ru/rt/" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <types>
+<xs:schema targetNamespace="http://portal.fccland.ru/rt/">
+               <xs:element name="createRequestRequest" type="xs:string"/>
+               <xs:element name="createRequestResponse" type="xs:string"/>
+           </xs:schema>
+  </types>
+  <message name="CreateRequestInput">
+    <part element="tns:createRequestRequest" name="data">
+    </part>
+  </message>
+  <message name="CreateRequestOutput">
+    <part element="tns:createRequestResponse" name="data">
+    </part>
+  </message>
+  <portType name="RosreestrServicePortType">
+    <operation name="CreateRequest">
+      <input message="tns:CreateRequestInput">
+    </input>
+      <output message="tns:CreateRequestOutput">
+    </output>
+    </operation>
+  </portType>
+  <binding name="RosreestrServiceBinding" type="tns:RosreestrServicePortType">
+    <soapenv:binding transport="http://schemas.xmlsoap.org/soap/http"/>
+    <operation name="CreateRequest">
+      <soapenv:operation soapAction="http://portal.rosreestr.ru/CreateRequest" style="document"/>
+      <input>
+        <soapenv:body use="literal"/>
+      </input>
+      <output>
+        <soapenv:body use="literal"/>
+      </output>
+    </operation>
+  </binding>
+  <service name="RosreestrService">
+    <port binding="tns:RosreestrServiceBinding" name="RosreestrServicePort">
+      <soapenv:address location="http://pk7nlbsmev.k7.egov.local:80/gateway/services/SID0004064/1.00"/>
+    </port>
+  </service>
+</definitions>

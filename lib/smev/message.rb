@@ -39,7 +39,7 @@ module Smev
 
 			sm = self.new wsdl.find_by_action( action, output ) do |sm|
 				sm.wsdl = wsdl
-				sm.soap_action = action.to_s
+				sm.soap_action = wsdl.soap_action_by_action(action) || action
 				sm.endpoint = wsdl.services.first.ports.first.soap_address.location
 			end
 			sm

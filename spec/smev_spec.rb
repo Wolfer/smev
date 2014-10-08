@@ -352,5 +352,12 @@ describe Smev::Message do
   end
 
 
+  describe "wsdl" do
+    it 'get right soap action' do
+      wsdl_path = ("file://" + File.dirname(__FILE__) + "/test_diff_soapaction/wsdl")
+      sm = Smev::Message.from_wsdl wsdl_path, 'CreateRequest'
+      sm.soap_action.should eql("http://portal.rosreestr.ru/CreateRequest")
+    end
+  end
 
 end

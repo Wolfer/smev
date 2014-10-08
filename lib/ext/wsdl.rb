@@ -20,6 +20,14 @@ module WSDL
       self.porttypes.map { |pt| pt.operations.map(&:name) }.flatten.uniq
     end
 
+    def soap_action_by_action action
+      self.bindings.any? do |b|
+        b.operations.any? do |op|
+          return op.soapaction if op.name == action
+        end        
+      end
+    end
+
   end
 
   module XMLSchema
