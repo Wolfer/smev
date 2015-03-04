@@ -79,6 +79,12 @@ module Smev
 				obj
 			end
 
+			def inspect
+				vars = self.instance_variables - [:@root_message]
+				vars = vars.map{|v| "#{v}=#{ self.instance_variable_get(v).inspect }"}
+				"#<#{self.class}:#{self.object_id} #{vars.join(" ")}>"
+			end
+
 		private
 
 			def self.child_factory child, root_message = nil
