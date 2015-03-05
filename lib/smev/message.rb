@@ -292,7 +292,7 @@ module Smev
 
 		def make_request body = ''
 			#FIXME write test for me
-			raise SmevException.new("Need endpoint and soap_action!") unless self.endpoint.present? and self.soap_action.present?
+			raise SmevException.new("Need endpoint and soap_action!") unless self.endpoint.present? and !self.soap_action.nil?
 			body = self.to_xml if body.blank?
 			Smev::Request.do self.endpoint, self.soap_action.to_s, (body.present? ?  body : self.to_xml )
 		end
