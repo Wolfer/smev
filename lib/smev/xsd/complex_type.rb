@@ -5,11 +5,7 @@
 			def self.build_from_xsd xsd, root_message = nil
 				super do |obj, xsd|
 					obj.children = xsd.elements.map do |elem| 
-						if elem.minoccurs > 1
-							elem.minoccurs.times.map{|i| child_factory elem, root_message }
-						else
-							child_factory elem, root_message
-						end
+						child_factory elem, root_message
 					end
 					obj
 				end

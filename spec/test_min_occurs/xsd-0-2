@@ -1,0 +1,28 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<xsd:schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:pfr="http://data.service.pfr.socit.ru" xmlns:xsd="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" targetNamespace="http://data.service.pfr.socit.ru">
+  <xsd:element name="FilePFR">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:choice>
+          <xsd:element name="ДатаРождения">
+            <xsd:simpleType>
+              <xsd:restriction base="xsd:string">
+                <xsd:pattern value="\d{2}\.\d{2}\.\d{4}"/>
+              </xsd:restriction>
+            </xsd:simpleType>
+          </xsd:element>
+        </xsd:choice>
+        
+        <xsd:element name="СтраховойНомер" minOccurs="2" maxOccurs="99">
+          <xsd:simpleType>
+            <xsd:restriction base="xsd:string">
+              <xsd:pattern value="\d{3}-\d{3}-\d{3} \d{2}"/>
+            </xsd:restriction>
+          </xsd:simpleType>
+        </xsd:element>
+
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+
+</xsd:schema>

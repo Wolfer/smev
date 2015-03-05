@@ -133,6 +133,16 @@ describe Smev::Message do
         sm = Smev::Message.new hash
         sm.load_from_xml("<Body><fault><string>123</string><code>123</code></fault></Body>").should be_true
       end
+
+    end
+
+    describe 'find element' do
+      it 'if min_occurs > 1' do 
+        wsdl = WSDL::Importer.import( "file://" + File.dirname(__FILE__) + "/test_min_occurs/wsdl" )
+        sm = Smev::Message.new wsdl.find_by_action(wsdl.soap_actions.first)
+        sm.get_child("FilePFR").should be_a(Smev::XSD::Element)
+      end
+
     end
 
     it "generate fault" do

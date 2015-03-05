@@ -1,0 +1,21 @@
+<?xml version='1.0' encoding='UTF-8'?><xsd:schema xmlns:ds="http://www.w3.org/2000/09/xmldsig#" xmlns:pfr="http://data.service.pfr.socit.ru" xmlns:smev="http://smev.gosuslugi.ru/rev111111" xmlns:xop="http://www.w3.org/2004/08/xop/include" xmlns:xsd="http://www.w3.org/2001/XMLSchema" attributeFormDefault="unqualified" elementFormDefault="qualified" targetNamespace="http://smev.gosuslugi.ru/rev111111">
+	<xsd:import namespace="http://data.service.pfr.socit.ru" schemaLocation="xsd-0-2"/>
+
+	<xsd:complexType name="BaseMessageType">
+		<xsd:sequence>
+			<xsd:element name="MessageData" type="smev:MessageDataType" />
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<xsd:complexType name="MessageDataType">
+		<xsd:sequence>
+			<xsd:element minOccurs="0" name="AppData" type="smev:AppDataType"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="AppDataType">
+		<xsd:sequence>
+			<xsd:element ref="pfr:FilePFR"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	
+</xsd:schema>
