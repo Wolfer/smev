@@ -1,6 +1,6 @@
 xml = Builder::XmlMarkup.new
 xml.tag! "soap:Header", "xmlns:soap" => "http://schemas.xmlsoap.org/soap/envelope/" do
-	xml.tag! "wsse:Security", "soap:actor" => "http://smev.gosuslugi.ru/actors/smev", "xmlns:wsse" => NAMESPACES["wsse"] do
+	xml.tag! "wsse:Security", "xmlns:soap" => "http://schemas.xmlsoap.org/soap/envelope/", "soap:actor" => "http://smev.gosuslugi.ru/actors/smev", "xmlns:wsse" => NAMESPACES["wsse"] do
 		xml.tag! "ds:Signature", "xmlns:ds" => NAMESPACES["ds"] do
 			xml.tag! "ds:SignedInfo" do
 				xml.tag! "ds:CanonicalizationMethod", "Algorithm" => "http://www.w3.org/2001/10/xml-exc-c14n#"
