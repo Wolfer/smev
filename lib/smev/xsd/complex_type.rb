@@ -35,8 +35,13 @@
 				children.inject({}) do |result, child| 
 					hash = child.to_hash(short)
 					if child.max_occurs > 1
-						result[child.name] ||= []
-						result[child.name] << hash.delete(child.name)
+						# result[child.name] ||= []
+						# result[child.name] << hash.delete(child.name)
+						val = hash.delete(child.name)
+						if val.present? or not short
+							result[child.name] ||= []
+							result[child.name] << val
+						end
 					else
 						result.merge! hash
 					end
