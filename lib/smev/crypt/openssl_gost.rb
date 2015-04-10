@@ -16,29 +16,73 @@ module Smev
       def get_private_key; @private_key || PRIVATEKEY; end
       def get_certificate_file; @certificate_file || get_certificate; end
       def get_private_key_file; @private_key_file || get_private_key; end
-      def get_signature_template; eval(File.read(File.dirname(__FILE__)+"/../template/signature.builder")); end
+      def get_signature_template opts = {}
+        eval(File.read(File.dirname(__FILE__)+"/../template/signature.builder"))
+      end
 
       def signature doc, actor = "http://smev.gosuslugi.ru/actors/smev"
         doc = Nokogiri::XML::Document.parse(doc) unless doc.is_a? Nokogiri::XML::Document
+        envel = doc.search_child("Envelope", NAMESPACES['soap']).first
+        body = envel.search_child("Body", NAMESPACES['soap']).first
+        header = envel.search_child("Header", NAMESPACES['soap']).first
+        used_prefixes = %w(soap wsse wsu ds)
 
-        security_with_header = Nokogiri::XML::Document.parse(get_signature_template).children.first
-        security = security_with_header.search_child("Security", NAMESPACES['wsse']).first
+        doc_nss = doc.collect_namespaces
+        doc_nss.delete("xmlns")
+        prefixes = used_prefixes.inject({}) do |res, name|
+            res[name] = name
+            doc_nss.find do |p, n|
+              res[name] = p.gsub('xmlns:', '') if n == NAMESPACES[name]
+            end
+            res
+          end
+
+        # Add Header if not exist
+        unless header
+          header = envel.parse("<#{prefixes['soap']}:Header></#{prefixes['soap']}:Header>").first
+          doc.search_child("Body", NAMESPACES['soap']).first.add_previous_sibling header
+        end
+
+        # Find namespace that not set in header scope
+        visible_nss = header.namespace_scopes
+        need_ns = {}
+        %w(wsse wsu ds).each do |name|
+          unless visible_nss.find{|n| n.href == NAMESPACES[name] }
+            need_ns["xmlns:#{name}"] = NAMESPACES[name]
+          end
+        end
+
+        # Set right prefixes
+        sig_tmpl = get_signature_template(nss: need_ns)
+        used_prefixes.each do |name|
+          sig_tmpl.gsub!("--#{name.upcase}--", prefixes[name])
+        end
         
+        security = header.parse(sig_tmpl).first
+        header << security
+
+        id = if id_attr = body.attribute_with_ns("Id", NAMESPACES["wsu"])
+            id_attr.content
+          else
+            body.set_attribute("#{prefixes['wsu']}:Id", "body")
+          end
+
+        ref = security.search_child("Reference", NAMESPACES['ds']).first
+        ref.attribute("URI").content = "##{id}"
+
         security.search_child("BinarySecurityToken", NAMESPACES['wsse']).first.children = File.read(get_certificate).gsub(/\-{2,}[^\-]+\-{2,}/,'').gsub(/\n\n+/, "\n")
         #digest
-        security.search_child("DigestValue", NAMESPACES['ds']).first.children = digest doc.search_child("Body", NAMESPACES['soap']).first
+        security.search_child("DigestValue", NAMESPACES['ds']).first.children = digest(body)
         #signature
         sig_value =  calculate_signature( security.search_child("SignedInfo", NAMESPACES['ds']).first.canonicalize_excl )
         security.search_child("SignatureValue", NAMESPACES['ds']).first.children = sig_value
 
-        if header = doc.search_child("Header", NAMESPACES['soap']).first
-          header << security
-        else
-          doc.search_child("Body", NAMESPACES['soap']).first.add_previous_sibling security_with_header
-        end
-        doc.search_child("Envelope", NAMESPACES['soap']).first.add_namespace("wsse", NAMESPACES['wsse']) unless doc.namespaces.values.include? NAMESPACES['wsse']
 
-        doc.to_xml(:save_with => Nokogiri::XML::Node::SaveOptions::AS_XML )
+        unless doc.namespaces.values.include? NAMESPACES['wsse']
+          doc.search_child("Envelope", NAMESPACES['soap']).first.add_namespace("wsse", NAMESPACES['wsse']) 
+        end
+
+        doc.to_xml(save_with: Nokogiri::XML::Node::SaveOptions::AS_XML )
       end
 
       def calculate_signature sig_info
