@@ -16,7 +16,11 @@ module Smev
       def get_private_key; @private_key || PRIVATEKEY; end
       def get_certificate_file; @certificate_file || get_certificate; end
       def get_private_key_file; @private_key_file || get_private_key; end
-      def get_signature_template opts = {}
+      def get_signature_template exists_nss = []
+        nss = {}
+        %w(soap wsse wsu ds).each do |ns|
+          nss["xmlns:#{ns}"] = NAMESPACES[ns] unless exists_nss.include?(NAMESPACES[ns])
+        end
         eval(File.read(File.dirname(__FILE__)+"/../template/signature.builder"))
       end
 
@@ -45,15 +49,13 @@ module Smev
 
         # Find namespace that not set in header scope
         visible_nss = header.namespace_scopes
-        need_ns = {}
+        exists_nss = []
         %w(wsse wsu ds).each do |name|
-          unless visible_nss.find{|n| n.href == NAMESPACES[name] }
-            need_ns["xmlns:#{name}"] = NAMESPACES[name]
-          end
+          exists_nss << NAMESPACES[name] if visible_nss.find{|n| n.href == NAMESPACES[name] }
         end
 
         # Set right prefixes
-        sig_tmpl = get_signature_template(nss: need_ns)
+        sig_tmpl = get_signature_template(exists_nss)
         used_prefixes.each do |name|
           sig_tmpl.gsub!("--#{name.upcase}--", prefixes[name])
         end

@@ -1,6 +1,5 @@
 xml =  Builder::XmlMarkup.new
-xml.tag! "--WSSE--:Security", (opts[:nss]||{}).merge(
-                                "--SOAP--:actor" => "http://smev.gosuslugi.ru/actors/smev") do
+xml.tag! "--WSSE--:Security", nss.merge("--SOAP--:actor" => "http://smev.gosuslugi.ru/actors/smev") do
 
   xml.tag! "--DS--:Signature" do
     xml.tag! "--DS--:SignedInfo" do
