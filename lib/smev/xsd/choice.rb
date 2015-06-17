@@ -5,7 +5,7 @@ module Smev
 			def parent; WSDL::XMLSchema::Choice; end
 
 			def min_occurs
-				children.find{|child| child.min_occurs.zero?}.present? ? 0 : 1
+				children.find{|child| child.min_occurs.zero?}.present? ? 0 : @min_occurs
 			end
 
 			def to_xml nss

@@ -342,7 +342,7 @@ describe Smev::Message do
 
     end
 
-    it 'choice right to_xml with min_occurs 0' do
+    it 'choice right to_xml if child min_occurs 0' do
       hash =  {"name"=>"fault", "type"=>"element", "namespace" => "http://schemas.xmlsoap.org/soap/envelope/", "children"=>[
         {"name"=>"Sequence", "type"=>"sequence", "children"=>[
           {"name"=>"text", "type"=>"element", "value"=>{"type"=>"string", "restrictions"=>{}}},
@@ -350,6 +350,21 @@ describe Smev::Message do
             {"name"=>"string", "type"=>"element", "min_occurs" => 0, "children"=>[
               {"name"=>"Sequence", "type"=>"sequence", "children"=>[
                 {"name"=>"text", "type"=>"element", "value"=>{"type"=>"string", "restrictions"=>{}}}]}]}
+          ]}
+        ]}
+      ]}
+      sm = Smev::Message.new hash
+      sm.get_child("text").set "123"
+      sm.to_xml(false).should be_a(String)
+    end
+
+    it 'choice right to_xml with min_occurs 0' do
+      hash =  {"name"=>"fault", "type"=>"element", "namespace" => "http://schemas.xmlsoap.org/soap/envelope/", "children"=>[
+        {"name"=>"Sequence", "type"=>"sequence", "children"=>[
+          {"name"=>"text", "type"=>"element", "value"=>{"type"=>"string", "restrictions"=>{}}},
+          {"name"=>"Choice", "type"=>"choice", "min_occurs" => 0, "children"=>[
+            {"name"=>"text1", "type"=>"element", "value"=>{"type"=>"string", "restrictions"=>{}}},
+            {"name"=>"text2", "type"=>"element", "value"=>{"type"=>"string", "restrictions"=>{}}}
           ]}
         ]}
       ]}
