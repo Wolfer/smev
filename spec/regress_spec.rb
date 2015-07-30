@@ -27,5 +27,19 @@ describe Smev::Message do
     sm.to_hash(false).should eq("fault"=>{"first"=>[nil]})
   end
 
+  it 'can proccess empty AppliedDocuments' do
+    hash =  {"name"=>"BinaryData", "type"=>"element", "value"=>{"type"=>"string", "restrictions"=>{}}}
+    sm = Smev::Message.new hash
+    sm.get_child("BinaryData").set "UEsDBBQACAAIAE9T/UYAAAAAAAAAAAAAAAAsAAAAcmVxXzZmYjE5M2U1LTYzYzUtNDY3NS05OTYy
+LTYzNTk0YTg1N2YyZC54bWxTUFBQsHEsKMjJTE1xyU8uzU3NKym24+VSAInrY5EAAFBLBwhWtREK
+IAAAADEAAABQSwECFAAUAAgACABPU/1GVrURCiAAAAAxAAAALAAAAAAAAAAAAAAAAAAAAAAAcmVx
+XzZmYjE5M2U1LTYzYzUtNDY3NS05OTYyLTYzNTk0YTg1N2YyZC54bWxQSwUGAAAAAAEAAQBaAAAA
+egAAAAAA"
+    Dir.mktmpdir do |dir|
+      sm.get_appdoc dir
+      sm.files.should be_empty
+    end
+  end
+
 
 end

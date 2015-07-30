@@ -235,7 +235,8 @@ module Smev
 			rq = self.get_child("RequestCode")
 			if req_xml = att_files.find{|af|  af.match( rq ? /req_#{rq.get}+\.xml$/ : /req_[^\.]+\.xml$/ ) }
 				attachment_schema.load_from_nokogiri Nokogiri::XML::Document.parse(File.read(req_xml)).children.first
-				attachment_schema.search_child("AppliedDocument").each do |ad| 
+				attachment_schema.search_child("AppliedDocument").each do |ad|
+					next unless ad.valid? 
 					file = ad.children.to_hash
 					file["Name"] = File.join(dir, file["URL"], file["Name"])
 					self.files << file
