@@ -26,7 +26,10 @@
 					obj.namespace = hash["namespace"] || ns
 					obj.value = Value.build_from_hash hash["value"] if obj.leaf?
 					obj.attributes = hash["attributes"].map{|attr| Attribute.build_from_hash attr} if hash["attributes"].present?
-					obj.children = obj.children.first if obj.children
+					if obj.children
+						raise SmevException.new("Element can't get two complex type") if obj.children.size > 1
+						obj.children = obj.children.first
+					end
 				end
 			end
 
