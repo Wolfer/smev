@@ -31,7 +31,8 @@ module Smev
         header = envel.search_child("Header", NAMESPACES['soap']).first
         used_prefixes = %w(soap wsse wsu ds)
 
-        doc_nss = doc.collect_namespaces
+        doc_nss = envel.namespaces
+        doc_nss = doc_nss.merge(header.namespaces) if header
         doc_nss.delete("xmlns")
         prefixes = used_prefixes.inject({}) do |res, name|
             res[name] = name
