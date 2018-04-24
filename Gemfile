@@ -11,7 +11,7 @@ group :test, :development do
 end
 
 gem 'soap4r', :git => 'https://github.com/Wolfer/soap4r.git'
-gem 'nokogiri', '~> 1.6.1'#, :git => "git://github.com/tenderlove/nokogiri.git", :branch => "c14n"
+gem 'nokogiri', '~> 1.8'#, :git => "git://github.com/tenderlove/nokogiri.git", :branch => "c14n"
 gem 'nori'
 gem 'builder'
 gem 'rubyzip', '~> 1.0'

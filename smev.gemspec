@@ -20,7 +20,7 @@ Gem::Specification.new do |s|
   s.add_dependency "nori"
   s.add_dependency "macaddr", '= 1.6.1'
   s.add_dependency "uuid"
-  s.add_dependency "nokogiri", '~> 1.6.1'
+  s.add_dependency "nokogiri", '~> 1.8'
   s.add_dependency "rubyzip", '~> 1.0'
   s.add_dependency "mime-types"
   s.add_dependency "httpi"
